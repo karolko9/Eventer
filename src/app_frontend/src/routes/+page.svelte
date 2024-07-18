@@ -1,26 +1,20 @@
 <script>
-  import "../index.scss";
-  import { backend } from "$lib/canisters";
+  import LoggedIn from "../components/LoggedIn.svelte";
+  import LoggedOut from "../components/LoggedOut.svelte";
+  import { auth } from "../lib/auth";
+  import { onMount } from "svelte";
 
-  let greeting = "";
-
-  function onSubmit(event) {
-    const name = event.target.name.value;
-    backend.greet(name).then((response) => {
-      greeting = response;
-    });
-    return false;
-  }
+  onMount(() => {
+    $auth.init();
+  });
 </script>
 
 <main>
-  <img src="/logo2.svg" alt="DFINITY logo" />
-  <br />
-  <br />
-  <form action="#" on:submit|preventDefault={onSubmit}>
-    <label for="name">Enter your name: &nbsp;</label>
-    <input id="name" alt="Name" type="text" />
-    <button type="submit">Click Me!</button>
-  </form>
-  <section id="greeting">{greeting}</section>
+  {#if $auth.isReady}
+    {#if $auth.isAuthenticated}
+      <LoggedIn />
+    {:else}
+      <LoggedOut />
+    {/if}
+  {/if}
 </main>
