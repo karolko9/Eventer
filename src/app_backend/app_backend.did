@@ -1,3 +1,13 @@
 service : {
-    "greet": (text) -> (text);
+  create_event : (text, text, text) -> (text);
+  get_event : (nat) -> (text) query;
+  get_user : (principal) -> (text) query;
+  register_user : (
+      text,
+      record { float64; float64 },
+      vec text,
+      text,
+      text,
+      text,
+    ) -> (text);
 }
