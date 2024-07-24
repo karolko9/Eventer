@@ -13,7 +13,9 @@
   "dependencies": {
     "@dfinity/agent": "^0.20.0",
     "@dfinity/candid": "^0.20.0",
-    "@dfinity/principal": "^0.20.0"
+    "@dfinity/principal": "^0.20.0",
+    "maplibre-gl": "^4.5.0",
+    "svelte-maplibre": "^0.9.9"
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^2.0.0",

@@ -11,7 +11,7 @@
 </script>
 
 <main>
-  <Map/>
+  <Map />
 
   <!-- {#if $auth.isReady}
     {#if $auth.isAuthenticated}
