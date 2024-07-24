@@ -1,5 +1,5 @@
 <script>
-  import {Map} from "../components/Map.svelte";
+  import Map from "../components/Map.svelte";
   // import LoggedIn from "../components/LoggedIn.svelte";
   // import LoggedOut from "../components/LoggedOut.svelte";
   // import { auth } from "../lib/auth";
@@ -12,7 +12,7 @@
 
 <main>
   <Map/>
-  
+
   <!-- {#if $auth.isReady}
     {#if $auth.isAuthenticated}
       <LoggedIn />
