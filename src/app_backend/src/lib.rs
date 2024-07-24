@@ -1,44 +1,31 @@
-
-use std::{
-    cell::RefCell,
-    collections::HashMap,
-};
 use candid::Principal;
+use std::{cell::RefCell, collections::HashMap};
 mod model;
 use model::{event::Event, user::UserDataModel};
-
+mod service;
 
 thread_local! {
     static USER_DATA_MODEL: std::cell::RefCell<UserDataModels> = RefCell::default();
-    static EVENTS: std::cell::RefCell<HashMap<u128, Event>> = std::cell::RefCell::new(HashMap::new());
+    static EVENTS: std::cell::RefCell<EventMap> = RefCell::default();
 }
 
 type UserDataModels = HashMap<Principal, UserDataModel>;
-
-
-#[ic_cdk::query]
-fn check_user_model() -> Result<bool, String> {
-    let caller = ic_cdk::caller();
-    
-    USER_DATA_MODEL.with(|user_data_model| {
-        let user_data = user_data_model.borrow();
-        if user_data.contains_key(&caller) {
-            Ok(true)
-        } else {
-            Err("not".to_string())
-        }
-    })
-}
+type EventMap = HashMap<u128, Event>;
 
 #[ic_cdk::query]
-fn greet(name: String) -> String {
-    if let Ok(true) = check_user_model() {
-        format!("Hello, {}! caller: {}", name, ic_cdk::caller())
-    } else {
-        format!("Naura, {}! caller: {}", name, ic_cdk::caller())
-        
+fn get_user(user: Principal) -> String {
+    match service::user::get_user(user) {
+        Some(user_data) => format!("Found user: {:?}", user_data),
+        None => format!("User not found"),
     }
-    // format!("Hello, {}! caller: {}", name, ic_cdk::caller())
+}
+#[ic_cdk::update]
+fn register_user(name: String, location: (f64, f64), hobbies: Vec<String>, job: String, role: String, bio: String) -> String {
+    let caller = ic_cdk::caller();
+    match service::user::register_user(caller, name, location, hobbies, job, role, bio) {
+        Ok(message) => message,
+        Err(err) => err,
+    }
 }
 
 ic_cdk::export_candid!();

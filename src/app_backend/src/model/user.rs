@@ -2,7 +2,7 @@
 use serde::{Deserialize, Serialize};
 use crate::model::event::Event;
 
-// #[derive(Serialize, Deserialize, Clone)]
+#[derive(Clone, Debug)]
 pub struct UserDataModel {
     name: String,
     location: (f64, f64),
