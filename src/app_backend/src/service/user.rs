@@ -1,6 +1,3 @@
-
-
-
 use candid::Principal;
 
 use crate::model::user::UserDataModel;
@@ -21,7 +18,6 @@ pub fn user_exists(user: Principal) -> bool {
     })
 }
 
-
 pub fn register_user(
     user: Principal,
     name: String,
@@ -29,19 +25,13 @@ pub fn register_user(
     hobbies: Vec<String>,
     job: String,
     role: String,
-    bio: String
+    bio: String,
 ) -> Result<String, String> {
     if user_exists(user) {
         Err("User already exists".to_string())
     } else {
-        let user_data = UserDataModel::new(
-            name,
-            location,
-            hobbies,
-            job,
-            role,
-            bio,
-        ).map_err(|e| e.to_string())?;
+        let user_data = UserDataModel::new(name, location, hobbies, job, role, bio)
+            .map_err(|e| e.to_string())?;
 
         USER_DATA_MODEL.with(|user_data_model| {
             let mut user_data_map = user_data_model.borrow_mut();
@@ -49,4 +39,29 @@ pub fn register_user(
         });
         Ok("User registered".to_string())
     }
+}
+
+pub fn update_user(
+    user: Principal,
+    name: String,
+    location: (f64, f64),
+    hobbies: Vec<String>,
+    job: String,
+    role: String,
+    bio: String,
+) -> Result<String, String> {
+    let user_data = UserDataModel::new(name, location, hobbies, job, role, bio)
+        .map_err(|e| e.to_string())?;
+
+    USER_DATA_MODEL.with(|user_data_model| {
+        let mut user_data_map = user_data_model.borrow_mut();
+        
+        if user_data_map.contains_key(&user) {
+            user_data_map.insert(user, user_data);
+            Ok("User updated".to_string())
+        } else {
+            user_data_map.insert(user, user_data);
+            Ok("User registered".to_string())
+        }
+    })
 }

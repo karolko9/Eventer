@@ -13,6 +13,10 @@ thread_local! {
 type UserDataModels = HashMap<Principal, UserDataModel>;
 type EventMap = HashMap<u128, Event>;
 
+// USER
+//
+//
+// GET USER
 #[ic_cdk::query]
 fn get_user(user: Principal) -> String {
     match service::user::get_user(user) {
@@ -20,6 +24,8 @@ fn get_user(user: Principal) -> String {
         None => format!("User not found"),
     }
 }
+
+// REGISTER USER
 #[ic_cdk::update]
 fn register_user(name: String, location: (f64, f64), hobbies: Vec<String>, job: String, role: String, bio: String) -> String {
     let caller = ic_cdk::caller();
@@ -29,6 +35,20 @@ fn register_user(name: String, location: (f64, f64), hobbies: Vec<String>, job: 
     }
 }
 
+// UPDATE USER
+#[ic_cdk::update]
+fn update_user(name: String, location: (f64, f64), hobbies: Vec<String>, job: String, role: String, bio: String) -> String {
+    let caller = ic_cdk::caller();
+    match service::user::update_user(caller, name, location, hobbies, job, role, bio) {
+        Ok(message) => message,
+        Err(err) => err,
+    }
+}
+
+// EVENT
+//
+//
+// CREATE EVENT
 #[ic_cdk::update]
 fn create_event(name: String, time_start: String, time_end: String) -> String {
     let creator = ic_cdk::caller();
@@ -38,6 +58,7 @@ fn create_event(name: String, time_start: String, time_end: String) -> String {
     }
 }
 
+// GET EVENT BY ID
 #[ic_cdk::query]
 fn get_event(event_id: u128) -> String {
     match service::event::get_event(event_id) {
