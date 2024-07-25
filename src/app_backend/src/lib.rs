@@ -27,7 +27,14 @@ fn get_user(user: Principal) -> String {
 
 // REGISTER USER
 #[ic_cdk::update]
-fn register_user(name: String, location: (f64, f64), hobbies: Vec<String>, job: String, role: String, bio: String) -> String {
+fn register_user(
+    name: String,
+    location: (f64, f64),
+    hobbies: Vec<String>,
+    job: String,
+    role: String,
+    bio: String,
+) -> String {
     let caller = ic_cdk::caller();
     match service::user::register_user(caller, name, location, hobbies, job, role, bio) {
         Ok(message) => message,
@@ -37,7 +44,14 @@ fn register_user(name: String, location: (f64, f64), hobbies: Vec<String>, job: 
 
 // UPDATE USER
 #[ic_cdk::update]
-fn update_user(name: String, location: (f64, f64), hobbies: Vec<String>, job: String, role: String, bio: String) -> String {
+fn update_user(
+    name: String,
+    location: (f64, f64),
+    hobbies: Vec<String>,
+    job: String,
+    role: String,
+    bio: String,
+) -> String {
     let caller = ic_cdk::caller();
     match service::user::update_user(caller, name, location, hobbies, job, role, bio) {
         Ok(message) => message,
@@ -50,9 +64,9 @@ fn update_user(name: String, location: (f64, f64), hobbies: Vec<String>, job: St
 //
 // CREATE EVENT
 #[ic_cdk::update]
-fn create_event(name: String, time_start: String, time_end: String) -> String {
+fn create_event(name: String, time_start: String, time_end: String, tags: Vec<String>) -> String {
     let creator = ic_cdk::caller();
-    match service::event::create_event(name, time_start, time_end, creator) {
+    match service::event::create_event(name, time_start, time_end, creator, tags) {
         Ok(message) => message,
         Err(err) => err,
     }
@@ -64,6 +78,17 @@ fn get_event(event_id: u128) -> String {
     match service::event::get_event(event_id) {
         Some(event) => format!("Found event: {:?}", event),
         None => format!("Event not found"),
+    }
+}
+
+// GET EVENTS BY TAGS
+#[ic_cdk::query]
+fn get_event_by_tags(tags: Vec<String>) -> Option<Vec<((f64, f64), u128)>> {
+    let events = service::event::get_event_by_tag(tags);
+    if events.is_empty() {
+        None
+    } else {
+        Some(events)
     }
 }
 

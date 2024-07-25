@@ -8,7 +8,8 @@ pub fn create_event(
     name: String,
     time_start: String,
     time_end: String,
-    creator: Principal
+    creator: Principal,
+    tags: Vec<String>
 ) -> Result<String, String> {
     let event_id = NEXT_EVENT_ID.with(|next_id| {
         let mut id_counter = next_id.borrow_mut();
@@ -25,6 +26,7 @@ pub fn create_event(
         vec![creator],
         HashMap::new(),
         HashMap::new(),
+        tags
     );
 
     EVENTS.with(|events| {
@@ -42,3 +44,12 @@ pub fn get_event(event_id: u128) -> Option<Event> {
     })
 }
 
+pub fn get_event_by_tag(tags: Vec<String>) -> Vec<((f64, f64), u128)> {
+    EVENTS.with(|events| {
+        let events_on_map = events.borrow();
+        events_on_map.values()
+            .filter(|event| tags.iter().all(|tag| event.tags().contains(tag)))
+            .map(|event| ((event.location().0, event.location().1), event.id()))
+            .collect()
+    })
+}
