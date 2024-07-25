@@ -1,6 +1,6 @@
 <script>
   import Map from "../components/Map.svelte";
-  import LoggedIn from "../components/LoggedIn.svelte";
+  import Profile from "../components/Profile.svelte";
   import LoggedOut from "../components/LoggedOut.svelte";
   import { auth } from "../lib/auth";
   import { onMount } from "svelte";
@@ -18,17 +18,19 @@
           <!-- 
           lista komponentów na pasku narzędzi/opcji. Do zrobienia poprzez Routes?
           przejście do każdego routa albo spowoduje pojawienie się okienka elementu albo  stworzymy całkiem nowy widok, aczkolwiek 1 opcja efektowniejsza
-          
 
+          Router: NavBar
+
+          Routes:
           mapa - root - przejście do głównego widoku
           your events
           create event
           settings
           profile - będziemy chcieli żeby zawierał w środku component LoggedIn
-          searchbar
-          online events 
+          searchbar for events
+          online events - do tego myślę że spoko jednak było by zrobić całkiem nowy widok i zastąpić nim element Map, aczkolwiek to na przyszłość
           -->
-          <LoggedIn />
+          <Profile /> 
         </div>
         <div>
           <Map />
