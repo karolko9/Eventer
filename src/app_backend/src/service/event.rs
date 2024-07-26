@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::dto_request;
-use crate::dto_response;
+use crate::dto_response::response::{EventResponse, EventDetailsResponse};
 use crate::model::event::Event;
 use crate::service::user;
 use crate::{ USER_DATA_MODEL, EVENTS, NEXT_EVENT_ID};
@@ -34,10 +34,10 @@ pub fn create_event(event_dto: dto_request::request::EventDTO, caller: Principal
     true
 }
 
-pub fn get_event(event_id: u128) -> Option<dto_response::response::EventDetailsResponse> {
+pub fn get_event(event_id: u128) -> Option<EventDetailsResponse> {
     EVENTS.with(|events| {
         let events_map = events.borrow();
-        events_map.get(&event_id).map(|event| dto_response::response::EventDetailsResponse {
+        events_map.get(&event_id).map(|event| EventDetailsResponse {
             location: (event.location().0.clone(), event.location().1.clone()),
             id: event.id().clone(),
             name: event.name().to_string(),
@@ -48,13 +48,13 @@ pub fn get_event(event_id: u128) -> Option<dto_response::response::EventDetailsR
     })
 }
 
-pub fn get_event_by_tag(tags: Vec<String>) -> Vec<dto_response::response::EventResponse> {
+pub fn get_event_by_tag(tags: Vec<String>) -> Vec<EventResponse> {
     EVENTS.with(|events| {
         let events_on_map = events.borrow();
         events_on_map
             .values()
             .filter(|event| tags.iter().all(|tag| event.tags().contains(tag)))
-            .map(|event| dto_response::response::EventResponse {
+            .map(|event| EventResponse {
                 location: (event.location().0.clone(), event.location().1.clone()),
                 id: event.id().clone(),
             })
@@ -62,7 +62,7 @@ pub fn get_event_by_tag(tags: Vec<String>) -> Vec<dto_response::response::EventR
     })
 }
 
-pub fn get_event_by_tag_user(caller: Principal) -> Vec<dto_response::response::EventResponse> {
+pub fn get_event_by_tag_user(caller: Principal) -> Vec<EventResponse> {
     let user_tags = user::get_user(caller).map_or(Vec::new(), |user| user.get_tags().clone());
 
     EVENTS.with(|events| {
@@ -70,7 +70,7 @@ pub fn get_event_by_tag_user(caller: Principal) -> Vec<dto_response::response::E
         events_on_map
             .values()
             .filter(|event| user_tags.iter().any(|tag| event.tags().contains(tag)))
-            .map(|event| dto_response::response::EventResponse {
+            .map(|event| EventResponse {
                 location: (event.location().0.clone(), event.location().1.clone()),
                 id: event.id().clone(),
             })
