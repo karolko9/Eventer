@@ -7,10 +7,7 @@ use crate::service::user;
 use crate::{EVENTS, NEXT_EVENT_ID};
 use candid::Principal;
 
-pub fn create_event(
-    event_dto: dto_request::request::EventDTO,
-    caller: Principal,
-) -> Result<String, String> {
+pub fn create_event(event_dto: dto_request::request::EventDTO, caller: Principal) -> bool {
     let event_id = NEXT_EVENT_ID.with(|next_id| {
         let mut id_counter = next_id.borrow_mut();
         let current_id = *id_counter;
@@ -34,13 +31,20 @@ pub fn create_event(
         events_map.insert(event_id, event);
     });
 
-    Ok("Event created successfully".to_string())
+    true
 }
 
-pub fn get_event(event_id: u128) -> Option<Event> {
+pub fn get_event(event_id: u128) -> Option<dto_response::response::EventDetailsResponse> {
     EVENTS.with(|events| {
         let events_map = events.borrow();
-        events_map.get(&event_id).cloned()
+        events_map.get(&event_id).map(|event| dto_response::response::EventDetailsResponse {
+            location: (event.location().0.clone(), event.location().1.clone()),
+            id: event.id().clone(),
+            name: event.name().to_string(),
+            time_start: event.time_start().to_string(),
+            time_end: event.time_end().to_string(),
+            tags: event.tags().clone(),
+        })
     })
 }
 

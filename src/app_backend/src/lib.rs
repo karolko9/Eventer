@@ -32,11 +32,8 @@ fn register_user(user_dto: dto_request::request::UserDTO) -> bool {
 
 // UPDATE USER
 #[ic_cdk::update]
-fn update_user(user_dto: dto_request::request::UserDTO) -> String {
-    match service::user::update_user(ic_cdk::caller(), user_dto) {
-        Ok(message) => message,
-        Err(err) => err,
-    }
+fn update_user(user_dto: dto_request::request::UserDTO) -> bool {
+    service::user::update_user(ic_cdk::caller(), user_dto)
 }
 
 // EVENT
@@ -44,20 +41,14 @@ fn update_user(user_dto: dto_request::request::UserDTO) -> String {
 //
 // CREATE EVENT
 #[ic_cdk::update]
-fn create_event(event_dto: dto_request::request::EventDTO) -> String {
-    match service::event::create_event(event_dto, ic_cdk::caller()) {
-        Ok(message) => message,
-        Err(err) => err,
-    }
+fn create_event(event_dto: dto_request::request::EventDTO) -> bool {
+    service::event::create_event(event_dto, ic_cdk::caller())
 }
 
 // GET EVENT BY ID
 #[ic_cdk::query]
-fn get_event(event_id: u128) -> String {
-    match service::event::get_event(event_id) {
-        Some(event) => format!("Found event: {:?}", event),
-        None => format!("Event not found"),
-    }
+fn get_event(event_id: u128) -> Option<dto_response::response::EventDetailsResponse> {
+    service::event::get_event(event_id) 
 }
 
 // GET EVENTS BY TAGS

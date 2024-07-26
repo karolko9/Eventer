@@ -23,7 +23,7 @@ pub fn user_exists(user: Principal) -> bool {
     })
 }
 
-// 
+// Register user
 pub fn register_user(user: Principal, user_dto: dto_request::request::UserDTO) -> bool {
     if user_exists(user) {
         false
@@ -41,22 +41,23 @@ pub fn register_user(user: Principal, user_dto: dto_request::request::UserDTO) -
     }
 }
 
-pub fn update_user(user: Principal, user_dto: dto_request::request::UserDTO) -> Result<String, String> {
+// Update user
+pub fn update_user(user: Principal, user_dto: dto_request::request::UserDTO) -> bool{
     USER_DATA_MODEL.with(|user_data_model| {
         let mut user_data_map = user_data_model.borrow_mut();
         
         if let Some(existing_user_data) = user_data_map.get_mut(&user) {
             existing_user_data.set_name(user_dto.name);
-            if let Err(e) = existing_user_data.set_location(user_dto.location.0, user_dto.location.1) {
-                return Err(e);
+            if let Err(_) = existing_user_data.set_location(user_dto.location.0, user_dto.location.1) {
+                return false;
             }
             existing_user_data.set_tags(user_dto.tags);
             existing_user_data.set_job(user_dto.job);
             existing_user_data.set_role(user_dto.role);
             existing_user_data.set_bio(user_dto.bio);
-            Ok("User updated".to_string())
+            true
         } else {
-            Err("User does not exist".to_string())
+            false
         }
     })
 }

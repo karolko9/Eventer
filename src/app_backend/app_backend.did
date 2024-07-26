@@ -4,6 +4,18 @@ type EventDTO = record {
   time_start : text;
   time_end : text;
 };
+type EventDetailsResponse = record {
+  id : nat;
+  name : text;
+  tags : vec text;
+  location : record { float64; float64 };
+  time_start : text;
+  time_end : text;
+};
+type EventResponse = record {
+  id : nat;
+  location : record { float64; float64 };
+};
 type UserDTO = record {
   bio : text;
   job : text;
@@ -12,16 +24,21 @@ type UserDTO = record {
   tags : vec text;
   location : record { float64; float64 };
 };
+type UserDataModel = record {
+  bio : text;
+  job : text;
+  name : text;
+  role : text;
+  list_of_events : vec nat;
+  tags : vec text;
+  location : record { float64; float64 };
+};
 service : {
-  create_event : (EventDTO) -> (text);
-  get_event : (nat) -> (text) query;
-  get_event_by_tags : (vec text) -> (
-      opt vec record { record { float64; float64 }; nat },
-    ) query;
-  get_event_by_tags_user : () -> (
-      opt vec record { record { float64; float64 }; nat },
-    ) query;
-  get_user : () -> (text) query;
-  register_user : (UserDTO) -> (text);
-  update_user : (UserDTO) -> (text);
+  create_event : (EventDTO) -> (bool);
+  get_event : (nat) -> (opt EventDetailsResponse) query;
+  get_event_by_tags : (vec text) -> (vec EventResponse) query;
+  get_event_by_tags_user : () -> (vec EventResponse) query;
+  get_user : () -> (opt UserDataModel) query;
+  register_user : (UserDTO) -> (bool);
+  update_user : (UserDTO) -> (bool);
 }
