@@ -24,18 +24,20 @@ pub fn user_exists(user: Principal) -> bool {
 }
 
 // 
-pub fn register_user(user: Principal, user_dto: dto_request::request::UserDTO) -> Result<String, String> {
+pub fn register_user(user: Principal, user_dto: dto_request::request::UserDTO) -> bool {
     if user_exists(user) {
-        Err("User already exists".to_string())
+        false
     } else {
-        let user_data = UserDataModel::new(user_dto)
-            .map_err(|e| e.to_string())?;
+        let user_data = match UserDataModel::new(user_dto) {
+            Ok(data) => data,
+            Err(_) => return false,
+        };
 
         USER_DATA_MODEL.with(|user_data_model| {
             let mut user_data_map = user_data_model.borrow_mut();
             user_data_map.insert(user, user_data);
         });
-        Ok("User registered".to_string())
+        true
     }
 }
 

@@ -20,20 +20,14 @@ type EventMap = HashMap<u128, Event>;
 //
 // GET USER
 #[ic_cdk::query]
-fn get_user() -> String {
-    match service::user::get_user(ic_cdk::caller()) {
-        Some(user_data) => format!("Found user: {:?}", user_data),
-        None => format!("User not found"),
-    }
+fn get_user() -> Option<UserDataModel> {
+    service::user::get_user(ic_cdk::caller()) 
 }
 
 // REGISTER USER
 #[ic_cdk::update]
-fn register_user(user_dto: dto_request::request::UserDTO) -> String {
-    match service::user::register_user(ic_cdk::caller(), user_dto) {
-        Ok(message) => message,
-        Err(err) => err,
-    }
+fn register_user(user_dto: dto_request::request::UserDTO) -> bool {
+    service::user::register_user(ic_cdk::caller(), user_dto)
 }
 
 // UPDATE USER

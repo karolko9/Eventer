@@ -1,8 +1,9 @@
 use crate::dto_request;
 use crate::{model::event::Event, service::user};
 use serde::{Deserialize, Serialize};
+use candid::CandidType;
 
-#[derive(Clone, Debug)]
+#[derive(CandidType, Clone, Debug)]
 pub struct UserDataModel {
     name: String,
     location: (f64, f64),
@@ -20,7 +21,7 @@ impl UserDataModel {
             || user_dto.location.1 < -180.0
             || user_dto.location.1 > 180.0
         {
-            return Err("Location coordinates must be between -180 and 180.".to_string());
+            return Err("Location coordinates must be between -90 to 90 ,-180 to 180.".to_string());
         }
         Ok(UserDataModel {
             name: user_dto.name,
