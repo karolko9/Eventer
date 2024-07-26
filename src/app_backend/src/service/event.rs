@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use candid::Principal;
 use crate::model::event::Event;
 use crate::{EVENTS, NEXT_EVENT_ID};
+use crate::service::user;
 
 pub fn create_event(
     name: String,
@@ -50,6 +51,18 @@ pub fn get_event_by_tag(tags: Vec<String>) -> Vec<((f64, f64), u128)> {
         events_on_map.values()
             .filter(|event| tags.iter().all(|tag| event.tags().contains(tag)))
             .map(|event| ((event.location().0, event.location().1), event.id()))
+            .collect()
+    })
+}
+
+pub fn get_event_by_tag_user(caller: Principal) -> Vec<((f64, f64), u128)> {
+    let user_tags = user::get_user(caller).map_or(Vec::new(), |user| user.tags().clone());
+
+    EVENTS.with(|events| {
+        let events_on_map = events.borrow();
+        events_on_map.values()
+            .filter(|event| user_tags.iter().any(|tag| event.tags().contains(tag)))
+            .map(|event| (event.location(), event.id()))
             .collect()
     })
 }

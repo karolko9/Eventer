@@ -92,4 +92,16 @@ fn get_event_by_tags(tags: Vec<String>) -> Option<Vec<((f64, f64), u128)>> {
     }
 }
 
+// GET EVENTS BY TAGS USER
+#[ic_cdk::query]
+fn get_event_by_tags_user() -> Option<Vec<((f64, f64), u128)>> {
+    let caller = ic_cdk::caller();
+    let events = service::event::get_event_by_tag_user(caller);
+    if events.is_empty() {
+        None
+    } else {
+        Some(events)
+    }
+}
+
 ic_cdk::export_candid!();

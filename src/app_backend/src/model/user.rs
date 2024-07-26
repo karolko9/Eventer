@@ -1,12 +1,11 @@
-
-use serde::{Deserialize, Serialize};
 use crate::model::event::Event;
+use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug)]
 pub struct UserDataModel {
     name: String,
     location: (f64, f64),
-    hobbies: Vec<String>,
+    tags: Vec<String>,
     job: String,
     role: String,
     bio: String,
@@ -17,7 +16,7 @@ impl UserDataModel {
     pub fn new(
         name: String,
         location: (f64, f64),
-        hobbies: Vec<String>,
+        tags: Vec<String>,
         job: String,
         role: String,
         bio: String,
@@ -28,7 +27,7 @@ impl UserDataModel {
         Ok(UserDataModel {
             name,
             location,
-            hobbies,
+            tags,
             job,
             role,
             bio,
@@ -49,5 +48,9 @@ impl UserDataModel {
 
     pub fn add_event(&mut self, event: u128) {
         self.list_of_events.push(event);
+    }
+
+    pub fn tags(&self) -> &Vec<String> {
+        &self.tags
     }
 }

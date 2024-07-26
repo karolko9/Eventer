@@ -4,6 +4,9 @@ service : {
   get_event_by_tags : (vec text) -> (
       opt vec record { record { float64; float64 }; nat },
     ) query;
+  get_event_by_tags_user : () -> (
+      opt vec record { record { float64; float64 }; nat },
+    ) query;
   get_user : (principal) -> (text) query;
   register_user : (
       text,
