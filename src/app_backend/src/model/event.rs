@@ -117,4 +117,8 @@ impl Event {
     pub fn set_tags(&mut self, tags: Vec<String>) {
         self.tags = tags;
     }
+    
+    pub fn add_participant(&mut self, participant: Principal) {
+        self.hash_map_of_declared.insert(participant, "declared".to_string());
+    }
 }

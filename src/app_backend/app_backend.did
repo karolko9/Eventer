@@ -39,6 +39,7 @@ service : {
   get_event_by_tags : (vec text) -> (vec EventResponse) query;
   get_event_by_tags_user : () -> (vec EventResponse) query;
   get_user : () -> (opt UserDataModel) query;
+  join_event : (nat) -> (bool);
   register_user : (UserDTO) -> (bool);
   update_user : (UserDTO) -> (bool);
 }

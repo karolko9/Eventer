@@ -63,4 +63,13 @@ fn get_event_by_tags_user() -> Vec<dto_response::response::EventResponse> {
     service::event::get_event_by_tag_user(ic_cdk::caller())           
 }
 
+//
+// USER JOIN EVENT
+// 
+
+#[ic_cdk::update]
+fn join_event(event_id: u128) -> bool {
+    service::event::join_event(ic_cdk::caller(), event_id)
+}
+
 ic_cdk::export_candid!();
