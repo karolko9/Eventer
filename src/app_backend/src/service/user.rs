@@ -11,13 +11,6 @@ pub fn get_user(user: Principal) -> Option<UserDataModel> {
     })
 }
 
-pub fn get_user_tags(user: Principal) -> Option<Vec<String>> {
-    USER_DATA_MODEL.with(|user_data_model| {
-        let user_data = user_data_model.borrow();
-        user_data.get(&user).map(|user_data_model| user_data_model.tags().clone())
-    })
-}
-
 pub fn user_exists(user: Principal) -> bool {
     USER_DATA_MODEL.with(|user_data_model| {
         let user_data = user_data_model.borrow();
