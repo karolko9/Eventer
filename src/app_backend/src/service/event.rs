@@ -56,7 +56,7 @@ pub fn get_event_by_tag(tags: Vec<String>) -> Vec<((f64, f64), u128)> {
 }
 
 pub fn get_event_by_tag_user(caller: Principal) -> Vec<((f64, f64), u128)> {
-    let user_tags = user::get_user(caller).map_or(Vec::new(), |user| user.tags().clone());
+    let user_tags = user::get_user(caller).map_or(Vec::new(), |user| user.get_tags().clone());
 
     EVENTS.with(|events| {
         let events_on_map = events.borrow();

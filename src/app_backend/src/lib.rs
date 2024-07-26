@@ -2,6 +2,7 @@ use candid::Principal;
 use std::{cell::RefCell, collections::HashMap};
 mod model;
 use model::{event::Event, user::UserDataModel};
+mod dto_request;
 mod service;
 
 thread_local! {
@@ -18,7 +19,8 @@ type EventMap = HashMap<u128, Event>;
 //
 // GET USER
 #[ic_cdk::query]
-fn get_user(user: Principal) -> String {
+fn get_user() -> String {
+    let user = ic_cdk::caller();
     match service::user::get_user(user) {
         Some(user_data) => format!("Found user: {:?}", user_data),
         None => format!("User not found"),
@@ -27,16 +29,9 @@ fn get_user(user: Principal) -> String {
 
 // REGISTER USER
 #[ic_cdk::update]
-fn register_user(
-    name: String,
-    location: (f64, f64),
-    hobbies: Vec<String>,
-    job: String,
-    role: String,
-    bio: String,
-) -> String {
+fn register_user(user_dto: dto_request::request::UserDTO) -> String {
     let caller = ic_cdk::caller();
-    match service::user::register_user(caller, name, location, hobbies, job, role, bio) {
+    match service::user::register_user(caller, user_dto) {
         Ok(message) => message,
         Err(err) => err,
     }
@@ -44,16 +39,9 @@ fn register_user(
 
 // UPDATE USER
 #[ic_cdk::update]
-fn update_user(
-    name: String,
-    location: (f64, f64),
-    hobbies: Vec<String>,
-    job: String,
-    role: String,
-    bio: String,
-) -> String {
+fn update_user(user_dto: dto_request::request::UserDTO) -> String {
     let caller = ic_cdk::caller();
-    match service::user::update_user(caller, name, location, hobbies, job, role, bio) {
+    match service::user::update_user(caller, user_dto) {
         Ok(message) => message,
         Err(err) => err,
     }
