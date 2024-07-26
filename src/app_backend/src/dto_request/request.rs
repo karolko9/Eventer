@@ -8,3 +8,11 @@ pub struct UserDTO {
     pub role: String,
     pub bio: String,
 }
+
+#[derive(serde::Deserialize, candid::CandidType)]
+pub struct EventDTO {
+    pub name: String,
+    pub time_start: String,
+    pub time_end: String,
+    pub tags: Vec<String>,
+}

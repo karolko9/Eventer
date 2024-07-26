@@ -52,9 +52,9 @@ fn update_user(user_dto: dto_request::request::UserDTO) -> String {
 //
 // CREATE EVENT
 #[ic_cdk::update]
-fn create_event(name: String, time_start: String, time_end: String, tags: Vec<String>) -> String {
+fn create_event(event_dto: dto_request::request::EventDTO) -> String {
     let creator = ic_cdk::caller();
-    match service::event::create_event(name, time_start, time_end, creator, tags) {
+    match service::event::create_event(event_dto, creator) {
         Ok(message) => message,
         Err(err) => err,
     }

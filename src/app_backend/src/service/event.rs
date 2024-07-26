@@ -5,13 +5,9 @@ use crate::model::event::Event;
 use crate::{EVENTS, NEXT_EVENT_ID};
 use crate::service::user;
 
-pub fn create_event(
-    name: String,
-    time_start: String,
-    time_end: String,
-    creator: Principal,
-    tags: Vec<String>
-) -> Result<String, String> {
+use crate::dto_request;
+
+pub fn create_event(event_dto: dto_request::request::EventDTO, caller: Principal) -> Result<String, String> {
     let event_id = NEXT_EVENT_ID.with(|next_id| {
         let mut id_counter = next_id.borrow_mut();
         let current_id = *id_counter;
@@ -21,13 +17,13 @@ pub fn create_event(
 
     let event = Event::new(
         event_id,
-        name,
-        time_start,
-        time_end,
-        vec![creator],
+        event_dto.name,
+        event_dto.time_start,
+        event_dto.time_end,
+        vec![caller],
         HashMap::new(),
         HashMap::new(),
-        tags
+        event_dto.tags
     );
 
     EVENTS.with(|events| {

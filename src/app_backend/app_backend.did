@@ -1,5 +1,19 @@
+type EventDTO = record {
+  name : text;
+  tags : vec text;
+  time_start : text;
+  time_end : text;
+};
+type UserDTO = record {
+  bio : text;
+  job : text;
+  name : text;
+  role : text;
+  tags : vec text;
+  location : record { float64; float64 };
+};
 service : {
-  create_event : (text, text, text, vec text) -> (text);
+  create_event : (EventDTO) -> (text);
   get_event : (nat) -> (text) query;
   get_event_by_tags : (vec text) -> (
       opt vec record { record { float64; float64 }; nat },
@@ -7,21 +21,7 @@ service : {
   get_event_by_tags_user : () -> (
       opt vec record { record { float64; float64 }; nat },
     ) query;
-  get_user : (principal) -> (text) query;
-  register_user : (
-      text,
-      record { float64; float64 },
-      vec text,
-      text,
-      text,
-      text,
-    ) -> (text);
-  update_user : (
-      text,
-      record { float64; float64 },
-      vec text,
-      text,
-      text,
-      text,
-    ) -> (text);
+  get_user : () -> (text) query;
+  register_user : (UserDTO) -> (text);
+  update_user : (UserDTO) -> (text);
 }
