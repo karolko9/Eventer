@@ -3,6 +3,7 @@ use std::{cell::RefCell, collections::HashMap};
 mod model;
 use model::{event::Event, user::UserDataModel};
 mod dto_request;
+mod dto_response;
 mod service;
 
 thread_local! {
@@ -20,8 +21,7 @@ type EventMap = HashMap<u128, Event>;
 // GET USER
 #[ic_cdk::query]
 fn get_user() -> String {
-    let user = ic_cdk::caller();
-    match service::user::get_user(user) {
+    match service::user::get_user(ic_cdk::caller()) {
         Some(user_data) => format!("Found user: {:?}", user_data),
         None => format!("User not found"),
     }
@@ -30,8 +30,7 @@ fn get_user() -> String {
 // REGISTER USER
 #[ic_cdk::update]
 fn register_user(user_dto: dto_request::request::UserDTO) -> String {
-    let caller = ic_cdk::caller();
-    match service::user::register_user(caller, user_dto) {
+    match service::user::register_user(ic_cdk::caller(), user_dto) {
         Ok(message) => message,
         Err(err) => err,
     }
@@ -40,8 +39,7 @@ fn register_user(user_dto: dto_request::request::UserDTO) -> String {
 // UPDATE USER
 #[ic_cdk::update]
 fn update_user(user_dto: dto_request::request::UserDTO) -> String {
-    let caller = ic_cdk::caller();
-    match service::user::update_user(caller, user_dto) {
+    match service::user::update_user(ic_cdk::caller(), user_dto) {
         Ok(message) => message,
         Err(err) => err,
     }
@@ -53,8 +51,7 @@ fn update_user(user_dto: dto_request::request::UserDTO) -> String {
 // CREATE EVENT
 #[ic_cdk::update]
 fn create_event(event_dto: dto_request::request::EventDTO) -> String {
-    let creator = ic_cdk::caller();
-    match service::event::create_event(event_dto, creator) {
+    match service::event::create_event(event_dto, ic_cdk::caller()) {
         Ok(message) => message,
         Err(err) => err,
     }
@@ -71,25 +68,14 @@ fn get_event(event_id: u128) -> String {
 
 // GET EVENTS BY TAGS
 #[ic_cdk::query]
-fn get_event_by_tags(tags: Vec<String>) -> Option<Vec<((f64, f64), u128)>> {
-    let events = service::event::get_event_by_tag(tags);
-    if events.is_empty() {
-        None
-    } else {
-        Some(events)
-    }
+fn get_event_by_tags(tags: Vec<String>) -> Vec<dto_response::response::EventResponse> {
+    service::event::get_event_by_tag(tags)
 }
 
 // GET EVENTS BY TAGS USER
 #[ic_cdk::query]
-fn get_event_by_tags_user() -> Option<Vec<((f64, f64), u128)>> {
-    let caller = ic_cdk::caller();
-    let events = service::event::get_event_by_tag_user(caller);
-    if events.is_empty() {
-        None
-    } else {
-        Some(events)
-    }
+fn get_event_by_tags_user() -> Vec<dto_response::response::EventResponse> {
+    service::event::get_event_by_tag_user(ic_cdk::caller())           
 }
 
 ic_cdk::export_candid!();
