@@ -6,7 +6,9 @@
         "node_compatibility": true
       },
       "package": "app_backend",
-      "type": "rust"
+      "type": "custom",
+      "build": "./build.sh app_backend",
+      "wasm": "target/wasm32-unknown-unknown/release/app_backend.wasm"
     },
     "app_frontend": {
       "dependencies": [
