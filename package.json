@@ -16,6 +16,7 @@
     "src/app_frontend"
   ],
   "dependencies": {
+    "@dfinity/agent": "^2.0.0",
     "@dfinity/auth-client": "^2.0.0"
   }
 }
