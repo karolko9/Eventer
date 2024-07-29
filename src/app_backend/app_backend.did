@@ -1,1 +1,5 @@
-service : { greet : (text) -> (text) query }
+type Result = variant { Ok : bool; Err : text };
+service : {
+  check_user_model : () -> (Result) query;
+  greet : (text) -> (text) query;
+}

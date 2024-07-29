@@ -1,5 +1,6 @@
 <script>
     import Menu from "../components/Menu.svelte";
+    import "../app.css";
 </script>
 
 <div class="container">
@@ -18,7 +19,6 @@
         left: 0;
         display: flex;
         flex-direction: column-reverse;
-        background-color: #ccc;
     }
 
     @media (min-width:1024px){
