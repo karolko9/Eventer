@@ -9,7 +9,7 @@ mod service;
 thread_local! {
     static USER_DATA_MODEL: std::cell::RefCell<UserDataModels> = RefCell::default();
     static EVENTS: std::cell::RefCell<EventMap> = RefCell::default();
-    static NEXT_EVENT_ID: RefCell<u128> = RefCell::new(1);
+    static NEXT_EVENT_ID: RefCell<u128> = RefCell::new(0);
 }
 
 type UserDataModels = HashMap<Principal, UserDataModel>;

@@ -56,7 +56,7 @@
         try {
             const eventDTO = {
                 name: eventName,
-                tags: eventTags.split(',').map(tag => tag.trim()),
+                tags: eventTags.split(' ').map(tag => tag.trim()),
                 location: [parseFloat(eventLocationLat), parseFloat(eventLocationLong)],
                 time_start: new Date(eventStartTime).toISOString(),
                 time_end: new Date(eventEndTime).toISOString()
@@ -86,7 +86,7 @@
         {/if}
     </div>
     <div>
-        <label for="eventTags">Event Tags (comma-separated):</label>
+        <label for="eventTags">Event Tags (blank-space-separated):</label>
         <input type="text" id="eventTags" bind:value={eventTags} />
     </div>
     <div>
