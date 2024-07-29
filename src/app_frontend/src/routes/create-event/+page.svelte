@@ -1,5 +1,7 @@
 <script>
     import { auth } from "../../lib/auth";
+    import { onMount } from "svelte";
+
     let eventName = "";
     let eventTags = "";
     let eventLocationLat = "";
@@ -7,8 +9,12 @@
     let eventStartTime = "";
     let eventEndTime = "";
     
-    let creationStatus = "";
+    let creationStatus = "Creating...";
     let validationErrors = {};
+
+    onMount(() => {
+            $auth.init();
+        });
 
     function validateFields() {
         validationErrors = {};
@@ -21,6 +27,7 @@
     }
   
     async function handleCreateEvent() {
+        console.log("Creating event...");
         if (!validateFields()) {
             creationStatus = "Please fill in all required fields.";
             return;
@@ -30,17 +37,26 @@
             const eventDTO = {
                 name: eventName,
                 tags: eventTags.split(',').map(tag => tag.trim()), 
-                location: { 
-                    0: parseFloat(eventLocationLat), 
-                    1: parseFloat(eventLocationLong) 
-                },
-                time_start: eventStartTime,
-                time_end: eventEndTime
+                location: [parseFloat(eventLocationLat), parseFloat(eventLocationLong)],
+                time_start: new Date(eventStartTime).toISOString(),
+                time_end: new Date(eventEndTime).toISOString()
             };
+            console.log("connecting to backend");
+            if($auth.isReady) {
+                console.log("auth is ready");
+                if($auth.isAuthenticated) {
+                    console.log("auth is authenticated");
+                    console.log($auth.whoamiActor);
+                    const result = await $auth.whoamiActor.create_event(eventDTO);  // send to backend to create event and wait for response
+                    creationStatus = result ? "Event created successfully!" : "Failed to create event.";
+                } else {
+                    console.log("auth is not authenticated");
+                }
+            } else {
+                console.log("auth is not ready");
+            }
+
     
-            const result = await $auth.whoamiActor?.create_event(eventDTO);  // send to backend to create event and wait for response
-    
-            creationStatus = result ? "Event created successfully!" : "Failed to create event.";
         } catch (error) {
             console.error("Error creating event:", error);
             creationStatus = "Error creating event.";
