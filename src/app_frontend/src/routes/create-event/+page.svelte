@@ -13,7 +13,7 @@
     let creationStatus = "";
     let validationErrors = {};
 
-    let marker = null; // Store only one marker
+    let marker = null;
 
     function addMarker(e) {
         marker = { lngLat: e.detail.lngLat };
@@ -26,22 +26,33 @@
     });
 
     function validateFields() {
-        validationErrors = {};
-        if (!eventName) validationErrors.eventName = "Event Name is required.";
-        if (!eventLocationLat) validationErrors.eventLocationLat = "Location Latitude is required.";
-        if (!eventLocationLong) validationErrors.eventLocationLong = "Location Longitude is required.";
-        if (!eventStartTime) validationErrors.eventStartTime = "Start Time is required.";
-        if (!eventEndTime) validationErrors.eventEndTime = "End Time is required.";
-        return Object.keys(validationErrors).length === 0;
+    validationErrors = {};
+
+    if (!eventName) validationErrors.eventName = "Event Name is required.";
+    if (!eventLocationLat) validationErrors.eventLocationLat = "Location Latitude is required.";
+    if (!eventLocationLong) validationErrors.eventLocationLong = "Location Longitude is required.";
+    if (!eventStartTime) validationErrors.eventStartTime = "Start Time is required.";
+    if (!eventEndTime) validationErrors.eventEndTime = "End Time is required.";
+
+    if (eventStartTime && eventEndTime) {
+        const startTime = new Date(eventStartTime);
+        const endTime = new Date(eventEndTime);
+        
+        if (endTime <= startTime) {
+            validationErrors.eventEndTime = "End Time must be after Start Time.";
+        }
     }
+
+    return Object.keys(validationErrors).length === 0;
+}
+
 
     async function handleCreateEvent() {
         console.log("Creating event...");
         if (!validateFields()) {
-            creationStatus = "Please fill in all required fields.";
-            return;
-        }
-
+        creationStatus = "Please fill in all required fields correctly.";
+        return;
+    }
         try {
             const eventDTO = {
                 name: eventName,
