@@ -110,3 +110,20 @@ pub fn join_event(caller: Principal, event_id: u128) -> bool {
         false
     }
 }
+
+pub fn get_all_events_with_details() -> Vec<EventDetailsResponse> {
+    EVENTS.with(|events| {
+        let events_map = events.borrow();
+        events_map
+            .values()
+            .map(|event| EventDetailsResponse {
+                location: (event.location().0.clone(), event.location().1.clone()),
+                id: event.id().clone(),
+                name: event.name().to_string(),
+                time_start: event.time_start().to_string(),
+                time_end: event.time_end().to_string(),
+                tags: event.tags().clone(),
+            })
+            .collect()
+    })
+}

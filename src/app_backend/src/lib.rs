@@ -72,4 +72,10 @@ fn join_event(event_id: u128) -> bool {
     service::event::join_event(ic_cdk::caller(), event_id)
 }
 
+// GET ALL EVENTS WITH DETAILS
+#[ic_cdk::query]
+fn get_all_events_with_details() -> Vec<dto_response::response::EventDetailsResponse> {
+    service::event::get_all_events_with_details()
+}
+
 ic_cdk::export_candid!();

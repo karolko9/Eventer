@@ -36,6 +36,7 @@ type UserDataModel = record {
 };
 service : {
   create_event : (EventDTO) -> (bool);
+  get_all_events_with_details : () -> (vec EventDetailsResponse) query;
   get_event : (nat) -> (opt EventDetailsResponse) query;
   get_event_by_tags : (vec text) -> (vec EventResponse) query;
   get_event_by_tags_user : () -> (vec EventResponse) query;
