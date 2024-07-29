@@ -5,7 +5,7 @@
 <section class="map-wrapper">
     <MapLibre 
     center={[50,20]}
-    zoom={7}
+    zoom={1}
     class="map"
     standardControls
     style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json" />
