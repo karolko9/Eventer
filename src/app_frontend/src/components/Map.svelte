@@ -3,6 +3,7 @@
   import { auth } from "../lib/auth";
   import { onMount } from "svelte";
   import { writable } from 'svelte/store';
+  import EventDetailsModal from './EventDetailsModal.svelte';
 
   let events = writable([]);
 
@@ -28,7 +29,15 @@
     console.log(event);
     console.log([event.location[1], event.location[0]]);
     return [event.location[1], event.location[0]];
-  } 
+  }
+
+  let selectedEvent;
+
+  function selectEvent(event) {
+    console.log("Event selected");
+    console.log(event);
+    selectedEvent = event;
+  }
 </script>
 
 <section class="map-wrapper">
@@ -43,29 +52,31 @@
     <!-- Unlike the custom marker example, default markers do not have mouse events,
     and popups only support the default openOn="click" behavior -->
     <DefaultMarker lngLat={extractEventLocation(event)}>
-      <Popup offset={[0, -10]}>
+      <Popup offset={[0, -10]} on:close={() => selectEvent(null)}>
         <div class="popup-wrapper">
           <div class="event-name">{event.name}</div>
           {#if event.tags.length > 0}
           <div class="event-description-item">Tags: {event.tags.join(', ')}</div>
           {/if}
           <div class="event-description-item">Date: {event.time_start}</div>
-          <button>More info</button>
+          <button on:click={() => selectEvent(event)}>More info</button>
         </div>
       </Popup>
     </DefaultMarker>
   {/each}
 </MapLibre>
+<EventDetailsModal event={selectedEvent}/>
 </section>
 
 <style>
   .map-wrapper{
-    width:100%;
-    height:100%;
+    width: 100%;
+    height: 100%;
     display: flex;
     background-color: #aaa;
+    position: relative;
   }
-   .popup-wrapper{
+  .popup-wrapper{
     width: 200px;
     min-height: 50px;
     border-radius: 10px;
