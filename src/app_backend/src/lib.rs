@@ -36,6 +36,10 @@ fn update_user(user_dto: dto_request::request::UserDTO) -> bool {
     service::user::update_user(ic_cdk::caller(), user_dto)
 }
 
+#[ic_cdk::update]
+fn get_user_events() -> Vec<dto_response::response::EventUserResponse>{
+    service::user::get_user_events(ic_cdk::caller())
+}
 // EVENT
 //
 //

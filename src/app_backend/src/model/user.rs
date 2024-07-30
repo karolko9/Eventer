@@ -1,4 +1,5 @@
-use crate::dto_request;
+use crate::dto_response::response::EventUserResponse;
+use crate::{dto_request, dto_response};
 use crate::{model::event::Event, service::user};
 use serde::{Deserialize, Serialize};
 use candid::CandidType;
@@ -95,10 +96,25 @@ impl UserDataModel {
     pub fn get_bio(&self) -> &String {
         &self.bio
     }
-
+    
     // Setter dla pola `bio`
     pub fn set_bio(&mut self, bio: String) {
         self.bio = bio;
+    }
+    
+    // Setter dla pola `bio`
+    // Getter dla pola `events`
+    pub fn get_events(&self) -> Vec<EventUserResponse> {
+        let mut event_responses = Vec::new();
+        for event_id in &self.list_of_events {
+            let event_response = EventUserResponse {
+                location: self.location,
+                name: self.name.clone(),
+                id: *event_id,
+            };
+            event_responses.push(event_response);
+        }
+        event_responses
     }
 
     // Metoda do dodawania wydarzeń

@@ -1,5 +1,7 @@
 use candid::Principal;
 
+use crate::dto_request::request;
+use crate::dto_response::response;
 use crate::model::user::UserDataModel;
 use crate::USER_DATA_MODEL;
 
@@ -58,6 +60,18 @@ pub fn update_user(user: Principal, user_dto: dto_request::request::UserDTO) -> 
             true
         } else {
             false
+        }
+    })
+}
+
+pub fn get_user_events(caller: Principal) -> Vec<response::EventUserResponse> {
+    USER_DATA_MODEL.with(|user_data_model| {
+        let user_data = user_data_model.borrow();
+        if let Some(user) = user_data.get(&caller) {
+            let get_events = user.get_events();
+            get_events
+        } else {
+            Vec::new()
         }
     })
 }
