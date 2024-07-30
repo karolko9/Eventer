@@ -16,6 +16,17 @@
     let mapCenter = [50, 20];
     let searchResults = [];
 
+    async function fetchLocationName(lat, lon) {
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=en`);
+            const data = await response.json();
+            return data.display_name || "Unknown location";
+        } catch (error) {
+            console.error("Error fetching location name:", error);
+            return "Error fetching location name";
+        }
+    }
+
     function addMarker(e) {
         marker = { lngLat: e.detail.lngLat };
         eventLocationLat = e.detail.lngLat.lat;
@@ -83,10 +94,13 @@
             return;
         }
         try {
+            const adress = await fetchLocationName(eventLocationLat, eventLocationLong);
+            console.log(adress)
             const eventDTO = {
                 name: eventName,
                 tags: eventTags.split(' ').map(tag => tag.trim()),
                 location: [parseFloat(eventLocationLat), parseFloat(eventLocationLong)],
+                // adress: adress,  // Add location name to eventDTO
                 time_start: new Date(eventStartTime).toISOString(),
                 time_end: new Date(eventEndTime).toISOString()
             };
@@ -108,6 +122,7 @@
         $auth.init();
     });
 </script>
+
 
 <div>
     <h1>Create New Event</h1>
