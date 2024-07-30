@@ -4,6 +4,7 @@
   import { onMount } from "svelte";
   import { writable } from 'svelte/store';
   import EventDetailsModal from './EventDetailsModal.svelte';
+  import maplibregl from 'maplibre-gl';
 
   let events = writable([]);
 
@@ -44,7 +45,6 @@
   <MapLibre
   style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
   class="map"
-  standardControls
   zoom={1}
   center={[-20, 0]}
 >
