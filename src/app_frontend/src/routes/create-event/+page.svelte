@@ -9,11 +9,12 @@
     let eventLocationLong = "";
     let eventStartTime = "";
     let eventEndTime = "";
-
     let creationStatus = "";
     let validationErrors = {};
-
     let marker = null;
+    let searchQuery = "";
+    let mapCenter = [50, 20];
+    let searchResults = [];
 
     function addMarker(e) {
         marker = { lngLat: e.detail.lngLat };
@@ -21,38 +22,66 @@
         eventLocationLong = e.detail.lngLat.lng;
     }
 
-    onMount(() => {
-        $auth.init();
-    });
+    async function searchLocation() {
+        if (!searchQuery) return;
 
-    function validateFields() {
-    validationErrors = {};
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=5`);
+            const data = await response.json();
 
-    if (!eventName) validationErrors.eventName = "Event Name is required.";
-    if (!eventLocationLat) validationErrors.eventLocationLat = "Location Latitude is required.";
-    if (!eventLocationLong) validationErrors.eventLocationLong = "Location Longitude is required.";
-    if (!eventStartTime) validationErrors.eventStartTime = "Start Time is required.";
-    if (!eventEndTime) validationErrors.eventEndTime = "End Time is required.";
-
-    if (eventStartTime && eventEndTime) {
-        const startTime = new Date(eventStartTime);
-        const endTime = new Date(eventEndTime);
-        
-        if (endTime <= startTime) {
-            validationErrors.eventEndTime = "End Time must be after Start Time.";
+            if (data.length > 0) {
+                searchResults = data;
+                creationStatus = ""; 
+            } else {
+                searchResults = [];
+                creationStatus = "No results found.";
+            }
+        } catch (error) {
+            console.error("Error fetching location:", error);
+            creationStatus = "Error fetching location.";
         }
     }
 
-    return Object.keys(validationErrors).length === 0;
-}
+    function selectLocation(result) {
+        const { lat, lon } = result;
+        mapCenter = [lon, lat];
+        marker = { lngLat: { lat, lng: lon } };
+        eventLocationLat = lat;
+        eventLocationLong = lon;
+        searchResults = []; 
+    }
 
+    function handleKeydown(event, result) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            selectLocation(result);
+        }
+    }
+
+    function validateFields() {
+        validationErrors = {};
+        if (!eventName) validationErrors.eventName = "Event Name is required.";
+        if (!eventLocationLat) validationErrors.eventLocationLat = "Location Latitude is required.";
+        if (!eventLocationLong) validationErrors.eventLocationLong = "Location Longitude is required.";
+        if (!eventStartTime) validationErrors.eventStartTime = "Start Time is required.";
+        if (!eventEndTime) validationErrors.eventEndTime = "End Time is required.";
+
+        if (eventStartTime && eventEndTime) {
+            const startTime = new Date(eventStartTime);
+            const endTime = new Date(eventEndTime);
+            if (endTime <= startTime) {
+                validationErrors.eventEndTime = "End Time must be after Start Time.";
+            }
+        }
+
+        return Object.keys(validationErrors).length === 0;
+    }
 
     async function handleCreateEvent() {
         console.log("Creating event...");
         if (!validateFields()) {
-        creationStatus = "Please fill in all required fields correctly.";
-        return;
-    }
+            creationStatus = "Please fill in all required fields correctly.";
+            return;
+        }
         try {
             const eventDTO = {
                 name: eventName,
@@ -74,6 +103,10 @@
             creationStatus = "Error creating event.";
         }
     }
+
+    onMount(() => {
+        $auth.init();
+    });
 </script>
 
 <div>
@@ -119,8 +152,8 @@
     </div>
     <section class="map-wrapper">
         <MapLibre 
-            center={[50,20]}
-            zoom={1}
+            center={mapCenter}
+            zoom={10}
             class="map"
             standardControls
             style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json" 
@@ -134,20 +167,78 @@
     
     <button type="button" id="createEventButton" on:click={handleCreateEvent}>Create Event</button>
     <p id="creationStatus">{creationStatus}</p>
+
+    <div>
+        <label for="searchQuery">Search Location:</label>
+        <input type="text" id="searchQuery" bind:value={searchQuery} placeholder="Search for a location" />
+        <button type="button" on:click={searchLocation}>Search</button>
+        {#if creationStatus}
+            <p class="status">{creationStatus}</p>
+        {/if}
+    </div>
+
+    {#if searchResults.length > 0}
+        <div class="search-results">
+            <h2>Search Results:</h2>
+            <ul>
+                {#each searchResults as result}
+                    <li>
+                        <button
+                            type="button"
+                            on:click={() => selectLocation(result)}
+                            on:keydown={(event) => handleKeydown(event, result)}
+                            tabindex="0"
+                        >
+                            <strong>{result.display_name}</strong><br>
+                            Latitude: {result.lat}<br>
+                            Longitude: {result.lon}
+                        </button>
+                    </li>
+                {/each}
+            </ul>
+        </div>
+    {/if}
+
 </div>
 
 <style>
     .error {
         color: red;
     }
-    .map-wrapper{
-        width:100%;
+    .status {
+        color: green;
+    }
+    .search-results {
+        margin-top: 20px;
+    }
+    .search-results ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+    .search-results li {
+        margin-bottom: 10px;
+    }
+    .search-results button {
+        background: none;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 5px;
+        cursor: pointer;
+        width: 100%;
+        text-align: left;
+        display: block;
+    }
+    .search-results button:hover {
+        background-color: #f0f0f0;
+    }
+    .map-wrapper {
+        width: 100%;
         height: 400px;
         display: flex;
         background-color: #aaa;
     }
     :global(.map) {
-        flex:1;
+        flex: 1;
     }
 </style>
-
