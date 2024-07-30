@@ -11,7 +11,7 @@
 
 
 {#if $auth.isReady}
-  {#if $auth.isAuthenticated} 
+  {#if $auth.isAuthenticated}
       <Map />
   {:else}
     <LoggedOut />
