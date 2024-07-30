@@ -18,6 +18,7 @@ impl Event {
     pub fn new(
         id: u128,
         name: String,
+        location: (f64, f64),
         time_start: String,
         time_end: String,
         list_of_admin: Vec<Principal>,
@@ -28,7 +29,7 @@ impl Event {
         Event {
             id,
             name,
-            location: (0.0, 0.0),
+            location,
             time_start,
             time_end,
             list_of_admin,

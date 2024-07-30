@@ -1,5 +1,4 @@
 import { createActor, canisterId } from 'declarations/app_backend';
-import { building } from '$app/environment';
 import { AuthClient } from "@dfinity/auth-client";
 import { readable } from "svelte/store";
 
