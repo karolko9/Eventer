@@ -74,6 +74,9 @@
         height: 75px;
         background-color: #fff;
         z-index: 2;
+        border-right:2px solid rgba(0, 0, 0, 0.2);
+        position: relative;
+        z-index: 2000;
     }
 
     ul {
