@@ -53,7 +53,7 @@
 </script>
 
 <nav>
-    <ul>
+    <ul class="border-t-2 lg:border-r-2 border-gray-200 border-solid">
         {#each menuItems as item}
             <li class="{item.hideOnMobile && isMobile}">
                 <a href={item.href}>

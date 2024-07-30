@@ -1,6 +1,7 @@
 <script>
     import { auth } from "../../lib/auth";
     import { onMount } from "svelte";
+    import { MapLibre, MapEvents, DefaultMarker } from 'svelte-maplibre';
 
     let eventName = "";
     let eventTags = "";
@@ -8,55 +9,66 @@
     let eventLocationLong = "";
     let eventStartTime = "";
     let eventEndTime = "";
-    
-    let creationStatus = "Creating...";
+
+    let creationStatus = "";
     let validationErrors = {};
 
+    let marker = null;
+
+    function addMarker(e) {
+        marker = { lngLat: e.detail.lngLat };
+        eventLocationLat = e.detail.lngLat.lat;
+        eventLocationLong = e.detail.lngLat.lng;
+    }
+
     onMount(() => {
-            $auth.init();
-        });
+        $auth.init();
+    });
 
     function validateFields() {
-        validationErrors = {};
-        if (!eventName) validationErrors.eventName = "Event Name is required.";
-        if (!eventLocationLat) validationErrors.eventLocationLat = "Location Latitude is required.";
-        if (!eventLocationLong) validationErrors.eventLocationLong = "Location Longitude is required.";
-        if (!eventStartTime) validationErrors.eventStartTime = "Start Time is required.";
-        if (!eventEndTime) validationErrors.eventEndTime = "End Time is required.";
-        return Object.keys(validationErrors).length === 0;
+    validationErrors = {};
+
+    if (!eventName) validationErrors.eventName = "Event Name is required.";
+    if (!eventLocationLat) validationErrors.eventLocationLat = "Location Latitude is required.";
+    if (!eventLocationLong) validationErrors.eventLocationLong = "Location Longitude is required.";
+    if (!eventStartTime) validationErrors.eventStartTime = "Start Time is required.";
+    if (!eventEndTime) validationErrors.eventEndTime = "End Time is required.";
+
+    if (eventStartTime && eventEndTime) {
+        const startTime = new Date(eventStartTime);
+        const endTime = new Date(eventEndTime);
+        
+        if (endTime <= startTime) {
+            validationErrors.eventEndTime = "End Time must be after Start Time.";
+        }
     }
-  
+
+    return Object.keys(validationErrors).length === 0;
+}
+
+
     async function handleCreateEvent() {
         console.log("Creating event...");
         if (!validateFields()) {
-            creationStatus = "Please fill in all required fields.";
-            return;
-        }
-
+        creationStatus = "Please fill in all required fields correctly.";
+        return;
+    }
         try {
             const eventDTO = {
                 name: eventName,
-                tags: eventTags.split(',').map(tag => tag.trim()), 
+                tags: eventTags.split(' ').map(tag => tag.trim()),
                 location: [parseFloat(eventLocationLat), parseFloat(eventLocationLong)],
                 time_start: new Date(eventStartTime).toISOString(),
                 time_end: new Date(eventEndTime).toISOString()
             };
-            console.log("connecting to backend");
-            if($auth.isReady) {
-                console.log("auth is ready");
-                if($auth.isAuthenticated) {
-                    console.log("auth is authenticated");
-                    console.log($auth.whoamiActor);
-                    const result = await $auth.whoamiActor.create_event(eventDTO);  // send to backend to create event and wait for response
-                    creationStatus = result ? "Event created successfully!" : "Failed to create event.";
-                } else {
-                    console.log("auth is not authenticated");
-                }
-            } else {
-                console.log("auth is not ready");
-            }
 
-    
+            if ($auth.isReady && $auth.isAuthenticated) {
+                console.log("Auth is ready and authenticated");
+                const result = await $auth.whoamiActor.create_event(eventDTO);
+                creationStatus = result ? "Event created successfully!" : "Failed to create event.";
+            } else {
+                creationStatus = "Authentication is not ready or not authenticated.";
+            }
         } catch (error) {
             console.error("Error creating event:", error);
             creationStatus = "Error creating event.";
@@ -74,7 +86,7 @@
         {/if}
     </div>
     <div>
-        <label for="eventTags">Event Tags (comma-separated):</label>
+        <label for="eventTags">Event Tags (blank-space-separated):</label>
         <input type="text" id="eventTags" bind:value={eventTags} />
     </div>
     <div>
@@ -105,6 +117,21 @@
             <p class="error">{validationErrors.eventEndTime}</p>
         {/if}
     </div>
+    <section class="map-wrapper">
+        <MapLibre 
+            center={[50,20]}
+            zoom={1}
+            class="map"
+            standardControls
+            style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json" 
+        >
+            <MapEvents on:click={addMarker} />
+            {#if marker}
+                <DefaultMarker lngLat={marker.lngLat} />
+            {/if}
+        </MapLibre>
+    </section>
+    
     <button type="button" id="createEventButton" on:click={handleCreateEvent}>Create Event</button>
     <p id="creationStatus">{creationStatus}</p>
 </div>
@@ -113,4 +140,14 @@
     .error {
         color: red;
     }
+    .map-wrapper{
+        width:100%;
+        height: 400px;
+        display: flex;
+        background-color: #aaa;
+    }
+    :global(.map) {
+        flex:1;
+    }
 </style>
+
