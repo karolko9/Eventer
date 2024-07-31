@@ -9,9 +9,10 @@
 
   let events = writable([{name: "Hello", time_start: Date(), tags: ["music", "games"], location: [50, 20]}]);
   let selectedEvent;
-  import maplibregl from 'maplibre-gl';
 
   let mapCenter = [50, 20];
+
+  let map;
 
   async function fetchEvents() {
     try {
@@ -31,7 +32,15 @@
     });
   });
 
-  function handleEventMoreInfoButton(event, map) {
+  function diselectEvent() {
+    selectEvent = null;
+  }
+
+  function extractEventLocation(event) {
+    return [event.location[1], event.location[0]];
+  }
+
+  function selectEvent(event) {
     selectedEvent = event;
     map.flyTo({
       center: extractEventLocation(event),
@@ -41,6 +50,10 @@
 
   function handleSearchboxLocationSelect(event) {
     const location = event.detail.location;
+    map.flyTo({
+      center: location,
+      zoom: 9,
+    });
   }
 
 </script>
@@ -53,11 +66,11 @@
     center={mapCenter}
     attributionControl={false}     
     zoomOnDoubleClick={true}
-    let:map     
+    bind:map={map}
   >
     {#each $events as event}
       <DefaultMarker lngLat={[event.location[1], event.location[0]]}>
-        <Popup offset={[0, -10]} on:close={() => selectEvent(null)}>
+        <Popup offset={[0, -10]} on:close={diselectEvent}>
           <div class="popup-wrapper">
             <div class="event-name">{event.name}</div>
             <!-- <div class="event-address">{event.address}</div> -->
@@ -65,7 +78,7 @@
               <div class="event-description-item">Tags: {event.tags.join(', ')}</div>
             {/if}
             <div class="event-description-item">Date: {event.time_start}</div>
-            <Button click={() => handleEventMoreInfoButton(event, map)}>More info</Button>
+            <Button click={() => selectEvent(event)}>More info</Button>
           </div>
         </Popup>
       </DefaultMarker>
@@ -73,7 +86,7 @@
   </MapLibre>
   <EventDetailsModal event={selectedEvent} />
   <div class="searchbox-wrapper" class:shifted={selectedEvent != null}>
-    <Searchbox on:location={(event) => console.log(event.detail)} />
+    <Searchbox on:location={handleSearchboxLocationSelect} />
   </div>
 </section>
 
