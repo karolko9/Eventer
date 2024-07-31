@@ -4,6 +4,7 @@
   import { onMount } from "svelte";
   import { writable } from 'svelte/store';
   import EventDetailsModal from './EventDetailsModal.svelte';
+  import maplibregl from 'maplibre-gl';
 
   let events = writable([]);
 
@@ -47,7 +48,6 @@
   <MapLibre
   style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
   class="map"
-  standardControls
   zoom={1}
   center={[-20, 0]}
   let:map
@@ -65,6 +65,7 @@
         </div>
       </Popup>
     </DefaultMarker>
+
   {/each}
 </MapLibre>
 <EventDetailsModal event={selectedEvent}/>
@@ -120,3 +121,7 @@
     flex:1;
   }
 </style>
+    <!-- <div class="w-full mb-4 flex items-center justify-between border p-2 rounded">
+      <input placeholder="Find event" class="flex-1 text-md text-primary  focus:outline-none" />
+      <IconSearch style="color: #5B2784; width:30px; height:30px;"/>
+  </div> -->
