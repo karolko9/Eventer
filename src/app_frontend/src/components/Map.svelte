@@ -4,7 +4,7 @@
   import { onMount } from "svelte";
   import { writable } from 'svelte/store';
   import EventDetailsModal from './EventDetailsModal.svelte';
-  
+
   let events = writable([]);
   let selectedEvent;
 
@@ -31,9 +31,6 @@
     });
   });
 
-  function extractEventLocation(event) {
-    return [event.location[1], event.location[0]];
-  }
 
   function selectEvent(event) {
     selectedEvent = event;
@@ -81,10 +78,11 @@
     center={mapCenter}
   >
     {#each $events as event}
-      <DefaultMarker lngLat={extractEventLocation(event)}>
+      <DefaultMarker lngLat={[event.location[1], event.location[0]]}>
         <Popup offset={[0, -10]} on:close={() => selectEvent(null)}>
           <div class="popup-wrapper">
             <div class="event-name">{event.name}</div>
+            <!-- <div class="event-address">{event.address}</div> -->
             {#if event.tags.length > 0}
               <div class="event-description-item">Tags: {event.tags.join(', ')}</div>
             {/if}
@@ -120,8 +118,6 @@
             tabindex="0"
           >
             <strong>{result.display_name}</strong><br>
-            Latitude: {result.lat}<br>
-            Longitude: {result.lon}
           </button>
         </li>
       {/each}

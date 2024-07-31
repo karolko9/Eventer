@@ -94,13 +94,13 @@
             return;
         }
         try {
-            const aadress = await fetchLocationName(eventLocationLat, eventLocationLong);
-            console.log(aadress)
+            const address = await fetchLocationName(eventLocationLat, eventLocationLong);
+            console.log(address)
             const eventDTO = {
                 name: eventName,
                 tags: eventTags.split(' ').map(tag => tag.trim()),
                 location: [parseFloat(eventLocationLat), parseFloat(eventLocationLong)],
-                address: adress,  // Add location name to eventDTO
+                address: address,  
                 time_start: new Date(eventStartTime).toISOString(),
                 time_end: new Date(eventEndTime).toISOString()
             };
@@ -191,8 +191,6 @@
                             tabindex="0"
                         >
                             <strong>{result.display_name}</strong><br>
-                            Latitude: {result.lat}<br>
-                            Longitude: {result.lon}
                         </button>
                     </li>
                 {/each}
