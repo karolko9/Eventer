@@ -7,8 +7,9 @@
   import Button from './Button.svelte';
   import Searchbox from './Searchbox.svelte';
 
-  let events = writable([{name: "Hello", time_start: Date(), tags: ["music", "games"], location: [50, 20]}]);
+  let events = writable([]); //writable([{name: "Hello", time_start: Date(), tags: ["music", "games"], location: [50, 20]}]);
   let selectedEvent;
+  let eventDetailsModalOpen = false;
 
   let mapCenter = [50, 20];
 
@@ -32,8 +33,12 @@
     });
   });
 
-  function diselectEvent() {
-    selectEvent = null;
+  function closeEventDetailsModal() {
+    eventDetailsModalOpen = false;
+  }
+
+  function openEventDetailsModal() {
+    eventDetailsModalOpen = true;
   }
 
   function extractEventLocation(event) {
@@ -42,6 +47,7 @@
 
   function selectEvent(event) {
     selectedEvent = event;
+    openEventDetailsModal();
     map.flyTo({
       center: extractEventLocation(event),
       zoom: 9,
@@ -70,7 +76,7 @@
   >
     {#each $events as event}
       <DefaultMarker lngLat={[event.location[1], event.location[0]]}>
-        <Popup offset={[0, -10]} on:close={diselectEvent}>
+        <Popup offset={[0, -10]} on:close={closeEventDetailsModal}>
           <div class="popup-wrapper">
             <div class="event-name">{event.name}</div>
             <!-- <div class="event-address">{event.address}</div> -->
@@ -84,8 +90,8 @@
       </DefaultMarker>
     {/each}
   </MapLibre>
-  <EventDetailsModal event={selectedEvent} />
-  <div class="searchbox-wrapper" class:shifted={selectedEvent != null}>
+  <EventDetailsModal event={selectedEvent} open={eventDetailsModalOpen} />
+  <div class="searchbox-wrapper" class:shifted={eventDetailsModalOpen}>
     <Searchbox on:location={handleSearchboxLocationSelect} />
   </div>
 </section>

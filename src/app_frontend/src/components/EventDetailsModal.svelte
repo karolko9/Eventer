@@ -4,9 +4,11 @@
 
     export let event;
     console.log(event)
+    export let open;
 </script>
 
-<main class:open={event != null} class="h-[500px] lg:h-full w-full lg:w-[400px] bottom-[-500px] lg:left-[-500px] lg:bottom-0 p-4 bg-white overflow-y-scroll absolute z-10 duration-300 ease-in-out   border-r-2 border-gray-200 rounded-md ">
+<main class:open={open} class="h-[500px] lg:h-full w-full lg:w-[400px] bottom-[-500px] lg:left-[-500px] lg:bottom-0 p-4 bg-white overflow-y-scroll absolute z-10 duration-300 ease-in-out   border-r-2 border-gray-200 rounded-md ">
+    {#if event != null} 
         <img src="/eventCardImg.png" class="w-full object-cover mb-4 rounded-md" alt="thumbnail"/>
         <h1 class="mb-2 text-lg font-medium">ICP: Roadmap for devs</h1>
         <div class="flex items-center gap-3 mb-2">
@@ -51,6 +53,7 @@
             </div>
         </div>
         <button class="py-3 px-10 text-md font-medium bg-primary text-background rounded-[20px]">Buy Ticket</button>
+    {/if}
 </main>
 
 <style>
