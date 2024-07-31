@@ -63,6 +63,7 @@
         </div>
       </Popup>
     </DefaultMarker>
+
   {/each}
 </MapLibre>
 <EventDetailsModal event={selectedEvent}/>
@@ -118,3 +119,7 @@
     flex:1;
   }
 </style>
+    <!-- <div class="w-full mb-4 flex items-center justify-between border p-2 rounded">
+      <input placeholder="Find event" class="flex-1 text-md text-primary  focus:outline-none" />
+      <IconSearch style="color: #5B2784; width:30px; height:30px;"/>
+  </div> -->
