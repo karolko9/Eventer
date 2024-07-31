@@ -4,14 +4,13 @@
   import { onMount } from "svelte";
   import { writable } from 'svelte/store';
   import EventDetailsModal from './EventDetailsModal.svelte';
+  import Button from './Button.svelte';
+  import Searchbox from './Searchbox.svelte';
 
-  let events = writable([]);
+  let events = writable([{name: "Hello", time_start: Date(), tags: ["music", "games"], location: [50, 20]}]);
   let selectedEvent;
 
-  let searchQuery = "";
-  let searchResults = [];
   let mapCenter = [50, 20];
-  let creationStatus = "";
 
   async function fetchEvents() {
     try {
@@ -31,51 +30,24 @@
     });
   });
 
-
   function selectEvent(event) {
     selectedEvent = event;
   }
 
-  async function searchLocation() {
-    if (!searchQuery) return;
-
-    try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=5`);
-      const data = await response.json();
-
-      if (data.length > 0) {
-        searchResults = data;
-        creationStatus = "";
-      } else {
-        searchResults = [];
-        creationStatus = "No results found.";
-      }
-    } catch (error) {
-      console.error("Error fetching location:", error);
-      creationStatus = "Error fetching location.";
-    }
+  function handleSearchboxLocationSelect(event) {
+    const location = event.detail.location;
   }
 
-  function selectLocation(result) {
-    const { lat, lon } = result;
-    mapCenter = [lon, lat];
-    searchResults = [];
-  }
-
-  function handleKeydown(event, result) {
-    if (event.key === 'Enter' || event.key === ' ') {
-      selectLocation(result);
-    }
-  }
 </script>
 
 <section class="map-wrapper">
   <MapLibre
     style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
     class="map"
-    standardControls
     zoom={1}
     center={mapCenter}
+    attributionControl={false}     
+    zoomOnDoubleClick={true}     
   >
     {#each $events as event}
       <DefaultMarker lngLat={[event.location[1], event.location[0]]}>
@@ -87,40 +59,16 @@
               <div class="event-description-item">Tags: {event.tags.join(', ')}</div>
             {/if}
             <div class="event-description-item">Date: {event.time_start}</div>
-            <button on:click={() => selectEvent(event)}>More info</button>
+            <Button click={() => selectEvent(event)}>More info</Button>
           </div>
         </Popup>
       </DefaultMarker>
     {/each}
   </MapLibre>
   <EventDetailsModal event={selectedEvent} />
-<div>
-  <label for="searchQuery">Search Location:</label>
-  <input type="text" id="searchQuery" bind:value={searchQuery} placeholder="Search for a location" />
-  <button type="button" on:click={searchLocation}>Search</button>
-  {#if creationStatus}
-    <p class="status">{creationStatus}</p>
-  {/if}
-</div>
-{#if searchResults.length > 0}
-  <div class="search-results">
-    <h2>Search Results:</h2>
-    <ul>
-      {#each searchResults as result}
-        <li>
-          <button
-            type="button"
-            on:click={() => selectLocation(result)}
-            on:keydown={(event) => handleKeydown(event, result)}
-            tabindex="0"
-          >
-            <strong>{result.display_name}</strong><br>
-          </button>
-        </li>
-      {/each}
-    </ul>
+  <div class="searchbox-wrapper" class:shifted={selectedEvent != null}>
+    <Searchbox on:location={(event) => console.log(event.detail)} />
   </div>
-{/if}
 </section>
 
 <style>
@@ -147,56 +95,23 @@
     margin-top: 5px;
     margin-left: 10px;
   }
-  button {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 10px;
-    border: none;
-    border-radius: 20px;
-    min-height: 30px;
-    padding: 10px;
-    padding-left: 20px;
-    padding-right: 20px;
-    background-color: #5b2784;
-    color: white;
-    transition: filter 0.3s;
-    transition: transform 0.1s;
-  }
-  button:hover {
-    filter: brightness(130%);
-  }
-  button:active {
-    transform: scale(0.95);
-  }
   :global(.map) {
     flex: 1;
   }
-  .status {
-    color: green;
+  .searchbox-wrapper{
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin: 20px;
+    transition: left 0.3s ease-in-out;
+    z-index: 1000;
   }
-  .search-results {
-    margin-top: 20px;
+  .searchbox-wrapper.shifted{
+    left: 200px;
   }
-  .search-results ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
-  .search-results li {
-    margin-bottom: 10px;
-  }
-  .search-results button {
-    background: none;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 5px;
-    cursor: pointer;
-    width: 100%;
-    text-align: left;
-    display: block;
-  }
-  .search-results button:hover {
-    background-color: #f0f0f0;
+  @media (min-width:1024px){
+    .searchbox-wrapper.shifted{
+      left: 400px;
+    }
   }
 </style>
