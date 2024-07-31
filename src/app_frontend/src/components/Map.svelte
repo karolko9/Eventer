@@ -94,8 +94,6 @@
     {/each}
   </MapLibre>
   <EventDetailsModal event={selectedEvent} />
-</section>
-
 <div>
   <label for="searchQuery">Search Location:</label>
   <input type="text" id="searchQuery" bind:value={searchQuery} placeholder="Search for a location" />
@@ -104,7 +102,6 @@
     <p class="status">{creationStatus}</p>
   {/if}
 </div>
-
 {#if searchResults.length > 0}
   <div class="search-results">
     <h2>Search Results:</h2>
@@ -124,6 +121,7 @@
     </ul>
   </div>
 {/if}
+</section>
 
 <style>
   .map-wrapper {
