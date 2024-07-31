@@ -94,13 +94,13 @@
             return;
         }
         try {
-            const adress = await fetchLocationName(eventLocationLat, eventLocationLong);
-            console.log(adress)
+            const aadress = await fetchLocationName(eventLocationLat, eventLocationLong);
+            console.log(aadress)
             const eventDTO = {
                 name: eventName,
                 tags: eventTags.split(' ').map(tag => tag.trim()),
                 location: [parseFloat(eventLocationLat), parseFloat(eventLocationLong)],
-                // adress: adress,  // Add location name to eventDTO
+                address: adress,  // Add location name to eventDTO
                 time_start: new Date(eventStartTime).toISOString(),
                 time_end: new Date(eventEndTime).toISOString()
             };

@@ -1,6 +1,7 @@
 type EventDTO = record {
   name : text;
   tags : vec text;
+  address : text;
   location : record { float64; float64 };
   time_start : text;
   time_end : text;
@@ -9,6 +10,7 @@ type EventDetailsResponse = record {
   id : nat;
   name : text;
   tags : vec text;
+  address : text;
   location : record { float64; float64 };
   time_start : text;
   time_end : text;

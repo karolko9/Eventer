@@ -6,6 +6,7 @@ pub struct Event {
     id: u128,
     name: String,
     location: (f64, f64),
+    address: String,
     time_start: String,
     time_end: String,
     list_of_admin: Vec<Principal>,
@@ -19,6 +20,7 @@ impl Event {
         id: u128,
         name: String,
         location: (f64, f64),
+        address: String,
         time_start: String,
         time_end: String,
         list_of_admin: Vec<Principal>,
@@ -30,6 +32,7 @@ impl Event {
             id,
             name,
             location,
+            address,
             time_start,
             time_end,
             list_of_admin,
@@ -50,6 +53,10 @@ impl Event {
 
     pub fn location(&self) -> (f64, f64) {
         self.location
+    }
+
+    pub fn address(&self) -> &str {
+        &self.address
     }
 
     pub fn time_start(&self) -> &str {
@@ -90,6 +97,10 @@ impl Event {
         }
         self.location = (latitude, longitude);
         Ok(())
+    }
+
+    pub fn set_address(&mut self, address: String) {
+        self.address = address;
     }
 
     pub fn set_time_start(&mut self, time_start: String) {
