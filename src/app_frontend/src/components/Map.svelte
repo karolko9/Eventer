@@ -33,11 +33,14 @@
 
   let selectedEvent;
 
-  function selectEvent(event) {
-    console.log("Event selected");
-    console.log(event);
+  function handleEventMoreInfoButton(event, map) {
     selectedEvent = event;
+    map.flyTo({
+      center: extractEventLocation(event),
+      zoom: 9,
+    });
   }
+
 </script>
 
 <section class="map-wrapper">
@@ -47,10 +50,9 @@
   standardControls
   zoom={1}
   center={[-20, 0]}
+  let:map
 >
   {#each $events as event}
-    <!-- Unlike the custom marker example, default markers do not have mouse events,
-    and popups only support the default openOn="click" behavior -->
     <DefaultMarker lngLat={extractEventLocation(event)}>
       <Popup offset={[0, -10]} on:close={() => selectEvent(null)}>
         <div class="popup-wrapper">
@@ -59,7 +61,7 @@
           <div class="event-description-item">Tags: {event.tags.join(', ')}</div>
           {/if}
           <div class="event-description-item">Date: {event.time_start}</div>
-          <button on:click={() => selectEvent(event)}>More info</button>
+          <button on:click={() => handleEventMoreInfoButton(event, map)}>More info</button>
         </div>
       </Popup>
     </DefaultMarker>
