@@ -138,20 +138,6 @@
         <input type="text" id="eventTags" bind:value={eventTags} />
     </div>
     <div>
-        <label for="eventLocationLat">Location Latitude:</label>
-        <input type="number" id="eventLocationLat" step="any" bind:value={eventLocationLat} />
-        {#if validationErrors.eventLocationLat}
-            <p class="error">{validationErrors.eventLocationLat}</p>
-        {/if}
-    </div>
-    <div>
-        <label for="eventLocationLong">Location Longitude:</label>
-        <input type="number" id="eventLocationLong" step="any" bind:value={eventLocationLong} />
-        {#if validationErrors.eventLocationLong}
-            <p class="error">{validationErrors.eventLocationLong}</p>
-        {/if}
-    </div>
-    <div>
         <label for="eventStartTime">Start Time:</label>
         <input type="datetime-local" id="eventStartTime" bind:value={eventStartTime} />
         {#if validationErrors.eventStartTime}
@@ -168,7 +154,7 @@
     <section class="map-wrapper">
         <MapLibre 
             center={mapCenter}
-            zoom={10}
+            zoom={1}
             class="map"
             standardControls
             style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json" 
