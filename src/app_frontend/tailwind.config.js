@@ -10,6 +10,7 @@ export default {
         background: '#ffffff',
         primary: '#5B2784',
         accent: '#EC1D79',
+        green: '#004F2D'
       },
       height: {
         desktop: 'calc(100vh - 65px)',

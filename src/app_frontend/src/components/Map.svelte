@@ -9,6 +9,7 @@
 
   let events = writable([{name: "Hello", time_start: Date(), tags: ["music", "games"], location: [50, 20]}]);
   let selectedEvent;
+  import maplibregl from 'maplibre-gl';
 
   let mapCenter = [50, 20];
 
@@ -30,8 +31,12 @@
     });
   });
 
-  function selectEvent(event) {
+  function handleEventMoreInfoButton(event, map) {
     selectedEvent = event;
+    map.flyTo({
+      center: extractEventLocation(event),
+      zoom: 9,
+    });
   }
 
   function handleSearchboxLocationSelect(event) {
@@ -47,7 +52,8 @@
     zoom={1}
     center={mapCenter}
     attributionControl={false}     
-    zoomOnDoubleClick={true}     
+    zoomOnDoubleClick={true}
+    let:map     
   >
     {#each $events as event}
       <DefaultMarker lngLat={[event.location[1], event.location[0]]}>
@@ -59,7 +65,7 @@
               <div class="event-description-item">Tags: {event.tags.join(', ')}</div>
             {/if}
             <div class="event-description-item">Date: {event.time_start}</div>
-            <Button click={() => selectEvent(event)}>More info</Button>
+            <Button click={() => handleEventMoreInfoButton(event, map)}>More info</Button>
           </div>
         </Popup>
       </DefaultMarker>
@@ -115,3 +121,7 @@
     }
   }
 </style>
+    <!-- <div class="w-full mb-4 flex items-center justify-between border p-2 rounded">
+      <input placeholder="Find event" class="flex-1 text-md text-primary  focus:outline-none" />
+      <IconSearch style="color: #5B2784; width:30px; height:30px;"/>
+  </div> -->
