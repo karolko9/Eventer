@@ -21,10 +21,6 @@
         eventLocationLong = e.detail.lngLat.lng;
     }
 
-    onMount(() => {
-        $auth.init();
-    });
-
     function validateFields() {
     validationErrors = {};
 
