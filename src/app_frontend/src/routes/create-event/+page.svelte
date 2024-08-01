@@ -95,7 +95,7 @@
         }
         try {
             const address = await fetchLocationName(eventLocationLat, eventLocationLong);
-            console.log(address)
+            console.log("Address:", address);
             const eventDTO = {
                 name: eventName,
                 tags: eventTags.split(' ').map(tag => tag.trim()),
