@@ -20,6 +20,7 @@ pub fn create_event(event_dto: dto_request::request::EventDTO, caller: Principal
         event_id,
         event_dto.name,
         event_dto.location,
+        event_dto.address,
         event_dto.time_start,
         event_dto.time_end,
         vec![caller],
@@ -41,6 +42,7 @@ pub fn get_event(event_id: u128) -> Option<EventDetailsResponse> {
         let events_map = events.borrow();
         events_map.get(&event_id).map(|event| EventDetailsResponse {
             location: (event.location().0.clone(), event.location().1.clone()),
+            address: event.address().to_string(),
             id: event.id().clone(),
             name: event.name().to_string(),
             time_start: event.time_start().to_string(),
@@ -113,6 +115,7 @@ pub fn get_all_events_with_details() -> Vec<EventDetailsResponse> {
             .values()
             .map(|event| EventDetailsResponse {
                 location: (event.location().0.clone(), event.location().1.clone()),
+                address: event.address().to_string(),
                 id: event.id().clone(),
                 name: event.name().to_string(),
                 time_start: event.time_start().to_string(),

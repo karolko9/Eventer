@@ -4,8 +4,16 @@
   import { onMount } from "svelte";
   import { writable } from 'svelte/store';
   import EventDetailsModal from './EventDetailsModal.svelte';
+  import Button from './Button.svelte';
+  import Searchbox from './Searchbox.svelte';
 
-  let events = writable([]);
+  let events = writable([]); //writable([{name: "Hello", time_start: Date(), tags: ["music", "games"], location: [50, 20]}]);
+  let selectedEvent;
+  let eventDetailsModalOpen = false;
+
+  let mapCenter = [50, 20];
+
+  let map;
 
   async function fetchEvents() {
     try {
@@ -25,65 +33,85 @@
     });
   });
 
+  function closeEventDetailsModal() {
+    eventDetailsModalOpen = false;
+  }
+
+  function openEventDetailsModal() {
+    eventDetailsModalOpen = true;
+  }
+
   function extractEventLocation(event) {
-    console.log(event);
-    console.log([event.location[1], event.location[0]]);
     return [event.location[1], event.location[0]];
   }
 
-  let selectedEvent;
-
   function selectEvent(event) {
-    console.log("Event selected");
-    console.log(event);
     selectedEvent = event;
+    openEventDetailsModal();
+    map.flyTo({
+      center: extractEventLocation(event),
+      zoom: 9,
+    });
   }
+
+  function handleSearchboxLocationSelect(event) {
+    const location = event.detail.location;
+    map.flyTo({
+      center: location,
+      zoom: 9,
+    });
+  }
+
 </script>
 
 <section class="map-wrapper">
   <MapLibre
-  style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
-  class="map"
-  standardControls
-  zoom={1}
-  center={[-20, 0]}
->
-  {#each $events as event}
-    <!-- Unlike the custom marker example, default markers do not have mouse events,
-    and popups only support the default openOn="click" behavior -->
-    <DefaultMarker lngLat={extractEventLocation(event)}>
-      <Popup offset={[0, -10]} on:close={() => selectEvent(null)}>
-        <div class="popup-wrapper">
-          <div class="event-name">{event.name}</div>
-          {#if event.tags.length > 0}
-          <div class="event-description-item">Tags: {event.tags.join(', ')}</div>
-          {/if}
-          <div class="event-description-item">Date: {event.time_start}</div>
-          <button on:click={() => selectEvent(event)}>More info</button>
-        </div>
-      </Popup>
-    </DefaultMarker>
-  {/each}
-</MapLibre>
-<EventDetailsModal event={selectedEvent}/>
+    style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+    class="map"
+    zoom={1}
+    center={mapCenter}
+    attributionControl={false}     
+    zoomOnDoubleClick={true}
+    bind:map={map}
+  >
+    {#each $events as event}
+      <DefaultMarker lngLat={[event.location[1], event.location[0]]}>
+        <Popup offset={[0, -10]} on:close={closeEventDetailsModal}>
+          <div class="popup-wrapper">
+            <div class="event-name">{event.name}</div>
+            <!-- <div class="event-address">{event.address}</div> -->
+            {#if event.tags.length > 0}
+              <div class="event-description-item">Tags: {event.tags.join(', ')}</div>
+            {/if}
+            <div class="event-description-item">Date: {event.time_start}</div>
+            <Button click={() => selectEvent(event)}>More info</Button>
+          </div>
+        </Popup>
+      </DefaultMarker>
+    {/each}
+  </MapLibre>
+  <EventDetailsModal event={selectedEvent} open={eventDetailsModalOpen} />
+  <div class="searchbox-wrapper" class:shifted={eventDetailsModalOpen}>
+    <Searchbox on:location={handleSearchboxLocationSelect} />
+  </div>
 </section>
 
 <style>
-  .map-wrapper{
+  .map-wrapper {
     width: 100%;
     height: 100%;
     display: flex;
     background-color: #aaa;
     position: relative;
   }
-  .popup-wrapper{
+  .popup-wrapper {
     width: 200px;
     min-height: 50px;
     border-radius: 10px;
     border: 2px solid #5b2784;
     padding: 10px;
   }
-  .event-name{
+  .event-name {
     font-weight: bold;
     padding-bottom: 5px;
     border-bottom: 2px solid #5b2784;
@@ -92,29 +120,27 @@
     margin-top: 5px;
     margin-left: 10px;
   }
-  button{
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 10px;
-    border: none;
-    border-radius: 20px;
-    min-height: 30px;
-    padding: 10px;
-    padding-left: 20px;
-    padding-right: 20px;
-    background-color: #5b2784;
-    color: white;
-    transition: filter 0.3s;
-    transition: transform 0.1s;
-  }
-  button:hover{
-    filter: brightness(130%);
-  }
-  button:active{
-    transform: scale(0.95);
-  }
   :global(.map) {
-    flex:1;
+    flex: 1;
+  }
+  .searchbox-wrapper{
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin: 20px;
+    transition: left 0.3s ease-in-out;
+    z-index: 1000;
+  }
+  .searchbox-wrapper.shifted{
+    left: 200px;
+  }
+  @media (min-width:1024px){
+    .searchbox-wrapper.shifted{
+      left: 400px;
+    }
   }
 </style>
+    <!-- <div class="w-full mb-4 flex items-center justify-between border p-2 rounded">
+      <input placeholder="Find event" class="flex-1 text-md text-primary  focus:outline-none" />
+      <IconSearch style="color: #5B2784; width:30px; height:30px;"/>
+  </div> -->

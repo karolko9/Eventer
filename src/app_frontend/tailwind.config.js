@@ -14,6 +14,7 @@ export default {
         gray: {
           '100': 'rgba(0, 0, 0, 0.1)'
         },
+        green: '#004F2D',
         accent: '#EC1D79',
         magnum: {
           '50': '#fff9ed',

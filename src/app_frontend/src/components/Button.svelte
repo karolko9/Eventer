@@ -1,5 +1,5 @@
 <script>
-    export let click;
+    export let click = () => {};
 </script>
   
 <button on:click={click}><slot /></button>
