@@ -29,7 +29,7 @@
     }
 </script>
 
-<article on:click={handleClick} class="w-full lg:w-[24%] h-fit bg-primary flex flex-col rounded-xl shadow-xl cursor-pointer">
+<article class="w-full lg:w-[24%] h-fit bg-primary flex flex-col rounded-xl shadow-xl cursor-pointer">
     <img class="w-full object-cover" src={thumbnail} alt="chuj"/>
     <div class="p-3">
         <div class="flex items-center justify-between">

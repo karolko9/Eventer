@@ -18,7 +18,7 @@ const config = {
   },
   preprocess: sequence([
     vitePreprocess(),
-    preprocessMeltUI
+    preprocessMeltUI()
   ])
 };
 
