@@ -92,7 +92,7 @@
   </MapLibre>
   <EventDetailsModal event={selectedEvent} open={eventDetailsModalOpen} />
   <div class="searchbox-wrapper" class:shifted={eventDetailsModalOpen}>
-    <Searchbox on:location={handleSearchboxLocationSelect} />
+    <Searchbox on:location={handleSearchboxLocationSelect}/>
   </div>
 </section>
 
