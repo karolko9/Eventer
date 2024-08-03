@@ -109,4 +109,10 @@ fn get_all_events_with_details() -> Vec<dto_response::response::EventDetailsResp
     service::event::get_all_events_with_details()
 }
 
+#[ic_cdk::query]
+fn get_all_events() -> Vec<dto_response::response::EventResponse> {
+    service::event::get_all_events()
+}
+
+
 ic_cdk::export_candid!();

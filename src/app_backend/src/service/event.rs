@@ -125,3 +125,16 @@ pub fn get_all_events_with_details() -> Vec<EventDetailsResponse> {
             .collect()
     })
 }
+
+pub fn get_all_events() -> Vec<EventResponse> {
+    EVENTS.with(|events| {
+        let events_map = events.borrow();
+        events_map
+            .values()
+            .map(|event| EventResponse {
+                id: event.id().clone(),
+                location: (event.location().0.clone(), event.location().1.clone()),
+            })
+            .collect()
+    })
+}
