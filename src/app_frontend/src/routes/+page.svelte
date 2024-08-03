@@ -1,6 +1,5 @@
 <script>
   import Map from "../components/Map.svelte";
-  import LoggedOut from "../components/LoggedOut.svelte";
   import { auth } from "../lib/auth";
   import { onMount } from "svelte";
 
@@ -9,13 +8,6 @@
   });
 </script>
 
-
 {#if $auth.isReady}
-  {#if $auth.isAuthenticated}
-      <Map />
-  {:else}
-    <LoggedOut />
-  {/if}
+    <Map />
 {/if}
-
-

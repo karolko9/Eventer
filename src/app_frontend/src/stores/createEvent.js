@@ -5,12 +5,13 @@ export const formStep = writable(0);
 export const formData = writable(
     {
         name: "",
-        tags: [],
-        event_description: "",
-        event_thumbnail: "",
+        event_tags: [],
+        description: "",
+        thumbnail: "",
         location: [],
-        adress: "",
-        time_start: "",
-        time_end: ""
+        address: "",
+        date: "",
+        start_hour: "",
+        end_hour: ""
     }
 )

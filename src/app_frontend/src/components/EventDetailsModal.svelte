@@ -3,7 +3,6 @@
     import { IconMapPin, IconSearch, IconCalendarEvent, IconUsers, IconTicket, IconInfoCircle, IconLocation, IconMail } from '@tabler/icons-svelte';
 
     export let event;
-    console.log(event)
     export let open;
 </script>
 
