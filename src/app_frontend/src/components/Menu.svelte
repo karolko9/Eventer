@@ -15,7 +15,7 @@
 
     const menuItems = [
         { href: "/", label: "Map", icon:"map", hideOnMobile: false },
-        { href: "/my-events", label: "My Events", icon:"events", hideOnMobile: false },
+        { href: "/my-events/attendee", label: "My Events", icon:"events", hideOnMobile: false },
         { href: "/create-event", label: "Create Event", icon:"plus", hideOnMobile: false },
         { href: "/profile", label: "Profile", icon:"user", hideOnMobile: true },
         { href: "/settings", label: "Settings", icon:"settings", hideOnMobile: true }

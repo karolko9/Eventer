@@ -1,14 +1,35 @@
 <script>
+    import { createEventDispatcher } from 'svelte';
+    import { currentEvent } from '../stores/events';
     import {IconShare, IconMapPin} from '@tabler/icons-svelte';
+    export let id;
     export let title;
     export let ticketsAmount;
     export let date;
     export let location;
     export let description;
     export let thumbnail;
+
+    const dispatch = createEventDispatcher();
+
+    
+
+    function handleClick() {
+        currentEvent.set({
+            id,
+            title,
+            ticketsAmount,
+            date,
+            location,
+            description,
+            thumbnail
+        });
+
+        dispatch('navigate', { slug: id });
+    }
 </script>
 
-<article class="w-full lg:w-[24%] h-fit bg-primary flex flex-col rounded-xl shadow-xl">
+<article class="w-full lg:w-[24%] h-fit bg-primary flex flex-col rounded-xl shadow-xl cursor-pointer">
     <img class="w-full object-cover" src={thumbnail} alt="chuj"/>
     <div class="p-3">
         <div class="flex items-center justify-between">

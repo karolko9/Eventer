@@ -18,6 +18,7 @@ pub struct EventUserResponse {
 #[derive(CandidType, Serialize, Deserialize)]
 pub struct EventDetailsResponse {
     pub location: (f64, f64),
+    pub address: String,
     pub id: u128,
     pub name: String,
     pub time_start: String,
