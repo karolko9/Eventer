@@ -11,8 +11,8 @@
     let searchQuery;
 
     let searchResults = [];
-    let eventLocationLat = "";
-    let eventLocationLong = "";
+    let userLocationLat = "";
+    let userLocationLong = "";
     let creationStatus = "";
 
     let nameError = false;
@@ -36,8 +36,8 @@
 
     const selectLocation = (result) => {
         const { lat, lon } = result;
-        eventLocationLat = lat;
-        eventLocationLong = lon;
+        userLocationLat = lat;
+        userLocationLong = lon;
         searchResults = [];
     }
 
@@ -72,35 +72,34 @@
     } 
 
     const submitHandler = async () => {
-        nameError = !name;
-        location = !searchQuery;
-        tagsError = !tags;
-        jobError = !job;
-        roleError = !role;
-        bioError = !bio;
+        // nameError = !name;
+        // location = !searchQuery;
+        // tagsError = !tags;
+        // jobError = !job;
+        // roleError = !role;
+        // bioError = !bio;
 
-        if (nameError || locationError || tagsError || jobError || roleError || bioError) return;
+        // if (nameError || locationError || tagsError || jobError || roleError || bioError) return;
         const user_tags = tags.get().map((tag) => tag.value.trim());
 
         console.log("Register user...");
         try {
             const UserDTO = {
                 name,
-                location: searchQuery,
-                tags: [],
+                location: [parseFloat(userLocationLat), parseFloat(userLocationLong)],
+                tags: user_tags,
                 job: job,
                 role: role,
                 bio: bio,
             };
             
-            UserDTO.tags = tags;
 
             if ($auth.isReady && $auth.isAuthenticated) {
                 const result = await $auth.whoamiActor.register_user(UserDTO);
                 creationStatus = result ? "User created successfully!" : "Failed to create user.";
-                setTimeout(() =>{
-                    goto('/');
-                }, 2000)
+                // setTimeout(() =>{
+                //     goto('/');
+                // }, 200000)
             } else {
                 creationStatus = "Authentication is not ready or not authenticated.";
             }
@@ -108,7 +107,7 @@
             console.error("Error creating user:", error);
             creationStatus = "Error creating user.";
         }
-
+        console.log(creationStatus);
     }
 
     onMount(() => {
@@ -122,7 +121,8 @@
     <h1 class="text-2xl font-semibold text-primary">Profile</h1>
     <IconInfoCircle style="color: #5B2784; width:30px; height:30px;"/>
 </header>
-<form class="w-full h-mobile lg:h-desktop px-4 pb-4 overflow-y-hidden flex flex-col">
+
+<div class="w-full h-mobile lg:h-desktop px-4 pb-4 overflow-y-hidden flex flex-col">
     <article class="w-full h-mobile flex flex-col lg:p-4 overflow-y-auto lg:p-2 lg:border-2 lg:border-color lg:rounded-md">
         <div class="lg:h-fit flex flex-col gap-1 mb-3">
             <label for="name" class="mb-1 text-md text-primary">Name</label>
@@ -209,5 +209,5 @@
     <div class="flex flex-col items-center lg:items-start lg:flex-row gap-2 lg:gap-3">
         <button on:click={submitHandler} class="w-full lg:w-[200px] mt-3 p-3 bg-primary border-2 border-primary text-background lg:self-start rounded-md">Save</button>
     </div>
-</form>
+</div>
 
