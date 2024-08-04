@@ -7,7 +7,7 @@
   import Button from './Button.svelte';
   import Searchbox from './Searchbox.svelte';
   import { IconWallet, IconLogout } from '@tabler/icons-svelte';
-
+  import Wallet_Menu_Demo from './Wallet_Menu_Demo.svelte';
 
   onMount(() => {
     $auth.init().then(() => {
@@ -110,6 +110,9 @@
       <IconWallet style="color:#5B2784"/>
     {/if}
   </button>
+  <div class="wallet">
+    <Wallet_Menu_Demo/>
+  </div>
 </section>
 
 <style>
@@ -149,6 +152,18 @@
     transition: left 0.3s ease-in-out;
     display:flex;
     justify-content: center;
+  }
+  .wallet {
+      border: 2px solid rgba(0, 0, 0, 0.2);
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 400px;
+      margin: 20px auto;
+      z-index:100;
+      bottom: 20px;
+      background-color: white;
+      right:20px;
+      position: absolute;
   }
 
   @media (min-width: 1024px) {
