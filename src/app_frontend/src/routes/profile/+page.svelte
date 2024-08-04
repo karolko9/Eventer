@@ -69,7 +69,7 @@
 
     } 
 
-    const submitHandler = () => {
+    const submitHandler = async () => {
         nameError = !name;
         location = !searchQuery;
         tagsError = !tags;
@@ -79,6 +79,31 @@
 
         if (nameError || locationError || tagsError || jobError || roleError || bioError) return;
         const user_tags = tags.get().map((tag) => tag.value.trim());
+
+        console.log("Register user...");
+        try {
+            const UserDTO = {
+                name,
+                location: searchQuery,
+                tags: tags,
+                job: job,
+                role: role,
+                bio: bio,
+            };
+
+            if ($auth.isReady && $auth.isAuthenticated) {
+                const result = await $auth.whoamiActor.register_user(UserDTO);
+                creationStatus = result ? "Event created successfully!" : "Failed to create event.";
+                setTimeout(() =>{
+                    goto('/');
+                }, 2000)
+            } else {
+                creationStatus = "Authentication is not ready or not authenticated.";
+            }
+        } catch (error) {
+            console.error("Error creating user:", error);
+            creationStatus = "Error creating user.";
+        }
 
     }
 
