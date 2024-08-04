@@ -1,9 +1,5 @@
 <script>
-    import { onMount } from 'svelte';
-    import { page } from "$app/stores";
     import { IconMap, IconCalendarCheck, IconCirclePlus, IconUser, IconSettings} from '@tabler/icons-svelte';
-
-    let isMobile = false;
 
     const iconMapping = {
         "map": IconMap,
@@ -14,53 +10,27 @@
     };
 
     const menuItems = [
-        { href: "/", label: "Map", icon:"map", hideOnMobile: false },
+        { href: "/", label: "Events Map", icon:"map", hideOnMobile: false },
         { href: "/my-events/attendee", label: "My Events", icon:"events", hideOnMobile: false },
         { href: "/create-event", label: "Create Event", icon:"plus", hideOnMobile: false },
         { href: "/profile", label: "Profile", icon:"user", hideOnMobile: true },
-        { href: "/settings", label: "Settings", icon:"settings", hideOnMobile: true }
+        // { href: "/settings", label: "Settings", icon:"settings", hideOnMobile: true }
     ];
-    
-
-    onMount(() => {
-        const handleResize = () => {
-            isMobile = window.innerWidth <= 1024;
-        };
-
-        window.addEventListener('resize', handleResize);
-        handleResize();
-
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    });
-
-    const changeMenuItemsOrder = (isMobile) => {
-        if (isMobile) {
-            return [menuItems[1], ...menuItems.slice(0, 1), ...menuItems.slice(2)];
-        } else {
-            return menuItems;
-        }
-    }
 
     const getIconComponent = (iconName) => {
         return iconMapping[iconName] || null;
-    }
-
-    const isActivePath = (itemPath) => {
-        return itemPath === $page.url.pathname;
     }
 </script>
 
 <nav>
     <ul class="border-t-2 lg:border-r-2 border-gray-200 border-solid">
-        {#each menuItems as item}
-            <li class="{item.hideOnMobile && isMobile}">
+        {#each menuItems as item, index}
+            <li class="{item.hideOnMobile}">
                 <a href={item.href}>
                     {#if getIconComponent(item.icon)}
-                        <svelte:component this={getIconComponent(item.icon)} style="opacity: {isActivePath(item.href) ? '100%' : '30%'}; color: #5B2784; width:30px; height:30px;" />
+                        <svelte:component this={getIconComponent(item.icon)} style="color: #5B2784; width:30px; height:30px;" />
                     {/if}
-                    <p style="opacity: {isActivePath(item.href) ? '100%' : '30%'}; color: #5B2784">{item.label}</p>
+                    <p>{item.label}</p>
                 </a>
             </li>
         {/each}
@@ -94,6 +64,8 @@
         cursor:pointer;
     }
 
+ 
+
     .hideMenuOption {
         display:none;
     }
@@ -110,9 +82,8 @@
         margin:0;
         font-family: "Poppins", sans-serif;
         font-size: 16px;
+        color:#5b2784;
     }
-
-
 
     @media (min-width:1024px){
         nav {

@@ -8,8 +8,20 @@
   import Searchbox from './Searchbox.svelte';
   import { IconWallet, IconLogout } from '@tabler/icons-svelte';
 
-  let isAuthenticated = $auth.isAuthenticated;
-  console.log(isAuthenticated)
+
+  onMount(() => {
+    $auth.init().then(() => {
+      fetchEvents();
+    });
+  });
+
+  const handleAuth = () => {
+    if ($auth.isAuthenticated) {
+      $auth.logout();
+    } else {
+      $auth.login();
+    }
+  }
 
   let events = writable([]); //writable([{name: "Hello", time_start: Date(), tags: ["music", "games"], location: [50, 20]}]);
   let selectedEvent;
@@ -21,7 +33,7 @@
 
   async function fetchEvents() {
     try {
-      if ($auth.isReady && isAuthenticated) {
+      if ($auth.isReady && $auth.isAuthenticated) {
         const eventsList = await $auth.whoamiActor.get_all_events_with_details();
         events.set(eventsList);
       }
@@ -29,12 +41,6 @@
       console.error("Error fetching events:", error);
     }
   }
-
-  onMount(() => {
-    $auth.init().then(() => {
-      fetchEvents();
-    });
-  });
 
   function closeEventDetailsModal() {
     eventDetailsModalOpen = false;
@@ -97,8 +103,8 @@
   <div class="searchbox-wrapper" class:shifted={eventDetailsModalOpen}>
     <Searchbox on:location={handleSearchboxLocationSelect}/>
   </div>
-  <button on:click={isAuthenticated ? $auth.login : $auth.logout} class="hidden absolute right-[20px] top-[20px] lg:flex items-center justify-center w-[50px] h-[50px] border-[1px] border-color bg-background rounded-xl">
-    {#if isAuthenticated}
+  <button on:click={handleAuth} class="hidden absolute right-[20px] top-[20px] lg:flex items-center justify-center w-[50px] h-[50px] border-[1px] border-color bg-background rounded-xl">
+    {#if $auth.isAuthenticated}
       <IconLogout style="color:#5B2784"/> 
     {:else}
       <IconWallet style="color:#5B2784"/>

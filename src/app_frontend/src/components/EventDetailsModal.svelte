@@ -1,22 +1,48 @@
 <script>
     import Button from "./Button.svelte";
+    import { auth } from "../lib/auth";
     import { IconMapPin, IconSearch, IconCalendarEvent, IconUsers, IconTicket, IconInfoCircle, IconLocation, IconMail } from '@tabler/icons-svelte';
 
     export let event;
     export let open;
+
+    let joinedEvent = false;
+
+    const getStreetAndNumber = (address) => {
+        let fullAddressArr = address.split(',')
+        return fullAddressArr[2] + ", " + fullAddressArr[1];
+    }
+
+    const formatDate = (isoString) => {
+        const date = new Date(isoString);
+
+        const options = { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: '2-digit' };
+        const formattedDate = date.toLocaleDateString('en-US', options);
+
+        return formattedDate;
+    }
+
+
+    const joinEvent = async (id) => {
+        console.log(id)
+        if ($auth.isReady && $auth.isAuthenticated) {
+        const response = await $auth.whoamiActor.join_event(id);
+        console.log(response);
+      }
+    }
 </script>
 
 <main class:open={open} class="h-[500px] lg:h-full w-full lg:w-[400px] bottom-[-500px] lg:left-[-500px] lg:bottom-0 p-4 bg-white overflow-y-scroll absolute z-10 duration-300 ease-in-out   border-r-2 border-gray-200 rounded-md ">
     {#if event != null} 
-        <img src="/eventCardImg.png" class="w-full object-cover mb-4 rounded-md" alt="thumbnail"/>
-        <h1 class="mb-2 text-lg font-medium">ICP: Roadmap for devs</h1>
+        <img src="/eventCardImg1.png" class="w-full object-cover mb-4 rounded-md" alt="thumbnail"/>
+        <h1 class="mb-2 text-lg font-medium">{event.name}</h1>
         <div class="flex items-center gap-3 mb-2">
             <IconCalendarEvent />
-            <p style="text-md">Fri, 26 June 2024 17:00 </p>
+            <p style="text-md">{formatDate(event.time_start)}</p>
         </div>
         <div class="flex gap-3 mb-2">
             <IconMapPin />
-            <p style="text-md">AGH University of Cracow</p>
+            <p style="text-md">{getStreetAndNumber(event.address)}</p>
         </div>
         <div class="flex gap-3 mb-4">
             <IconUsers />
@@ -24,10 +50,10 @@
         </div> 
         <div class="w-full overflow-hidden mb-4">
             <div class="flex gap-2 overflow-x-scroll">
-                <div class="w-fit flex items-center gap-1 p-2 whitespace-nowrap bg-primary rounded-xl">
+                <button on:click={joinEvent(event.id)} class="w-fit flex items-center gap-1 p-2 whitespace-nowrap bg-primary rounded-xl">
                     <IconTicket style="color: #fff"/>
-                    <p class="text-background">Get ticket</p>
-                </div>
+                    <p class="text-background">Join event</p>
+                </button>
                 <div class="w-fit flex items-center gap-1 p-2 whitespace-nowrap bg-primary rounded-xl">
                     <IconInfoCircle style="color: #fff"/>
                     <p class="text-background">More info</p>
