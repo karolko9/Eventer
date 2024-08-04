@@ -23,7 +23,6 @@ Eventy.app is a platform that connects event attendees and organizers. Quickly f
    
 ## 🛠️ Tech Stack
 - Dfx
-- Expo
 - Svelte
 - Rust
 - Tailwind CSS
