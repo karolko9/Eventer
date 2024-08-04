@@ -1,6 +1,8 @@
 <script>
     import { IconInfoCircle, IconMapSearch, IconX } from '@tabler/icons-svelte'; 
     import { createTagsInput, melt } from '@melt-ui/svelte';
+    import { auth } from "../../lib/auth";
+    import { onMount } from "svelte";
 
     let name;
     let job;
@@ -85,15 +87,17 @@
             const UserDTO = {
                 name,
                 location: searchQuery,
-                tags: tags,
+                tags: [],
                 job: job,
                 role: role,
                 bio: bio,
             };
+            
+            UserDTO.tags = tags;
 
             if ($auth.isReady && $auth.isAuthenticated) {
                 const result = await $auth.whoamiActor.register_user(UserDTO);
-                creationStatus = result ? "Event created successfully!" : "Failed to create event.";
+                creationStatus = result ? "User created successfully!" : "Failed to create user.";
                 setTimeout(() =>{
                     goto('/');
                 }, 2000)
@@ -106,6 +110,10 @@
         }
 
     }
+
+    onMount(() => {
+        $auth.init();
+    });
 
 </script>
 
