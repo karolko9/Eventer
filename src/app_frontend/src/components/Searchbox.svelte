@@ -73,9 +73,8 @@
     }
 
 </script>
-  
-<main>
-    <div class="search-bar" class:focused={searchResults.length > 0}>
+<div class="lg:w-full flex flex-col relative">
+    <div class="search-bar">
         <input type="text"
             id="searchQuery"
             bind:value={searchQuery}
@@ -83,42 +82,42 @@
             on:input={handleInput}
             on:blur={onBlur}
             on:focus={searchLocation}
-            placeholder="Find event"
+            placeholder="Enter location"
+            class=""
             />
-        <button type="button" on:click={handleSearchButtonClick}><IconSearch /></button>
+        <button type="button" on:click={handleSearchButtonClick}><IconSearch style="color:#5B278480"/></button>
     </div>
-    <div class="search-results" class:expanded={searchResults.length > 0}>
-        {#if searchResults.length > 0}
-            <ul>
-                {#each searchResults as result}
-                <li>
-                    <button
-                    type="button"
-                    on:click={() => handleLocationSelect(result)}
-                    on:keydown={(event) => handleKeydown(event, result)}
-                    tabindex="0"
-                    >
-                    <strong>{result.display_name}</strong><br>
-                    </button>
-                </li>
-                {/each}
-            </ul>
-        {/if}
-    </div>
-</main>
+    
+    {#if searchResults.length > 0}
+        <ul class="w-full h-fit absolute top-[60px] z-50 overflow-auto p-3 flex flex-col gap-4 bg-background border-2 border-color rounded-[14px]">
+            {#each searchResults as result}
+            <li class="whitespace-nowrap"> 
+                <button
+                type="button"
+                on:click={() => handleLocationSelect(result)}
+                on:keydown={(event) => handleKeydown(event, result)}
+                tabindex="0"
+                >
+                {result.display_name}
+                </button>
+            </li>
+            {/each}
+        </ul>
+    {/if}
+</div>
   
 <style>
     .search-bar {
+        height: fit-content;
+        width:100%;
         display: flex;
+        justify-content: space-between;
         border-radius: 14px;
         border: 1px solid rgba(0, 0, 0, 0.2);
         background-color: white;
         padding: 8px;
         position: relative;
         z-index: 1000;
-    }
-    .search-bar.focused {
-        border-radius: 14px 14px 0px 0px;
     }
     .search-bar input {
         display: block;
@@ -131,7 +130,6 @@
     }
     .search-bar input:focus {
         outline: none;
-        border-bottom: 2px solid #5B278480;
         background: none;
     }
     .search-bar button {
@@ -145,27 +143,18 @@
         transform: scale(0.95);
     }
     .search-results {
-        width: 310px;
         min-height: 40px;
-        border-radius: 0px 0px 14px 14px;
+        border-radius: 14px;
         border: 1px solid rgba(0, 0, 0, 0.2);
         border-top: none;
         background-color: white;
         display: none;
+        z-index: 50;
     }
     .search-results.expanded {
         display: block;
     }
-    .search-results ul {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-    }
-    .search-results li {
-        margin-bottom: 10px;
-        overflow: hidden;
-        white-space: nowrap;
-    }
+
     .search-results button {
         background: none;
         padding: 5px;

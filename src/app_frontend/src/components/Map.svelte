@@ -6,6 +6,22 @@
   import EventDetailsModal from './EventDetailsModal.svelte';
   import Button from './Button.svelte';
   import Searchbox from './Searchbox.svelte';
+  import { IconWallet, IconLogout } from '@tabler/icons-svelte';
+
+
+  onMount(() => {
+    $auth.init().then(() => {
+      fetchEvents();
+    });
+  });
+
+  const handleAuth = () => {
+    if ($auth.isAuthenticated) {
+      $auth.logout();
+    } else {
+      $auth.login();
+    }
+  }
 
   let events = writable([]); //writable([{name: "Hello", time_start: Date(), tags: ["music", "games"], location: [50, 20]}]);
   let selectedEvent;
@@ -19,19 +35,12 @@
     try {
       if ($auth.isReady && $auth.isAuthenticated) {
         const eventsList = await $auth.whoamiActor.get_all_events_with_details();
-        console.log(eventsList);
         events.set(eventsList);
       }
     } catch (error) {
       console.error("Error fetching events:", error);
     }
   }
-
-  onMount(() => {
-    $auth.init().then(() => {
-      fetchEvents();
-    });
-  });
 
   function closeEventDetailsModal() {
     eventDetailsModalOpen = false;
@@ -92,8 +101,15 @@
   </MapLibre>
   <EventDetailsModal event={selectedEvent} open={eventDetailsModalOpen} />
   <div class="searchbox-wrapper" class:shifted={eventDetailsModalOpen}>
-    <Searchbox on:location={handleSearchboxLocationSelect} />
+    <Searchbox on:location={handleSearchboxLocationSelect}/>
   </div>
+  <button on:click={handleAuth} class="hidden absolute right-[20px] top-[20px] lg:flex items-center justify-center w-[50px] h-[50px] border-[1px] border-color bg-background rounded-xl">
+    {#if $auth.isAuthenticated}
+      <IconLogout style="color:#5B2784"/> 
+    {:else}
+      <IconWallet style="color:#5B2784"/>
+    {/if}
+  </button>
 </section>
 
 <style>
@@ -123,20 +139,30 @@
   :global(.map) {
     flex: 1;
   }
+
   .searchbox-wrapper{
+    width:100%;
     position: absolute;
     left: 0;
-    top: 0;
-    margin: 20px;
+    top: 20px;
+    z-index: 50;
     transition: left 0.3s ease-in-out;
-    z-index: 1000;
+    display:flex;
+    justify-content: center;
+  }
+
+  @media (min-width: 1024px) {
+    .searchbox-wrapper{
+      left:20px;
+      width:400px;
+    }
   }
   .searchbox-wrapper.shifted{
-    left: 200px;
+    left: 0;
   }
   @media (min-width:1024px){
     .searchbox-wrapper.shifted{
-      left: 400px;
+      left: 420px;
     }
   }
 </style>

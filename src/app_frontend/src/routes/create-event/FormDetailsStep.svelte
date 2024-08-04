@@ -5,21 +5,25 @@
 
     import { formProgress, formStep, formData } from '../../stores/createEvent.js';
 
+  
+
+    let formDataStore = get(formData);
+    let fileinput;
+    let { name, event_tags, description, thumbnail } = formDataStore;
+
+    let fetchedEventTags = event_tags;
+
     const {
         elements: { root, input, tag, deleteTrigger, edit },
         states: { tags },
     } = createTagsInput({
-        defaultTags: [],
+        defaultTags: event_tags,
         unique: true,
         add(tag) {
             return { id: tag, value: tag };
         },
         addOnPaste: true,
     });
-
-    let formDataStore = get(formData);
-    let fileinput;
-    let { name, description, thumbnail } = formDataStore;
 
     let nameError = false;
     let descriptionError = false;
@@ -41,11 +45,12 @@
         thumbnailError = !thumbnail;
 
         if (nameError || descriptionError || thumbnailError) return;
+        const event_tags = tags.get().map((tag) => tag.value.trim());
 
         formStep.set(1);
         formProgress.set(66);
 
-        formData.update(data => ({ ...data, name, description, thumbnail }));
+        formData.update(data => ({ ...data, name, event_tags, description, thumbnail }));
     }
 </script>
 
