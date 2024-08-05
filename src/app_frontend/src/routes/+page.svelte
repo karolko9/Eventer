@@ -11,3 +11,4 @@
 {#if $auth.isReady}
     <Map />
 {/if}
+
