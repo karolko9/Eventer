@@ -22,7 +22,7 @@ Eventer is a platform that connects event attendees and organizers. Quickly find
  - Automatic NFT drops after events
    
 ## 🛠️ Tech Stack
-- Dfx
+- Internet Computer
 - Svelte
 - Rust
 - Tailwind CSS
