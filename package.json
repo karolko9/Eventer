@@ -3,7 +3,7 @@
     "node": ">=16.0.0",
     "npm": ">=7.0.0"
   },
-  "name": "app",
+  "name": "project",
   "scripts": {
     "build": "npm run build --workspaces --if-present",
     "prebuild": "npm run prebuild --workspaces --if-present",
@@ -13,14 +13,6 @@
   },
   "type": "module",
   "workspaces": [
-    "src/app_frontend"
-  ],
-  "dependencies": {
-    "@dfinity/agent": "^2.0.0",
-    "@dfinity/auth-client": "^2.0.0"
-  },
-  "devDependencies": {
-    "@melt-ui/pp": "^0.3.2",
-    "@melt-ui/svelte": "^0.83.0"
-  }
+    "src/app"
+  ]
 }
