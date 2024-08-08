@@ -1,6 +1,6 @@
-use crate::dto_response::response::EventUserResponse;
+use crate::dto_response::event_dto_response::EventUserResponse;
 use crate::{dto_request, dto_response};
-use crate::{model::event::Event, service::user};
+use crate::model::event_model::Event;
 use serde::{Deserialize, Serialize};
 use candid::CandidType;
 
@@ -16,7 +16,7 @@ pub struct UserDataModel {
 }
 
 impl UserDataModel {
-    pub fn new(user_dto: dto_request::request::UserDTO) -> Result<Self, String> {
+    pub fn new(user_dto: dto_request::user_dto_request::UserDTO) -> Result<Self, String> {
         if user_dto.location.0 < -90.0
             || user_dto.location.0 > 90.0
             || user_dto.location.1 < -180.0

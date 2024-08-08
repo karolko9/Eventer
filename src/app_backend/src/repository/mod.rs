@@ -1,2 +1,2 @@
-pub mod user;
-pub mod event;
+pub mod user_repository;
+pub mod event_repository;
