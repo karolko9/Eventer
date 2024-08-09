@@ -6,5 +6,19 @@ use candid::CandidType;
 #[derive(CandidType, Clone, Debug)]
 pub struct Tag {
     name: String,
-    event_id: HashSet<u128>,
+    events_id: HashSet<u128>,
+}
+
+impl Tag{
+    pub fn new(name: String) -> Result<Self, String> {
+        Ok(Tag{
+            name: name,
+            events_id: HashSet::new(),
+        })
+
+    }
+
+    pub fn get_events_id(&self) -> &HashSet<u128>{
+        &self.events_id
+    }
 }
