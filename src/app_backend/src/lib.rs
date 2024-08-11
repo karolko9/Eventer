@@ -3,13 +3,13 @@ use candid::Principal;
 use std::{cell::RefCell, collections::HashMap};
 
 mod model;
-mod repository;
+mod service;
 use model::{event_model::Event, user_model::UserDataModel, tag_model::Tag};
 
 mod dto_request;
 mod dto_response;
 
-pub mod service;
+pub mod repository;
 
 thread_local! {
     static USER_DATA_MODEL: std::cell::RefCell<UserDataModels> = RefCell::default();
@@ -30,24 +30,24 @@ type TagMap = HashMap<String, Tag>;
 // GET USER
 #[ic_cdk::query]
 fn get_user() -> Option<UserDataModel> {
-    service::query::user_repository_query::get_user(ic_cdk::caller()) 
+    service::query::user_service_query::get_user(ic_cdk::caller()) 
 }
 
 // REGISTER USER
 #[ic_cdk::update]
 fn register_user(user_dto: dto_request::user_dto_request::UserDTO) -> bool {
-    service::update::user_repository_update::register_user(ic_cdk::caller(), user_dto)
+    service::update::user_service_update::register_user(ic_cdk::caller(), user_dto)
 }
 
 // UPDATE USER
 #[ic_cdk::update]
 fn update_user(user_dto: dto_request::user_dto_request::UserDTO) -> bool {
-    service::update::user_repository_update::update_user(ic_cdk::caller(), user_dto)
+    service::update::user_service_update::update_user(ic_cdk::caller(), user_dto)
 }
 
 #[ic_cdk::update]
-fn get_user_events() -> Vec<dto_response::event_dto_response::EventUserResponse>{
-    service::query::user_repository_query::get_user_events(ic_cdk::caller())
+fn get_user_events() -> Option<Vec<dto_response::event_dto_response::EventDetailsResponse>>{
+    service::query::user_service_query::get_user_events(ic_cdk::caller())
 }
 
 // EVENT
@@ -56,25 +56,21 @@ fn get_user_events() -> Vec<dto_response::event_dto_response::EventUserResponse>
 // CREATE EVENT
 #[ic_cdk::update]
 fn create_event(event_dto: dto_request::event_dto_request::EventDTO) -> bool {
-    service::update::event_repository_update::create_event(event_dto, ic_cdk::caller())
-}
+    match service::update::event_service_update::create_event(event_dto, ic_cdk::caller()) {
+        Ok(_) => true,
+        Err(_) => false,
+    }}
 
 // GET EVENT BY ID
 #[ic_cdk::query]
 fn get_event(event_id: u128) -> Option<dto_response::event_dto_response::EventDetailsResponse> {
-    service::query::event_repository_query::get_event(event_id) 
-}
-
-// GET EVENTS BY TAGS
-#[ic_cdk::query]
-fn get_event_by_tags(tags: Vec<String>) -> Vec<dto_response::event_dto_response::EventResponse> {
-    service::query::event_repository_query::get_event_by_tag(tags)
+    service::query::event_service_query::get_event(event_id) 
 }
 
 // GET EVENTS BY TAGS USER
 #[ic_cdk::query]
-fn get_event_by_tags_user() -> Vec<dto_response::event_dto_response::EventResponse> {
-    service::query::event_repository_query::get_event_by_tag_user(ic_cdk::caller())           
+fn get_event_by_tags_user() -> Option<Vec<dto_response::event_dto_response::EventMapResponse>> {
+    service::query::event_service_query::get_event_by_tag_user(ic_cdk::caller())           
 }
 
 //
@@ -83,20 +79,7 @@ fn get_event_by_tags_user() -> Vec<dto_response::event_dto_response::EventRespon
 
 #[ic_cdk::update]
 fn join_event(event_id: u128) -> bool {
-    service::update::event_repository_update::join_event(ic_cdk::caller(), event_id)
+    service::update::event_service_update::join_event(ic_cdk::caller(), event_id)
 }
-
-// GET ALL EVENTS WITH DETAILS - unnessary, only for testing
-#[ic_cdk::query]
-fn get_all_events_with_details() -> Vec<dto_response::event_dto_response::EventDetailsResponse> {
-    service::query::event_repository_query::get_all_events_with_details()
-}
-
-// GET ALL EVENTS - unnessary, only for testing
-#[ic_cdk::query]
-fn get_all_events() -> Vec<dto_response::event_dto_response::EventResponse> {
-    service::query::event_repository_query::get_all_events()
-}
-
 
 ic_cdk::export_candid!();

@@ -4,16 +4,35 @@ use candid::CandidType;
 use crate::model::event_model::Event;
 
 #[derive(CandidType, Serialize, Deserialize)]
-pub struct EventResponse {
+pub struct EventMapResponse {
     pub location: (f64, f64),
     pub id: u128,
 }
 
+impl From<Event> for EventMapResponse {
+    fn from(event: Event) -> Self {
+        EventMapResponse{
+            location: event.location(),
+            id: event.id()
+        }
+    }
+}
+
 #[derive(CandidType, Serialize, Deserialize)]
-pub struct EventUserResponse {
+pub struct EventMapName {
     pub location: (f64, f64),
     pub name: String,
     pub id: u128,
+}
+
+impl From<Event> for EventMapName {
+    fn from(event: Event)-> Self{
+        EventMapName{
+            location: event.location(),
+            name: event.name().to_string(),
+            id: event.id()
+        }
+    }
 }
 
 
@@ -37,7 +56,7 @@ impl From<&Event> for EventDetailsResponse {
             address: event.address().to_string(),
             time_start: event.time_start().to_string(),
             time_end: event.time_end().to_string(),
-            tags: event.tags().to_vec(),
+            tags: event.tags().iter().cloned().collect(),
         }
     }
 }

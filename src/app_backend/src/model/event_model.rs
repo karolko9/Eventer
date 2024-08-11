@@ -1,5 +1,5 @@
 use candid::Principal;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 #[derive(Debug, Clone)]
 pub struct Event {
@@ -12,7 +12,7 @@ pub struct Event {
     list_of_admin: Vec<Principal>,
     hash_map_of_declared: HashMap<Principal, String>,
     hash_map_of_user_who_check: HashMap<Principal, String>,
-    tags: Vec<String>,
+    tags: HashSet<String>,
 }
 
 impl Event {
@@ -26,7 +26,7 @@ impl Event {
         list_of_admin: Vec<Principal>,
         hash_map_of_declared: HashMap<Principal, String>,
         hash_map_of_user_who_check: HashMap<Principal, String>,
-        tags: Vec<String>,
+        tags: HashSet<String>,
     ) -> Self {
         Event {
             id,
@@ -79,7 +79,7 @@ impl Event {
         &self.hash_map_of_user_who_check
     }
 
-    pub fn tags(&self) -> &Vec<String> {
+    pub fn tags(&self) -> &HashSet<String> {
         &self.tags
     }
 
@@ -126,7 +126,7 @@ impl Event {
         self.hash_map_of_user_who_check = hash_map_of_user_who_check;
     }
 
-    pub fn set_tags(&mut self, tags: Vec<String>) {
+    pub fn set_tags(&mut self, tags: HashSet<String>) {
         self.tags = tags;
     }
     

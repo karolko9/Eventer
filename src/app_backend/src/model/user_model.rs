@@ -1,4 +1,6 @@
-use crate::dto_response::event_dto_response::EventUserResponse;
+use std::collections::HashSet;
+
+use crate::dto_response::event_dto_response::EventMapResponse;
 use crate::{dto_request, dto_response};
 use crate::model::event_model::Event;
 use serde::{Deserialize, Serialize};
@@ -8,11 +10,11 @@ use candid::CandidType;
 pub struct UserDataModel {
     name: String,
     location: (f64, f64),
-    tags: Vec<String>,
+    tags: HashSet<String>,
     job: String,
     role: String,
     bio: String,
-    list_of_events: Vec<u128>,
+    list_of_events: HashSet<u128>,
 }
 
 impl UserDataModel {
@@ -31,7 +33,7 @@ impl UserDataModel {
             job: user_dto.job,
             role: user_dto.role,
             bio: user_dto.bio,
-            list_of_events: Vec::new(),
+            list_of_events: HashSet::new(),
         })
     }
 
@@ -63,12 +65,12 @@ impl UserDataModel {
     }
 
     // Getter dla pola `tags`
-    pub fn get_tags(&self) -> &Vec<String> {
+    pub fn get_tags(&self) -> &HashSet<String> {
         &self.tags
     }
 
     // Setter dla pola `tags`
-    pub fn set_tags(&mut self, tags: Vec<String>) {
+    pub fn set_tags(&mut self, tags: HashSet<String>) {
         self.tags = tags;
     }
 
@@ -104,21 +106,12 @@ impl UserDataModel {
     
     // Setter dla pola `bio`
     // Getter dla pola `events`
-    pub fn get_events(&self) -> Vec<EventUserResponse> {
-        let mut event_responses = Vec::new();
-        for event_id in &self.list_of_events {
-            let event_response = EventUserResponse {
-                location: self.location,
-                name: self.name.clone(),
-                id: *event_id,
-            };
-            event_responses.push(event_response);
-        }
-        event_responses
+    pub fn get_events(&self) -> &HashSet<u128> {
+        &self.list_of_events
     }
 
     // Metoda do dodawania wydarzeń
     pub fn add_event(&mut self, event: u128) {
-        self.list_of_events.push(event);
+        self.list_of_events.insert(event);
     }
 }
