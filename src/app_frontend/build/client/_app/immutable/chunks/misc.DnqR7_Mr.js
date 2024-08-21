@@ -1,0 +1,1 @@
+import{h as i,a}from"./runtime.aXHnhyvJ.js";function f(e,t,n,r){i&&a(),t===void 0||t(e,n)}function l(e){const t={};e.children&&(t.default=!0);for(const n in e.$$slots)t[n]=!0;return t}function u(e){var n;var t=(n=e.$$slots)==null?void 0:n.default;return t===!0?e.children:t}export{l as a,u as d,f as s};
