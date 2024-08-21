@@ -1,7 +1,4 @@
 # 🧑‍💻 Eventer
-
-https://ryaqg-kqaaa-aaaap-ahr4a-cai.icp0.io/
-
 ## Project Description :mag:
 Eventer is a platform that connects event attendees and organizers. Quickly find events that interest you, or create your own and reach a new audience. All in one, user-friendly place.
 
