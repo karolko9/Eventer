@@ -2,7 +2,7 @@
 .vscode/
 .idea/
 **/*~
-src/app_frontend/build/
+src/app_frontend/src/build/
 
 # Mac OSX temporary files
 .DS_Store
