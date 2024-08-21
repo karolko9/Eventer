@@ -19,11 +19,6 @@ type EventResponse = record {
   id : nat;
   location : record { float64; float64 };
 };
-type EventUserResponse = record {
-  id : nat;
-  name : text;
-  location : record { float64; float64 };
-};
 type UserDTO = record {
   bio : text;
   job : text;
@@ -43,13 +38,11 @@ type UserDataModel = record {
 };
 service : {
   create_event : (EventDTO) -> (bool);
-  get_all_events : () -> (vec EventResponse) query;
   get_all_events_with_details : () -> (vec EventDetailsResponse) query;
   get_event : (nat) -> (opt EventDetailsResponse) query;
   get_event_by_tags : (vec text) -> (vec EventResponse) query;
   get_event_by_tags_user : () -> (vec EventResponse) query;
   get_user : () -> (opt UserDataModel) query;
-  get_user_events : () -> (vec EventUserResponse);
   join_event : (nat) -> (bool);
   register_user : (UserDTO) -> (bool);
   update_user : (UserDTO) -> (bool);

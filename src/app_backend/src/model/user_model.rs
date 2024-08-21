@@ -98,7 +98,7 @@ impl UserDataModel {
     pub fn get_bio(&self) -> &String {
         &self.bio
     }
-    
+
     // Setter dla pola `bio`
     pub fn set_bio(&mut self, bio: String) {
         self.bio = bio;

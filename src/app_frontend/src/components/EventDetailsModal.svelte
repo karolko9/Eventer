@@ -2,7 +2,6 @@
     import Button from "./Button.svelte";
     import { auth } from "../lib/auth";
     import { IconMapPin, IconSearch, IconCalendarEvent, IconUsers, IconTicket, IconInfoCircle, IconLocation, IconMail } from '@tabler/icons-svelte';
-    import { stripValues } from "@melt-ui/svelte/internal/helpers";
 
     export let event;
     export let open;
@@ -25,9 +24,9 @@
 
 
     const joinEvent = async (id) => {
-        console.log(parseInt(id));
+        console.log(id)
         if ($auth.isReady && $auth.isAuthenticated) {
-        const response = await $auth.whoamiActor.join_event(parseInt(id));
+        const response = await $auth.whoamiActor.join_event(id);
         console.log(response);
       }
     }
