@@ -1,0 +1,1 @@
+{"version":3,"file":"_page.svelte-Ck3VgCsw.js","sources":["../../../.svelte-kit/adapter-node/entries/pages/settings/_page.svelte.js"],"sourcesContent":["function _page($$payload) {\n  $$payload.out += `<h1>Settings</h1>`;\n}\nexport {\n  _page as default\n};\n"],"names":[],"mappings":"AAAA,SAAS,KAAK,CAAC,SAAS,EAAE;AAC1B,EAAE,SAAS,CAAC,GAAG,IAAI,CAAC,iBAAiB,CAAC,CAAC;AACvC;;;;"}

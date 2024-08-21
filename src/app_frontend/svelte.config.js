@@ -1,5 +1,5 @@
 import { preprocessMeltUI, sequence } from '@melt-ui/pp';
-import adapter from '@sveltejs/adapter-static';
+import adapter from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 /** @type {import('@sveltejs/kit').Config} */
@@ -9,12 +9,10 @@ const config = {
     // If your environment is not supported or you settled on a specific environment, switch out the adapter.
     // See https://kit.svelte.dev/docs/adapters for more information about adapters.
     adapter: adapter({
-      pages: 'dist',
-      assets: 'dist',
-      fallback: 'index.html',
-      precompress: false,
-      strict: true,
-    }),
+      out: 'build',  // This is where the built output will go
+      precompress: false,  // Set this to true if you want to precompress files
+      env: { port: 3000 }, // Set environment variables or defaults
+    })
   },
   preprocess: sequence([
     vitePreprocess(),
