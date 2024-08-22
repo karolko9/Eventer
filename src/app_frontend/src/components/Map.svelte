@@ -1,5 +1,5 @@
 <script>
-  import { MapLibre, DefaultMarker, Popup } from 'svelte-maplibre';
+  import { MapLibre, Marker, Popup } from 'svelte-maplibre';
   import { auth } from "../lib/auth";
   import { onMount } from "svelte";
   import { writable } from 'svelte/store';
@@ -7,7 +7,7 @@
   import Button from './Button.svelte';
   import Searchbox from './Searchbox.svelte';
   import Loader from './Loader.svelte';
-  import { IconWallet, IconLogout } from '@tabler/icons-svelte';
+  import { IconLogin, IconConfetti } from '@tabler/icons-svelte';
 
   onMount(() => {
     $auth.init().then(() => {
@@ -87,36 +87,26 @@
     zoomOnDoubleClick={true}
     bind:map={map}
     on:load={handleMapLoad}
+    on:click={closeEventDetailsModal}
   >
     {#each $events as event}
-      <DefaultMarker lngLat={[event.location[1], event.location[0]]}>
-        <Popup offset={[0, -10]} on:close={closeEventDetailsModal}>
-          <div class="popup-wrapper">
-            <div class="event-name">{event.name}</div>
-            <!-- <div class="event-address">{event.address}</div> -->
-            {#if event.tags.length > 0}
-              <div class="event-description-item">Tags: {event.tags.join(', ')}</div>
-            {/if}
-            <div class="event-description-item">Date: {event.time_start}</div>
-            <Button click={() => selectEvent(event)}>More info</Button>
-          </div>
-        </Popup>
-      </DefaultMarker>
+      <Marker lngLat={[event.location[1], event.location[0]]} on:click={() => selectEvent(event)} class="h-8 w-8 flex p-1 items-center justify-center rounded-full bg-primary border-4 border-primary-10">
+        <IconConfetti style="height:24px; with:24px; color:#fff"/>
+      </Marker>
     {/each}
   </MapLibre>
-  <EventDetailsModal event={selectedEvent} open={eventDetailsModalOpen} />
+  <EventDetailsModal event={selectedEvent} openModal={eventDetailsModalOpen} />
   <div class="searchbox-wrapper" class:shifted={eventDetailsModalOpen}>
     <Searchbox on:location={handleSearchboxLocationSelect}/>
   </div>
-  <button on:click={handleAuth} class="hidden absolute right-[20px] top-[20px] lg:flex items-center justify-center w-[50px] h-[50px] border-[1px] border-color bg-background rounded-xl">
-    {#if $auth.isAuthenticated}
-      <IconLogout style="color:#5B2784"/> 
-    {:else}
-      <IconWallet style="color:#5B2784"/>
-    {/if}
-  </button>
+  {#if !$auth.isAuthenticated}
+    <button on:click={handleAuth} class="absolute right-[20px] top-unset bottom-[20px] lg:bottom-unset lg:top-[20px] w-fit h-fit p-2 flex flex-col items-center justify-center border-[1px] border-color bg-background rounded-xl">
+      <IconLogin style="color:#5B2784"/>
+      <p class="text-xs text-primary300 font-medium">Sign In</p>
+    </button>
+  {/if}
   {#if showLoader}
-    <Loader imageSrc="undraw_world_re.svg" desription="Preparing map"/>
+    <Loader imageSrc="undraw_world_re.svg" description="Preparing map"/>
   {/if}
 </section>
 
@@ -172,6 +162,8 @@
       left: 420px;
     }
   }
+
+
 </style>
     <!-- <div class="w-full mb-4 flex items-center justify-between border p-2 rounded">
       <input placeholder="Find event" class="flex-1 text-md text-primary  focus:outline-none" />
