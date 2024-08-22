@@ -1,16 +1,34 @@
 <script>
     import Button from "./Button.svelte";
+    import { createDialog, melt } from '@melt-ui/svelte';
+    import { fade } from 'svelte/transition';
     import { auth } from "../lib/auth";
-    import { IconMapPin, IconSearch, IconCalendarEvent, IconUsers, IconTicket, IconInfoCircle, IconLocation, IconMail } from '@tabler/icons-svelte';
-
+    import { IconMapPin, IconCalendarEvent, IconUsers, IconTicket,  IconMail, IconX, IconPhone, IconMailUp } from '@tabler/icons-svelte';
+  
     export let event;
-    export let open;
+    export let openModal;
 
     let joinedEvent = false;
 
+    const postalCodeRegex = /^\d{2}-\d{3}$/;
+
+    const isPostalCode = (element) => {
+        return postalCodeRegex.test(element);
+    }
+
+    const findPostalCode = (arr) => {
+    let foundPostalCode = "";
+    arr.forEach(element => {
+        if (isPostalCode(element)) {
+            foundPostalCode = element;
+        }
+    });
+    return foundPostalCode;
+}
+
     const getStreetAndNumber = (address) => {
-        let fullAddressArr = address.split(',')
-        return fullAddressArr[2] + ", " + fullAddressArr[1];
+        let fullAddressArr = address.split(', ');
+        return fullAddressArr[0] + ", " + fullAddressArr[3] + ", " + findPostalCode(fullAddressArr);
     }
 
     const formatDate = (isoString) => {
@@ -30,12 +48,27 @@
         console.log(response);
       }
     }
+
+    const {
+    elements: {
+      trigger,
+      overlay,
+      content,
+      title,
+      description,
+      close,
+      portalled,
+    },
+    states: { open },
+  } = createDialog({
+    forceVisible: true,
+  });
 </script>
 
-<main class:open={open} class="h-[500px] lg:h-full w-full lg:w-[400px] bottom-[-500px] lg:left-[-500px] lg:bottom-0 p-4 bg-white overflow-y-scroll absolute z-10 duration-300 ease-in-out   border-r-2 border-gray-200 rounded-md ">
+<main class:open={openModal} class="h-[500px] lg:h-full w-full lg:w-[400px] bottom-[-500px] lg:left-[-500px] lg:bottom-0 p-4 bg-white overflow-y-scroll absolute z-10 duration-300 ease-in-out   border-r-2 border-gray-200 rounded-md ">
     {#if event != null} 
         <img src="/eventCardImg1.png" class="w-full object-cover mb-4 rounded-md" alt="thumbnail"/>
-        <h1 class="mb-2 text-lg font-medium">{event.name}</h1>
+        <h1 class="mb-2 text-lg font-semibold">{event.name}</h1>
         <div class="flex items-center gap-3 mb-2">
             <IconCalendarEvent />
             <p style="text-md">{formatDate(event.time_start)}</p>
@@ -46,29 +79,42 @@
         </div>
         <div class="flex gap-3 mb-4">
             <IconUsers />
-            <p style="text-md">Bilety: <span class="text-green">dostępne</span></p>
+            <p style="text-md">Tickets: <span class="text-green">available</span></p>
         </div> 
-        <div class="w-full overflow-hidden mb-4">
-            <div class="flex gap-2 overflow-x-scroll">
-                <button on:click={joinEvent(event.id)} class="w-fit flex items-center gap-1 p-2 whitespace-nowrap bg-primary rounded-xl">
-                    <IconTicket style="color: #fff"/>
-                    <p class="text-background">Join event</p>
-                </button>
-                <div class="w-fit flex items-center gap-1 p-2 whitespace-nowrap bg-primary rounded-xl">
-                    <IconInfoCircle style="color: #fff"/>
-                    <p class="text-background">More info</p>
-           
-                </div>
-                <div class="w-fit flex items-center gap-1 p-2 whitespace-nowrap bg-primary rounded-xl">
-                    <IconLocation style="color: #fff"/>
-                    <p class="text-background">Location</p>
-                </div>
-                <div class="w-fit flex items-center gap-1 p-2 whitespace-nowrap bg-primary rounded-xl">
-                    <IconMail style="color: #fff"/>
-                    <p class="text-background">Contact</p>
+        <div class="w-full flex gap-2  mb-4">
+            <button on:click={joinEvent(event.id)} class="w-fit flex items-center gap-1 p-2 whitespace-nowrap bg-primary rounded-xl">
+                <IconTicket style="color: #fff"/>
+                <p class="text-background">Join event</p>
+            </button>
+            <button use:melt={$trigger} class="w-fit flex items-center gap-1 p-2 whitespace-nowrap bg-primary rounded-xl">
+                <IconMail style="color: #fff"/>
+                <p class="text-background">Contact</p>
+            </button>
+        </div>
+        {#if $open}
+            <div class="flex flex-col" use:melt={$portalled}>
+                <div use:melt={$overlay} class="fixed inset-0 z-50 bg-black/50" transition:fade={{ duration: 150 }}></div>
+                <div use:melt={$content} class="fixed left-1/2 top-1/2 z-50 max-h-[85vh] w-[90vw] max-w-[450px] -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white p-6 shadow-lg">
+                    <div class="flex justify-between items-center">
+                        <h2 use:melt={$title} class="m-0 text-lg font-medium text-black">
+                            Organizer contact information
+                        </h2>
+                        <button use:melt={$close}>
+                            <IconX style="color:#5B2784" />
+                        </button>
+                    </div>
+                    <p use:melt={$description} class="mb-4 mt-1 leading-normal text-zinc-600">Contact event host by provided details</p>
+                    <div class="flex items-center gap-2 mb-2">
+                        <IconPhone style="color:#5B2784"/>
+                        <a class="font-medium text-primary300" href="tel:123456789">123 456 789</a>
+                    </div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <IconMailUp style="color:#5B2784"/>
+                        <a class="font-medium text-primary300" href="mailto:hostmail@gmail.com">host.mail@gmail.com</a>
+                    </div>
                 </div>
             </div>
-        </div>
+        {/if}
         <p class="text-sm font-light mb-4">"ICP: Roadmap for Devs" is an event that guides developers through building on the Internet Computer Protocol (ICP). It features expert speakers, hands-on workshops, and networking opportunities, providing essential insights and tools for effective ICP development.</p>
         <div class="flex gap-2 mb-2">
             <IconTicket style="color: #000"/>
@@ -77,6 +123,7 @@
                 <p class="text-sm opacity-80">Price includes 4zł service fee</p>
             </div>
         </div>
+        
         <button class="py-3 px-10 text-md font-medium bg-primary text-background rounded-[20px]">Buy Ticket</button>
     {/if}
 </main>
