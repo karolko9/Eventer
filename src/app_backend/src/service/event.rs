@@ -82,28 +82,34 @@ pub fn get_event_by_tag_user(caller: Principal) -> Vec<EventResponse> {
             .collect()
     })
 }
-
 pub fn join_event(caller: Principal, event_id: u128) -> bool {
     let mut event_joined = false;
+
     EVENTS.with(|events| {
-        let mut events_map = events.borrow_mut();        
-        if let Some(host) = events_map.get_mut(&event_id).map(|event| event.list_of_admin().first().unwrap()) {
-            if host.to_string() == caller.to_string() {
-                return; // Host cannot join their own event
-            }
-        }
-        if let Some(declaration) = events_map.get_mut(&event_id).map(|event| event.hash_map_of_declared().get(&caller)) {
-            if "declared".to_string() == *declaration.unwrap() { // If user has already declared, they cannot join again
-                return;
-            }
-        }
+        let mut events_map = events.borrow_mut();
+        
         if let Some(event) = events_map.get_mut(&event_id) {
-            event.add_participant(caller);  
+            let host = event.list_of_admin().first();
+            if let Some(host) = host {
+                if host.to_string() == caller.to_string() {
+                    return; // Host cannot join their own event
+                }
+            }
+            
+            if let Some(declaration) = event.hash_map_of_declared().get(&caller) {
+                if declaration == "declared" {
+                    return; // User has already declared
+                }
+            }
+
+            event.add_participant(caller);
             event_joined = true;
         }
     });
+
     if event_joined {
         user::register_blank_user(caller);
+        
         USER_DATA_MODEL.with(|users| {
             let mut users_map = users.borrow_mut();
             if let Some(user) = users_map.get_mut(&caller) {
@@ -117,6 +123,7 @@ pub fn join_event(caller: Principal, event_id: u128) -> bool {
         false
     }
 }
+
 
 
 pub fn get_all_events_with_details() -> Vec<EventDetailsResponse> {
