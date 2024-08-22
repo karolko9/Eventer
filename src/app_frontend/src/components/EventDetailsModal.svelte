@@ -44,9 +44,9 @@
     const joinEvent = async (id) => {
         console.log(id)
         if ($auth.isReady && $auth.isAuthenticated) {
-        const response = await $auth.whoamiActor.join_event(id);
-        console.log(response);
-      }
+            const response = await $auth.whoamiActor.join_event(id);
+            console.log("Response:" , response);
+        }
     }
 
     const {

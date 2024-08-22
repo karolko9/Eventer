@@ -8,7 +8,6 @@ pub struct UserDTO {
     pub role: String,
     pub bio: String,
 }
-
 #[derive(serde::Deserialize, candid::CandidType)]
 pub struct EventDTO {
     pub name: String,
