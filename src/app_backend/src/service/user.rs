@@ -40,6 +40,32 @@ pub fn register_user(user: Principal, user_dto: dto_request::request::UserDTO) -
         true
     }
 }
+// Register blank user
+pub fn register_blank_user(user: Principal) -> bool {
+    let user_dto = dto_request::request::UserDTO {
+        name: "".to_string(),
+        location: (0.0, 0.0),
+        tags: vec![],
+        job: "".to_string(),
+        role: "".to_string(),
+        bio: "".to_string(),
+    };
+    if user_exists(user) {
+        false
+    } else {
+        let user_data = match UserDataModel::new(user_dto) {
+            Ok(data) => data,
+            Err(_) => return false,
+        };
+
+        USER_DATA_MODEL.with(|user_data_model| {
+            let mut user_data_map = user_data_model.borrow_mut();
+            user_data_map.insert(user, user_data);
+        });
+        true
+    }
+}
+
 
 // Update user
 pub fn update_user(user: Principal, user_dto: dto_request::request::UserDTO) -> bool{

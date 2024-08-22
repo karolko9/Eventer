@@ -26,9 +26,9 @@
     const joinEvent = async (id) => {
         console.log(id)
         if ($auth.isReady && $auth.isAuthenticated) {
-        const response = await $auth.whoamiActor.join_event(id);
-        console.log(response);
-      }
+            const response = await $auth.whoamiActor.join_event(id);
+            console.log("Response:" , response);
+        }
     }
 </script>
 
@@ -50,10 +50,11 @@
         </div> 
         <div class="w-full overflow-hidden mb-4">
             <div class="flex gap-2 overflow-x-scroll">
-                <button on:click={joinEvent(event.id)} class="w-fit flex items-center gap-1 p-2 whitespace-nowrap bg-primary rounded-xl">
+                <button on:click={() => joinEvent(event.id)} class="w-fit flex items-center gap-1 p-2 whitespace-nowrap bg-primary rounded-xl">
                     <IconTicket style="color: #fff"/>
                     <p class="text-background">Join event</p>
                 </button>
+                
                 <div class="w-fit flex items-center gap-1 p-2 whitespace-nowrap bg-primary rounded-xl">
                     <IconInfoCircle style="color: #fff"/>
                     <p class="text-background">More info</p>
