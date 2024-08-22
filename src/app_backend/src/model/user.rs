@@ -7,11 +7,11 @@ use candid::CandidType;
 pub struct UserDataModel {
     name: String,
     location: (f64, f64),
-    tags: Vec<String>,
+    tags: HashSet<String>,
     job: String,
     role: String,
     bio: String,
-    list_of_events: Vec<u128>,
+    list_of_events: HashSet<u128>,
 }
 
 impl UserDataModel {
@@ -30,7 +30,7 @@ impl UserDataModel {
             job: user_dto.job,
             role: user_dto.role,
             bio: user_dto.bio,
-            list_of_events: Vec::new(),
+            list_of_events: HashSet::new(),
         })
     }
 
@@ -62,12 +62,12 @@ impl UserDataModel {
     }
 
     // Getter dla pola `tags`
-    pub fn get_tags(&self) -> &Vec<String> {
+    pub fn get_tags(&self) -> &HashSet<String> {
         &self.tags
     }
 
     // Setter dla pola `tags`
-    pub fn set_tags(&mut self, tags: Vec<String>) {
+    pub fn set_tags(&mut self, tags: HashSet<String>) {
         self.tags = tags;
     }
 

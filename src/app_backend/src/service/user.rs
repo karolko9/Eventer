@@ -45,7 +45,7 @@ pub fn register_blank_user(user: Principal) -> bool {
     let user_dto = dto_request::request::UserDTO {
         name: "".to_string(),
         location: (0.0, 0.0),
-        tags: vec![],
+        tags: HashSet::new(),
         job: "".to_string(),
         role: "".to_string(),
         bio: "".to_string(),
