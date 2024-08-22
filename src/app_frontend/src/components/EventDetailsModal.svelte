@@ -82,7 +82,7 @@
             <p style="text-md">Tickets: <span class="text-green">available</span></p>
         </div> 
         <div class="w-full flex gap-2  mb-4">
-            <button on:click={joinEvent(event.id)} class="w-fit flex items-center gap-1 p-2 whitespace-nowrap bg-primary rounded-xl">
+            <button on:click={() => joinEvent(event.id)} class="w-fit flex items-center gap-1 p-2 whitespace-nowrap bg-primary rounded-xl">
                 <IconTicket style="color: #fff"/>
                 <p class="text-background">Join event</p>
             </button>
