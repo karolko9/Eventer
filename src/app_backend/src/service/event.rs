@@ -85,11 +85,15 @@ pub fn get_event_by_tag_user(caller: Principal) -> Vec<EventResponse> {
 
 pub fn join_event(caller: Principal, event_id: u128) -> bool {
     let mut event_joined = false;
-
     EVENTS.with(|events| {
-        let mut events_map = events.borrow_mut();
+        let mut events_map = events.borrow_mut();        
         if let Some(host) = events_map.get_mut(&event_id).map(|event| event.list_of_admin().first().unwrap()) {
             if host.to_string() == caller.to_string() {
+                return; // Host cannot join their own event
+            }
+        }
+        if let Some(declaration) = events_map.get_mut(&event_id).map(|event| event.hash_map_of_declared().get(&caller)) {
+            if "declared".to_string() == *declaration.unwrap() { // If user has already declared, they cannot join again
                 return;
             }
         }
@@ -98,7 +102,6 @@ pub fn join_event(caller: Principal, event_id: u128) -> bool {
             event_joined = true;
         }
     });
-
     if event_joined {
         user::register_blank_user(caller);
         USER_DATA_MODEL.with(|users| {
