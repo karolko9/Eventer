@@ -89,8 +89,8 @@ pub fn join_event(caller: Principal, event_id: u128) -> bool {
     EVENTS.with(|events| {
         let mut events_map = events.borrow_mut();
         if let Some(host) = events_map.get_mut(&event_id).map(|event| event.list_of_admin().first().unwrap()) {
-            if *host.to_string() == caller.to_string() {
-                returt false;                
+            if host.to_string() == caller.to_string() {
+                return;
             }
         }
         if let Some(event) = events_map.get_mut(&event_id) {
@@ -100,7 +100,6 @@ pub fn join_event(caller: Principal, event_id: u128) -> bool {
     });
 
     if event_joined {
-
         user::register_blank_user(caller);
         USER_DATA_MODEL.with(|users| {
             let mut users_map = users.borrow_mut();
