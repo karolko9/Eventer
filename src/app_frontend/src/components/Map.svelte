@@ -77,7 +77,7 @@
   }
 </script>
 
-<section class="map-wrapper">
+<section class="w-[100%] h-[100%] flex relative">
   <MapLibre
     style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
     class="map"
@@ -99,6 +99,7 @@
   <div class="searchbox-wrapper" class:shifted={eventDetailsModalOpen}>
     <Searchbox on:location={handleSearchboxLocationSelect}/>
   </div>
+
   {#if !$auth.isAuthenticated}
     <button on:click={handleAuth} class="absolute right-[20px] top-unset bottom-[20px] lg:bottom-unset lg:top-[20px] w-fit h-fit p-2 flex flex-col items-center justify-center border-[1px] border-color bg-background rounded-xl">
       <IconLogin style="color:#5B2784"/>
@@ -111,28 +112,6 @@
 </section>
 
 <style>
-  .map-wrapper {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    position: relative;
-  }
-  .popup-wrapper {
-    width: 200px;
-    min-height: 50px;
-    border-radius: 10px;
-    border: 2px solid #5b2784;
-    padding: 10px;
-  }
-  .event-name {
-    font-weight: bold;
-    padding-bottom: 5px;
-    border-bottom: 2px solid #5b2784;
-  }
-  .event-description-item {
-    margin-top: 5px;
-    margin-left: 10px;
-  }
   :global(.map) {
     flex: 1;
   }
@@ -165,7 +144,3 @@
 
 
 </style>
-    <!-- <div class="w-full mb-4 flex items-center justify-between border p-2 rounded">
-      <input placeholder="Find event" class="flex-1 text-md text-primary  focus:outline-none" />
-      <IconSearch style="color: #5B2784; width:30px; height:30px;"/>
-  </div> -->
