@@ -6,8 +6,8 @@
   import EventDetailsModal from './EventDetailsModal.svelte';
   import Button from './Button.svelte';
   import Searchbox from './Searchbox.svelte';
+  import Loader from './Loader.svelte';
   import { IconWallet, IconLogout } from '@tabler/icons-svelte';
-
 
   onMount(() => {
     $auth.init().then(() => {
@@ -29,11 +29,16 @@
 
   let mapCenter = [50, 20];
 
-  let map;
+  let map = null;
+  let showLoader = true;
+
+  const handleMapLoad  = () => {
+    showLoader = false;
+  }
 
   async function fetchEvents() {
     try {
-      if ($auth.isReady && $auth.isAuthenticated) {
+      if ($auth.isReady) {
         const eventsList = await $auth.whoamiActor.get_all_events_with_details();
         events.set(eventsList);
       }
@@ -70,7 +75,6 @@
       zoom: 9,
     });
   }
-
 </script>
 
 <section class="map-wrapper">
@@ -82,6 +86,7 @@
     attributionControl={false}     
     zoomOnDoubleClick={true}
     bind:map={map}
+    on:load={handleMapLoad}
   >
     {#each $events as event}
       <DefaultMarker lngLat={[event.location[1], event.location[0]]}>
@@ -110,6 +115,9 @@
       <IconWallet style="color:#5B2784"/>
     {/if}
   </button>
+  {#if showLoader}
+    <Loader imageSrc="undraw_world_re.svg" desription="Preparing map"/>
+  {/if}
 </section>
 
 <style>
@@ -117,7 +125,6 @@
     width: 100%;
     height: 100%;
     display: flex;
-    background-color: #aaa;
     position: relative;
   }
   .popup-wrapper {

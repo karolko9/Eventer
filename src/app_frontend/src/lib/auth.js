@@ -99,7 +99,8 @@ export const auth = readable(initialAuth, (set) => {
       auth.authClient = authClient;
       const isAuthenticated = await authClient.isAuthenticated();
       const identity = isAuthenticated ? authClient.getIdentity() : null;
-      const whoamiActor = identity ? actorFromIdentity(identity) : null;
+      //replace null with createActor() to enable using backend for anonymus actor
+      const whoamiActor = identity ? actorFromIdentity(identity) : createActor(canisterId);
 
       auth.isAuthenticated = isAuthenticated;
       auth.identity = identity;

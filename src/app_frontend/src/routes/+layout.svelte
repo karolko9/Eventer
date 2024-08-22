@@ -5,7 +5,7 @@
 
 <div class="fixed inset-0 flex flex-col-reverse lg:flex-row">
     <Menu />
-    <main class="flex-1 h-full">
+    <main class="flex-1 h-full relative">
         <slot />
     </main>
 </div>
