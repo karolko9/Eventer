@@ -1,17 +1,28 @@
 import { writable } from 'svelte/store';
 
-export const formProgress = writable(33);
-export const formStep = writable(0);
-export const formData = writable(
-    {
-        name: "",
-        event_tags: [],
-        description: "",
-        thumbnail: "",
-        location: [],
-        address: "",
-        date: "",
-        start_hour: "",
-        end_hour: ""
-    }
-)
+const defaultFormData = {
+    name: "",
+    event_tags: [],
+    description: "",
+    thumbnail: "",
+    location: [],
+    address: "",
+    date: "",
+    start_hour: "",
+    end_hour: "",
+    media: "",
+    phone: "",
+    email: "",
+    price: 0
+};
+
+const formData = writable(defaultFormData)
+const formStep = writable(0);
+const formProgress = writable(0);
+
+const  resetFormData = () => {
+    formData.set(defaultFormData);
+}
+
+
+export { formData, resetFormData, formStep, formProgress}

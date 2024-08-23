@@ -6,6 +6,8 @@
     import FormDateStep from "./FormDateStep.svelte";
     import FormDetailsStep from "./FormDetailsStep.svelte";
     import FormLocationStep from "./FormLocationStep.svelte";
+    import FormTicketsStep from "./FormTicketsStep.svelte";
+    import FormHostContactStep from "./FormHostContactStep.svelte";
     import { auth } from "../../lib/auth";
     
     // progress bar
@@ -17,7 +19,7 @@
         max: 100,
     })
 
-    const formHeaders = ["Event details", "Event time", "Event location"];
+    const formHeaders = ["Event details", "Event time", "Event location", "Tickets details", "Contact with host"];
 
     onMount(() => {
         $auth.init();
@@ -42,5 +44,11 @@
         {/if}
         {#if $formStep === 2}
             <FormLocationStep />
+        {/if}
+        {#if $formStep === 3}
+            <FormTicketsStep />
+        {/if}
+        {#if $formStep === 4}
+            <FormHostContactStep />
         {/if}
 </form>

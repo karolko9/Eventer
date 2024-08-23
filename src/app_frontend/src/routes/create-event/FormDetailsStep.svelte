@@ -5,13 +5,8 @@
 
     import { formProgress, formStep, formData } from '../../stores/createEvent.js';
 
-  
-
     let formDataStore = get(formData);
-    let fileinput;
     let { name, event_tags, description, thumbnail } = formDataStore;
-
-    let fetchedEventTags = event_tags;
 
     const {
         elements: { root, input, tag, deleteTrigger, edit },
@@ -25,9 +20,7 @@
         addOnPaste: true,
     });
 
-    let nameError = false;
-    let descriptionError = false;
-    let thumbnailError = false;
+    let fileinput;
 
     const onFileSelected = (e) => {
         let image = e.target.files[0];
@@ -39,16 +32,23 @@
         };
     }
 
+    let nameError = false;
+    let descriptionError = false;
+    let thumbnailError = false;
+    let tagsError = false;
+
     const changeStep = () => {
         nameError = !name;
         descriptionError = !description;
         thumbnailError = !thumbnail;
+        tagsError = tags.get().length > 0;
 
         if (nameError || descriptionError || thumbnailError) return;
+    
         const event_tags = tags.get().map((tag) => tag.value.trim());
 
         formStep.set(1);
-        formProgress.set(66);
+        formProgress.set(20);
 
         formData.update(data => ({ ...data, name, event_tags, description, thumbnail }));
     }
@@ -90,15 +90,18 @@
                 <input use:melt={$input} type="text" name="tags" placeholder="Enter tags..." class="min-w-[4.5rem] shrink grow basis-0 border-0 text-black outline-none focus:!ring-0 data-[invalid]:text-red-500 placeholder-primary500"/>
             </div>
         </div>
+        {#if descriptionError}
+            <p class="text-sm text-accent">At least 1 tag is required</p>
+        {/if}
     </div>
     <div class="lg:h-fit flex flex-col gap-1 order-4 mb-3">
         <h3 class="mb-1 text-md text-primary">Event thumbnail</h3>
         {#if !thumbnail}
-            <div class="lg:w-[40vw] lg:min-h-[200px] p-3 flex flex-col items-center justify-center gap-2 border-2 border-color rounded-md" on:click={() => fileinput.click()}>
+            <button class="lg:w-[40vw] lg:min-h-[200px] p-3 flex flex-col items-center justify-center gap-2 border-2 border-color rounded-md" on:click={() => fileinput.click()}>
                 <IconPhotoPlus style="height: 40px; width: 40px; color: #5B2784"/>
                 <p class="text-sm text-primary font-medium">Upload event's thumbnail</p>
                 <input style="display:none" type="file" accept=".jpg, .jpeg, .png" on:change={onFileSelected} bind:this={fileinput} />
-            </div>
+            </button>
         {:else}
             <img class="lg:w-[40vw] object-cover rounded-md" src={thumbnail} alt="thumbnail" />
         {/if}
@@ -107,4 +110,6 @@
         {/if}
     </div>
 </article>
-<button on:click={changeStep} class="w-full lg:w-[200px] mt-3 p-3 bg-primary border-2 border-primary text-background lg:self-start rounded-md">Continue</button>
+<div class="flex flex-col items-center lg:items-start lg:flex-row gap-2 lg:gap-3">
+    <button type="submit" on:click={changeStep} class="w-full lg:w-[200px] mt-3 p-3 bg-primary border-2 border-primary text-background lg:self-start rounded-md">Continue</button>
+</div>

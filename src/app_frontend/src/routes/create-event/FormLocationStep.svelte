@@ -1,33 +1,27 @@
 <script>
-    import { onMount } from "svelte";
     import { get } from 'svelte/store';
-    import { goto } from '$app/navigation'
     import { MapLibre, MapEvents, DefaultMarker } from 'svelte-maplibre';
     import { IconMapSearch } from '@tabler/icons-svelte'
     import { formProgress, formStep, formData } from '../../stores/createEvent.js';
-    import { auth } from "../../lib/auth";
-
-    onMount(() => {
-        $auth.init();
-    });
+    import { addToast } from "../../components/Toast.svelte";
 
     let formDataStore = get(formData);
-    let {name, event_tags, description, location, address, date, start_hour, end_hour} = formDataStore;
+    let {location, address} = formDataStore;
+
     let locationError = ""
 
     let eventLocationLat = "";
     let eventLocationLong = "";
     let marker = null;
     let searchQuery = "";
-    let creationStatus = "";
     let mapCenter = [50, 20];
     let searchResults = [];
 
-    const  fetchLocationName = async(lat, lon) => {
+    const  fetchLocationName = async (lat, lon) => {
         try {
             const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=en`);
             const data = await response.json();
-            return data.display_name || "Unknown location";
+            return data.display_name;
         } catch (error) {
             console.error("Error fetching location name:", error);
             return "Error fetching location name";
@@ -43,14 +37,18 @@
             
             if (data.length > 0) {
                 searchResults = data;
-                creationStatus = ""; 
             } else {
                 searchResults = [];
-                creationStatus = "No results found.";
             }
         } catch (error) {
+            addToast({
+                    data: {
+                        title: 'Error',
+                        description: 'Location is not found',
+                        color: 'bg-red-500'
+                    }
+            })
             console.error("Error fetching location:", error);
-            creationStatus = "Error fetching location.";
         }
     }
 
@@ -74,56 +72,29 @@
         eventLocationLat = e.detail.lngLat.lat;
         eventLocationLong = e.detail.lngLat.lng;
     }
-     
-    const changeStep = (step, progress) => {
-        formStep.set(step);
-        formProgress.set(progress);
+
+    const goBack = () => {
+        formStep.set(1);
+        formProgress.set(40);
     }
 
-    const handleCreateEvent = async (locationData) => {
-        console.log("Creating event...");
-        try {
-            const eventDTO = {
-                name,
-                tags: event_tags,
-                location: locationData[0],
-                address: locationData[1],  
-                time_start:  new Date(`${date}T${start_hour}:00`).toISOString(),
-                time_end: new Date(`${date}T${end_hour}:00`).toISOString()
-            };
-
-            if ($auth.isReady && $auth.isAuthenticated) {
-                const result = await $auth.whoamiActor.create_event(eventDTO);
-                creationStatus = result ? "Event created successfully!" : "Failed to create event.";
-                setTimeout(() =>{
-                    goto('/');
-                }, 2000)
-            } else {
-                creationStatus = "Authentication is not ready or not authenticated.";
-            }
-        } catch (error) {
-            console.error("Error creating event:", error);
-            creationStatus = "Error creating event.";
-        }
-    }
-
-    const submitHandler = () => {
+    const changeStep = async () => {
         locationError = !eventLocationLat;
 
         if (locationError) return;
         
         const location = [parseFloat(eventLocationLat), parseFloat(eventLocationLong)];
+
+        const locationName = await fetchLocationName(eventLocationLat, eventLocationLong);
+
+        formData.update(data => ({
+            ...data,
+            location,
+            address: locationName
+        }));
         
-        fetchLocationName(eventLocationLat, eventLocationLong).then((res) => {
-            formData.update(data => ({
-                ...data,
-                location,
-                address:res
-            }));
-            return [location, res];
-        }).then((res) => {
-            handleCreateEvent(res);
-        })
+        formStep.set(3);
+        formProgress.set(60);
     }
 
 </script>
@@ -153,9 +124,6 @@
             {/each}
         </ul>
     {/if}
-    {#if creationStatus}
-        <p class="text-sm mb-3 {creationStatus === 'Event created successfully!' ? 'text-green': 'text-accent'}">{creationStatus}</p>
-    {/if}
     <MapLibre 
         center={[50,20]}
         zoom={1}
@@ -170,9 +138,9 @@
     </MapLibre>
 </article>
 <div class="flex flex-col items-center lg:items-start lg:flex-row gap-2 lg:gap-3">
-    <button on:click={submitHandler} class="w-full lg:w-[200px] mt-3 p-3 bg-primary border-2 border-primary text-background lg:self-start rounded-md">Continue</button>
-    <a href="#" on:click={() => changeStep(1, 66)} class="lg:hidden text-center text-primary500 text-md underline">Go back</a>
-    <button  on:click={() => changeStep(1, 66)} class="hidden lg:block w-[200px] mt-3 p-3 bg-background border-2 border-primary text-primary font-semibold self-start rounded-md">Go back</button>
+    <a href="#" on:click={goBack} class="lg:hidden text-center text-primary500 text-md underline">Go back</a>
+    <button  on:click={goBack} class="hidden lg:block w-[200px] mt-3 p-3 bg-background border-2 border-primary text-primary font-semibold self-start rounded-md">Go back</button>
+    <button type="submit" on:click={changeStep} class="w-full lg:w-[200px] mt-3 p-3 bg-primary border-2 border-primary text-background lg:self-start rounded-md">Continue</button>
 </div>
 <style>
      :global(.map) {

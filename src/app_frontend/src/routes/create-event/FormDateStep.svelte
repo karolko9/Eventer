@@ -4,8 +4,12 @@
     import { formProgress, formStep, formData } from '../../stores/createEvent.js';
 
     let formDataStore = get(formData);
-    
     let { date, start_hour, end_hour } = formDataStore;
+
+    const goBack = () => {
+      formStep.set(0);
+      formProgress.set(20);
+    }
 
     let dateError = false;
     let startHourError = false;
@@ -25,8 +29,8 @@
             end_hour
         }));
 
-        formStep.set(step);
-        formProgress.set(progress);
+        formStep.set(2);
+        formProgress.set(40);
     }
 </script>
     
@@ -54,7 +58,7 @@
   </div>
 </article>
 <div class="flex flex-col items-center lg:items-start lg:flex-row gap-2 lg:gap-3">
-  <button type="submit" on:click={() => changeStep(2,100)} class="w-full lg:w-[200px] mt-3 p-3 bg-primary border-2 border-primary text-background lg:self-start rounded-md">Continue</button>
-  <a href="#" on:click={() => changeStep(0,33)} class="lg:hidden text-center text-primary500 text-md underline">Go back</a>
-  <button  on:click={() => changeStep(0,33)} class="hidden lg:block w-[200px] mt-3 p-3 bg-background border-2 border-primary text-primary font-semibold self-start rounded-md">Go back</button>
+  <a href="#" on:click={goBack} class="lg:hidden text-center text-primary500 text-md underline">Go back</a>
+  <button  on:click={goBack} class="hidden lg:block w-[200px] mt-3 p-3 bg-background border-2 border-primary text-primary font-semibold self-start rounded-md">Go back</button>
+  <button type="submit" on:click={changeStep} class="w-full lg:w-[200px] mt-3 p-3 bg-primary border-2 border-primary text-background lg:self-start rounded-md">Continue</button>
 </div>
