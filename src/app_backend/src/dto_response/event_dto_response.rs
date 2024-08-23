@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use candid::CandidType;
+use crate::component;
 
 use crate::model::event_model::Event;
 
@@ -47,6 +48,7 @@ pub struct EventDetailsResponse {
     pub tags: Vec<String>,
     pub price: f32,
     pub description: String,
+    pub contact: component::contact::Contact,
 }
 
 impl From<&Event> for EventDetailsResponse {
@@ -61,6 +63,7 @@ impl From<&Event> for EventDetailsResponse {
             tags: event.tags().iter().cloned().collect(),
             price: event.price(),
             description: event.description().to_string(),
+            contact: event.contact()
         }
     }
 }

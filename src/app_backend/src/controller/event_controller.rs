@@ -1,6 +1,7 @@
 use crate::dto_request;
 use crate::dto_response;
 
+use crate::dto_response::event_dto_response::EventMapResponse;
 use crate::service; 
 
 // use crate::error::event_error;
@@ -25,4 +26,9 @@ fn get_event(event_id: u128) -> Option<dto_response::event_dto_response::EventDe
 #[ic_cdk::query]
 fn get_event_by_tags_user() -> Option<Vec<dto_response::event_dto_response::EventMapResponse>> {
     service::query::event_service_query::get_event_by_tag_user(ic_cdk::caller())           
+}
+
+#[ic_cdk::query]
+fn get_all_events() -> Option<Vec<dto_response::event_dto_response::EventMapResponse>>{
+    service::query::event_service_query::get_all_events()
 }

@@ -32,6 +32,15 @@ pub fn get_event_by_tag_user(caller: Principal) -> Option<Vec<EventMapResponse>>
 }
 
 
+pub fn get_all_events() -> Option<Vec<EventMapResponse>>{
+    event_repository::get_all_events().map(|events_vec| {
+        events_vec.into_iter()
+            .map(|event| EventMapResponse::from(event))
+            .collect()
+    })
+}
+
+
 
 
 

@@ -107,6 +107,10 @@ impl Event {
         &self.description
     }
 
+    pub fn contact(&self) -> component::contact::Contact{
+        self.contact.clone()
+    }
+
     // Setters
     pub fn set_name(&mut self, name: String) {
         self.name = name;

@@ -27,7 +27,6 @@
   });
 
   const triggerUpdateModal = () => {
-      console.log("clicked");
       showUpdateModalButton.click();
   }
 
@@ -37,7 +36,6 @@
   }
 
   $: if (showUpdateModal) {
-      
       triggerUpdateModal();
     }
 
@@ -77,10 +75,10 @@
     showLoader = false;
   }
 
-  async function fetchEvents(tag) {
+  async function fetchEvents() {
     try {
       if ($auth.isReady) {
-        const eventsList = await $auth.whoamiActor.get_event_by_tag_user();
+        const eventsList = await $auth.whoamiActor.get_all_events();
         events.set(eventsList);
       }
     } catch (error) {
@@ -146,7 +144,7 @@
     on:load={handleMapLoad}
     on:click={closeEventDetailsModal}
   >
-    {#each $events as event}
+    {#each $events[0] as event}
       <Marker lngLat={[event.location[1], event.location[0]]} on:click={() => selectEvent(event)} class="h-8 w-8 flex p-1 items-center justify-center rounded-full bg-primary border-4 border-primary-10">
         <IconConfetti style="height:24px; with:24px; color:#fff"/>
       </Marker>

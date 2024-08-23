@@ -30,6 +30,23 @@ pub fn get_event_by_id(event_id: u128) -> Option<Event> {
     })
 }
 
+pub fn get_all_events() -> Option<Vec<Event>>{
+    EVENTS.with(|events| {
+        let events = events.borrow();
+        let mut all_events = Vec::new();
+
+        for event_list in events.values() {
+            all_events.push(event_list.clone());
+        }
+
+        if all_events.is_empty() {
+            None
+        } else {
+            Some(all_events)
+        }
+    })
+}
+
 pub fn add_user_to_event(event_id: u128, caller: Principal) -> Result<(), String> {
     EVENTS.with(|events| {
         let mut events_map = events.borrow_mut();

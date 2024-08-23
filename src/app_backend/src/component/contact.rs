@@ -1,6 +1,7 @@
 use candid::CandidType;
+use serde::{Deserialize, Serialize};
 
-#[derive(CandidType, Clone, Debug)]
+#[derive(CandidType, Clone, Debug, Serialize, Deserialize)]
 pub struct Contact {
     pub email: String,
     pub phone: String,

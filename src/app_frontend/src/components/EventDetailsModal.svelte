@@ -1,5 +1,5 @@
 <script>
-    import Button from "./Button.svelte";
+    import { onMount } from "svelte";
     import { createDialog, melt } from '@melt-ui/svelte';
     import { fade } from 'svelte/transition';
     import { auth } from "../lib/auth";
@@ -9,22 +9,30 @@
     export let openModal;
 
     let eventDetails;
-
     let joinedEvent = false;
+
+    onMount(() => {
+        $auth.init();
+    });
+
+    $: if(event){
+        fetchEventDetails();
+    }
 
     const fetchEventDetails = async () => {
         try {
             if ($auth.isReady) {
-                const details = await $auth.whoamiActor.get_event(event.id);
-                eventDetails = details;
-            }
+            const details = await $auth.whoamiActor.get_event(parseInt(event.id));
+            eventDetails = details[0];
+        }
         } catch (error) {
             console.error("Error fetching event:", error);
         }
     }
 
-    if(event != null)
+    if(openModal){
         fetchEventDetails();
+    }
 
     const postalCodeRegex = /^\d{2}-\d{3}$/;
 
@@ -43,7 +51,7 @@
 }
 
     const getStreetAndNumber = (address) => {
-        let fullAddressArr = address.split(', ');
+        let fullAddressArr = address.split(',');
         return fullAddressArr[0] + ", " + fullAddressArr[3] + ", " + findPostalCode(fullAddressArr);
     }
 
@@ -56,12 +64,14 @@
         return formattedDate;
     }
 
-
     const joinEvent = async (id) => {
-        console.log(id)
         if ($auth.isReady && $auth.isAuthenticated) {
-            const response = await $auth.whoamiActor.join_event(id);
-            console.log("Response:" , response);
+            try{
+                const response = await $auth.whoamiActor.join_event(parseInt(id));
+                console.log("Response:" , response);
+            }catch(error){
+                console.error(error)
+            } 
         }
     }
 
@@ -81,7 +91,7 @@
   });
 </script>
 
-<main class:open={openModal} class="h-[500px] lg:h-full w-full lg:w-[400px] bottom-[-500px] lg:left-[-500px] lg:bottom-0 p-4 bg-white overflow-y-scroll absolute z-10 duration-300 ease-in-out   border-r-2 border-gray-200 rounded-md ">
+<main class:open={openModal} class="h-[500px] lg:h-full w-full lg:w-[400px] bottom-[-500px] lg:left-[-500px] lg:bottom-0 p-4 bg-white overflow-y-scroll absolute z-10 duration-300 ease-in-out border-r-2 border-gray-200 rounded-md ">
     {#if eventDetails != null} 
         <img src="/eventCardImg1.png" class="w-full object-cover mb-4 rounded-md" alt="thumbnail"/>
         <h1 class="mb-2 text-lg font-semibold">{eventDetails.name}</h1>
@@ -122,20 +132,20 @@
                     <p use:melt={$description} class="mb-4 mt-1 leading-normal text-zinc-600">Contact event host by provided details</p>
                     <div class="flex items-center gap-2 mb-2">
                         <IconPhone style="color:#5B2784"/>
-                        <a class="font-medium text-primary300" href="tel:123456789">123 456 789</a>
+                        <a class="font-medium text-primary300" href="tel:123456789">{eventDetails.contact.phone}</a>
                     </div>
                     <div class="flex items-center gap-2 mb-2">
                         <IconMailUp style="color:#5B2784"/>
-                        <a class="font-medium text-primary300" href="mailto:hostmail@gmail.com">host.mail@gmail.com</a>
+                        <a class="font-medium text-primary300" href="mailto:hostmail@gmail.com">{eventDetails.contact.email}</a>
                     </div>
                 </div>
             </div>
         {/if}
-        <p class="text-sm font-light mb-4">"ICP: Roadmap for Devs" is an event that guides developers through building on the Internet Computer Protocol (ICP). It features expert speakers, hands-on workshops, and networking opportunities, providing essential insights and tools for effective ICP development.</p>
+        <p class="text-sm font-light mb-4 break-words">{eventDetails.description}</p>
         <div class="flex gap-2 mb-2">
             <IconTicket style="color: #000"/>
             <div class="flex flex-col">
-                <p class="text-md">Form: 100zł</p>
+                <p class="text-md">Form: {eventDetails.price}zł</p>
                 <p class="text-sm opacity-80">Price includes 4zł service fee</p>
             </div>
         </div>
