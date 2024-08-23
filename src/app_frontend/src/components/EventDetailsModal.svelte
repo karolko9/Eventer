@@ -8,7 +8,23 @@
     export let event;
     export let openModal;
 
+    let eventDetails;
+
     let joinedEvent = false;
+
+    const fetchEventDetails = async () => {
+        try {
+            if ($auth.isReady) {
+                const details = await $auth.whoamiActor.get_event(event.id);
+                eventDetails = details;
+            }
+        } catch (error) {
+            console.error("Error fetching event:", error);
+        }
+    }
+
+    if(event != null)
+        fetchEventDetails();
 
     const postalCodeRegex = /^\d{2}-\d{3}$/;
 
@@ -66,23 +82,23 @@
 </script>
 
 <main class:open={openModal} class="h-[500px] lg:h-full w-full lg:w-[400px] bottom-[-500px] lg:left-[-500px] lg:bottom-0 p-4 bg-white overflow-y-scroll absolute z-10 duration-300 ease-in-out   border-r-2 border-gray-200 rounded-md ">
-    {#if event != null} 
+    {#if eventDetails != null} 
         <img src="/eventCardImg1.png" class="w-full object-cover mb-4 rounded-md" alt="thumbnail"/>
-        <h1 class="mb-2 text-lg font-semibold">{event.name}</h1>
+        <h1 class="mb-2 text-lg font-semibold">{eventDetails.name}</h1>
         <div class="flex items-center gap-3 mb-2">
             <IconCalendarEvent />
-            <p style="text-md">{formatDate(event.time_start)}</p>
+            <p style="text-md">{formatDate(eventDetails.time_start)}</p>
         </div>
         <div class="flex gap-3 mb-2">
             <IconMapPin />
-            <p style="text-md">{getStreetAndNumber(event.address)}</p>
+            <p style="text-md">{getStreetAndNumber(eventDetails.address)}</p>
         </div>
         <div class="flex gap-3 mb-4">
             <IconUsers />
             <p style="text-md">Tickets: <span class="text-green">available</span></p>
         </div> 
         <div class="w-full flex gap-2  mb-4">
-            <button on:click={() => joinEvent(event.id)} class="w-fit flex items-center gap-1 p-2 whitespace-nowrap bg-primary rounded-xl">
+            <button on:click={() => joinEvent(eventDetails.id)} class="w-fit flex items-center gap-1 p-2 whitespace-nowrap bg-primary rounded-xl">
                 <IconTicket style="color: #fff"/>
                 <p class="text-background">Join event</p>
             </button>

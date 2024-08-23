@@ -77,11 +77,11 @@
     showLoader = false;
   }
 
-  async function fetchEvents() {
+  async function fetchEvents(tag) {
     try {
       if ($auth.isReady) {
-        // const eventsList = await $auth.whoamiActor.get_all_events_with_details();
-        // events.set(eventsList);
+        const eventsList = await $auth.whoamiActor.get_event_by_tag_user();
+        events.set(eventsList);
       }
     } catch (error) {
       console.error("Error fetching events:", error);
