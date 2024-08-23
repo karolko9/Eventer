@@ -1,24 +1,21 @@
 <script>
+    import { onMount } from "svelte";
+    import { goto } from '$app/navigation'
     import { IconInfoCircle, IconMapSearch, IconX } from '@tabler/icons-svelte'; 
     import { createTagsInput, melt } from '@melt-ui/svelte';
+    import { auth } from "../../lib/auth.js";
+    import { addToast } from "../../components/Toast.svelte";
 
+    onMount(() => {
+        $auth.init()
+    });
+
+    
     let name;
-    let job;
-    let role;
-    let bio;
     let searchQuery;
-
     let searchResults = [];
-    let eventLocationLat = "";
-    let eventLocationLong = "";
-    let creationStatus = "";
-
-    let nameError = false;
-    let locationError = false;
-    let tagsError = false;
-    let jobError = false;
-    let roleError = false;
-    let bioError = false;
+    let userLocationLat = "";
+    let userLocationLong = "";
 
     const {
         elements: { root, input, tag, deleteTrigger, edit },
@@ -34,8 +31,8 @@
 
     const selectLocation = (result) => {
         const { lat, lon } = result;
-        eventLocationLat = lat;
-        eventLocationLong = lon;
+        userLocationLat = lat;
+        userLocationLong = lon;
         searchResults = [];
     }
 
@@ -51,39 +48,59 @@
         try {
             const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=5`);
             const data = await response.json();
-            
             if (data.length > 0) {
                 searchResults = data;
-                creationStatus = ""; 
             } else {
                 searchResults = [];
-                creationStatus = "No results found.";
             }
         } catch (error) {
             console.error("Error fetching location:", error);
-            creationStatus = "Error fetching location.";
         }
     }
 
-    const handleRegister = async () => {
+    let nameError = false;
+    let locationError = false;
+    let tagsError = false;
 
-    } 
-
-    const submitHandler = () => {
+    const submitHandler = async () => {
         nameError = !name;
-        location = !searchQuery;
-        tagsError = !tags;
-        jobError = !job;
-        roleError = !role;
-        bioError = !bio;
+        locationError  = !searchQuery;
+        tagsError = !tags.get().length > 0;
 
-        if (nameError || locationError || tagsError || jobError || roleError || bioError) return;
+        if (nameError || locationError) return;
         const user_tags = tags.get().map((tag) => tag.value.trim());
 
+        const userDTO = {
+                name,
+                location: [parseFloat(userLocationLat), parseFloat(userLocationLong)],
+                tags: user_tags,
+                job: "",
+                role: "",
+                bio: ""
+        };
+        
+        try{
+            if ($auth.isReady && $auth.isAuthenticated) {
+                const result = await $auth.whoamiActor.register_user(userDTO);
+                if(result){
+                    localStorage.setItem("updated_profile", true)
+                    addToast({data: {title: 'Success',description: 'Updated profile successfully!', color: 'bg-green'}})
+                    setTimeout(() => {
+                        goto('/');
+                    }, 2000)
+                } else{
+                    addToast({data: {title: 'Error', description: 'Login in order to update profile', color: 'bg-red-500'}})
+                }
+            } else {
+                addToast({data: {title: 'Error', description: 'Login in order to update profile', color: 'bg-red-500'}})
+            }
+        }catch(error){
+            addToast({data: { title: 'Error', description: 'Something went wrong!', color: 'bg-red-500'}})
+            console.log(error.message);
+        }
     }
 
 </script>
-
 
 <header class="relative p-4 flex items-center justify-between">
     <h1 class="text-2xl font-semibold text-primary">Profile</h1>
@@ -93,7 +110,7 @@
     <article class="w-full h-mobile flex flex-col lg:p-4 overflow-y-auto lg:p-2 lg:border-2 lg:border-color lg:rounded-md">
         <div class="lg:h-fit flex flex-col gap-1 mb-3">
             <label for="name" class="mb-1 text-md text-primary">Name</label>
-            <input bind:value={name} name="name" placeholder="Enter your city name" class="lg:w-[40vw] p-2 text-sm text-primary font-medium border-2 border-color focus:outline-none focus:border-primary bg-background rounded-md placeholder-primary500"/>
+            <input bind:value={name} name="name" placeholder="Enter Your name or nickname" class="lg:w-[40vw] p-2 text-sm text-primary font-medium border-2 border-color focus:outline-none focus:border-primary bg-background rounded-md placeholder-primary500"/>
             {#if nameError}
                 <p class="text-sm text-accent">Entering your name is required</p>
             {/if}
@@ -101,7 +118,7 @@
         <div class="relative lg:h-fit flex flex-col gap-1 mb-3">
             <label for="name" class="mb-1 text-md text-primary">Location</label>
             <div class="lg:w-[40vw] relative lg:h-fit flex gap-1 mb-3">
-                <input name="name" id="searchQuery" bind:value={searchQuery} placeholder="Enter your city of residence" class="w-full p-2 text-sm text-primary font-medium border-2 border-color focus:outline-none focus:border-primary bg-background rounded-md placeholder-primary500"/>
+                <input name="name" id="searchQuery" bind:value={searchQuery} placeholder="Enter Your city of residence" class="w-full p-2 text-sm text-primary font-medium border-2 border-color focus:outline-none focus:border-primary bg-background rounded-md placeholder-primary500"/>
                 <button on:click={searchLocation} class="flex items-center bg-primary px-2 py-0.5 rounded-md">
                     <IconMapSearch style="height:18px; width:18px; color:#fff;"/>
                 </button>
@@ -149,27 +166,6 @@
             </div>
             {#if tagsError}
                 <p class="text-sm text-accent">Entering tags is required</p>
-            {/if}
-        </div>
-        <div class="lg:h-fit flex flex-col gap-1 mb-3">
-            <label for="job" class="mb-1 text-md text-primary">Job</label>
-            <input bind:value={job} name="job" placeholder="Enter your job" class="lg:w-[40vw] p-2 text-sm text-primary font-medium border-2 border-color focus:outline-none focus:border-primary bg-background rounded-md placeholder-primary500"/>
-            {#if jobError}
-                <p class="text-sm text-accent">Entering your current job is required</p>
-            {/if}
-        </div>
-        <div class="lg:h-fit flex flex-col gap-1 mb-3">
-            <label for="role" class="mb-1 text-md text-primary">Role</label>
-            <input bind:value={role} name="role" placeholder="Enter your role" class="lg:w-[40vw] p-2 text-sm text-primary font-medium border-2 border-color focus:outline-none focus:border-primary bg-background rounded-md placeholder-primary500"/>
-            {#if roleError}
-                <p class="text-sm text-accent">Entering your current role is required</p>
-            {/if}
-        </div>
-        <div class="lg:h-fit flex flex-col gap-1 mb-3">
-            <label for="bio" class="mb-1 text-md text-primary">Bio</label>
-            <input bind:value={bio} name="bio" placeholder="Enter your bio" class="lg:w-[40vw] p-2 text-sm text-primary font-medium border-2 border-color focus:outline-none focus:border-primary bg-background rounded-md placeholder-primary500"/>
-            {#if bioError}
-                <p class="text-sm text-accent">Entering your bio is required</p>
             {/if}
         </div>
     </article>
