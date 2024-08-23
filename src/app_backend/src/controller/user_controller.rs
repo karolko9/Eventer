@@ -23,10 +23,11 @@ fn register_user(user_dto: dto_request::user_dto_request::UserDTO) -> bool {
 
 #[ic_cdk::update]
 fn join_event(event_id: u128) -> bool {
-    match service::update::event_service_update::join_event(ic_cdk::caller(), event_id){
-        Ok(_) => true,
-        Err(_) => false,
-    }
+    // match service::update::event_service_update::join_event(ic_cdk::caller(), event_id){
+    //     Ok(_) => true,
+    //     Err(_) => false,
+    // }
+    service::update::event_service_update::join_event(ic_cdk::caller(), event_id)
 }
 
 #[ic_cdk::query]
