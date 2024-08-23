@@ -66,11 +66,11 @@ pub fn update_user_database(user: Principal, user_dto: user_dto_request::UserDTO
                     Ok(data) => data,
                     Err(_) => return Err(()),
                 };
-
-                USER_DATA_MODEL.with(|user_data_model| {
-                    let mut user_data_map = user_data_model.borrow_mut();
-                    user_data_map.insert(user, user_data);
-                });
+                user_data_map.insert(user, user_data);
+                // USER_DATA_MODEL.with(|user_data_model| {
+                //     let mut user_data_map = user_data_model.borrow_mut();
+                //     user_data_map.insert(user, user_data);
+                // });
             }
             Ok(())
         })

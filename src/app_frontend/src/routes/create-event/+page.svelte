@@ -1,5 +1,4 @@
 <script>
-    import { onMount } from "svelte";
     import { formProgress, formStep } from '../../stores/createEvent.js';
     import { createProgress } from '@melt-ui/svelte';
     import { IconInfoCircle } from '@tabler/icons-svelte'; 
@@ -20,10 +19,6 @@
     })
 
     const formHeaders = ["Event details", "Event time", "Event location", "Tickets details", "Contact with host"];
-
-    onMount(() => {
-        $auth.init();
-    });
 </script>
 
 <header class="relative p-4 flex items-center justify-between">
