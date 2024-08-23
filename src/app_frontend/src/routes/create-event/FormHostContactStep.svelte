@@ -13,8 +13,6 @@
     let formDataStore = get(formData);
     let { name, event_tags, description,date, start_hour, end_hour, location, address, price, media, phone, email, resetFormData} = formDataStore;
 
-    let creationStatus = "";
-
     let emailError = false;
     let phoneError = false;
     let mediaError = false;
@@ -43,36 +41,21 @@
 
             if ($auth.isReady && $auth.isAuthenticated) {
                 const result = await $auth.whoamiActor.create_event(eventDTO);
-                console.log(result);
                 if(result){
-                    creationStatus = "Event created successfully!";
                     formProgress.set(100);
-                    addToast({
-                        data: {
-                            title: 'Success',
-                            description: 'The event was created!',
-                            color: 'bg-green'
-                        }
-                    })
+                    addToast({ data: { title: 'Success', description: 'The event was created!', color: 'bg-green'}})
                     setTimeout(() => {
                         goto('/');
                     }, 2000)
                 }else{
-                    creationStatus = "Failed to create event.";
-                    addToast({
-                        data: {
-                            title: 'Error',
-                            description: 'Something went wrong!',
-                            color: 'bg-red-500'
-                        }
-                    })
+                    addToast({ data: { title: 'Error', description: 'Something went wrong!', color: 'bg-red-500'}})
                 } 
             } else {
-                creationStatus = "Authentication is not ready or not authenticated.";
+                addToast({data: {title: 'Error', description: 'Login in order to create event', color: 'bg-red-500'}})
             }
         } catch (error) {
             console.error("Error creating event:", error);
-            creationStatus = "Error creating event.";
+            addToast({ data: { title: 'Error', description: 'Something went wrong!', color: 'bg-red-500'}})
         }
     }
 
@@ -103,9 +86,6 @@
             <p class="text-sm text-accent">Link to social media platform is required</p>
         {/if}
     </div>
-    {#if creationStatus}
-        <p class="text-sm mb-3 {creationStatus === 'Event created successfully!' ? 'text-green': 'text-accent'}">{creationStatus}</p>
-    {/if}
 </article>
 <div class="flex flex-col items-center lg:items-start lg:flex-row gap-2 lg:gap-3">
     <a href="#" on:click={goBack} class="lg:hidden text-center text-primary500 text-md underline">Go back</a>

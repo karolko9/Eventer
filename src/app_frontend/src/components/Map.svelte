@@ -2,17 +2,58 @@
   import { MapLibre, Marker, Popup } from 'svelte-maplibre';
   import { auth } from "../lib/auth";
   import { onMount } from "svelte";
+  import { goto } from '$app/navigation'
   import { writable } from 'svelte/store';
   import EventDetailsModal from './EventDetailsModal.svelte';
-  import Button from './Button.svelte';
   import Searchbox from './Searchbox.svelte';
   import Loader from './Loader.svelte';
-  import { IconLogin, IconConfetti } from '@tabler/icons-svelte';
+  import { IconLogin, IconConfetti, IconX } from '@tabler/icons-svelte';
+  import { addToast } from "../components/Toast.svelte";
+  import { createDialog, melt } from '@melt-ui/svelte';
+  import { fade } from 'svelte/transition';
+
+  let showUpdateModal = false;
+  let showUpdateModalButton;
 
   onMount(() => {
     $auth.init().then(() => {
       fetchEvents();
+      if(localStorage.getItem("updated_profile")){
+        zoomToUserLocation();
+      } else{
+        showUpdateModal = true;
+      }
     });
+  });
+
+  const triggerUpdateModal = () => {
+      console.log("clicked");
+      showUpdateModalButton.click();
+  }
+
+  const handleUpdateProfile = () => {
+      showUpdateModal = false;
+      goto("/profile");
+  }
+
+  $: if (showUpdateModal) {
+      
+      triggerUpdateModal();
+    }
+
+    const {
+        elements: {
+          trigger,
+          overlay,
+          content,
+          title,
+          description,
+          close,
+          portalled,
+        },
+    states: { open },
+  } = createDialog ({
+    forceVisible: true,
   });
 
   const handleAuth = () => {
@@ -39,13 +80,29 @@
   async function fetchEvents() {
     try {
       if ($auth.isReady) {
-        const eventsList = await $auth.whoamiActor.get_all_events_with_details();
-        events.set(eventsList);
+        // const eventsList = await $auth.whoamiActor.get_all_events_with_details();
+        // events.set(eventsList);
       }
     } catch (error) {
       console.error("Error fetching events:", error);
     }
   }
+
+  const zoomToUserLocation = async () => {
+    try{
+      if($auth.isReady){
+        const result = await $auth.whoamiActor.get_user();
+        map.flyTo({
+          center: [result[0].location[1], result[0].location[0]],
+          zoom: 9,
+        });
+      }
+    }catch(error){
+      console.error(error);
+      addToast({data: { title: 'Error', description: 'Something went wrong!', color: 'bg-red-500'}})
+    }
+  }
+
 
   function closeEventDetailsModal() {
     eventDetailsModalOpen = false;
@@ -99,7 +156,23 @@
   <div class="searchbox-wrapper" class:shifted={eventDetailsModalOpen}>
     <Searchbox on:location={handleSearchboxLocationSelect}/>
   </div>
-
+  <button bind:this={showUpdateModalButton} use:melt={$trigger} class=""></button>
+  {#if $open}
+    <div class="flex flex-col outline-none" use:melt={$portalled}>
+        <div use:melt={$overlay} class="fixed inset-0 z-50 bg-black/50" transition:fade={{ duration: 150 }}></div>
+        <div use:melt={$content} class="fixed left-1/2 top-1/2 z-50 max-h-[85vh] w-[90vw] max-w-[450px] -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white p-6 shadow-lg">
+          <div class="flex justify-between items-center">
+            <h2 use:melt={$title} class="m-0 text-lg font-medium text-black">Hi, thank you for choosing Eventer!</h2>
+            <button use:melt={$close}>
+                <IconX style="color:#5B2784" />
+            </button>
+          </div>
+          <p use:melt={$description} class="mb-4 mt-1 leading-normal text-zinc-600">Before you start looking for event for todays's evening, let us help you. Please, complete Your profile after clicking button below.</p>
+          <img src="undraw_partying.svg" alt="people with baloons" class="h-[140px]"/>
+          <button on:click={handleUpdateProfile} class="mt-2 p-2 bg-primary text-background rounded-lg text-center">Complete profile</button>
+        </div>
+    </div>
+  {/if}
   {#if !$auth.isAuthenticated}
     <button on:click={handleAuth} class="absolute right-[20px] top-unset bottom-[20px] lg:bottom-unset lg:top-[20px] w-fit h-fit p-2 flex flex-col items-center justify-center border-[1px] border-color bg-background rounded-xl">
       <IconLogin style="color:#5B2784"/>
