@@ -99,7 +99,6 @@
       }
     }catch(error){
       console.error(error);
-      addToast({data: { title: 'Error', description: 'Something went wrong!', color: 'bg-red-500'}})
     }
   }
 

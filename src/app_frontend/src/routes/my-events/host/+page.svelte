@@ -38,5 +38,10 @@
         {#each events as event}
             <EventCard id={event.id} userType="host" name={event.name} date={event.time_start} address={event.address} eventDescription={event.description} on:navigate={handleNavigate}/>
         {/each}
+    {:else}
+    <div class="flex flex-col items-center mx-auto self-center">
+        <img src="/undraw_void.svg" alt="void" class="h-[200px] w-[200px]"/>
+        <h1 class="mt-4 text-xl font-medium text-primary">Events not found</h1>
+    </div>
     {/if}
 </section>

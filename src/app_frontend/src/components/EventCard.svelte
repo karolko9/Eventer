@@ -1,7 +1,7 @@
 <script>
     import { createEventDispatcher } from 'svelte';
     import { currentEvent } from '../stores/events';
-    import { IconPhone, IconShare, IconMapPin, IconX, IconMailUp } from '@tabler/icons-svelte';
+    import { IconPhone, IconShare, IconMapPin, IconX, IconMailUp, IconUserSearch } from '@tabler/icons-svelte';
     import { createDialog, melt } from '@melt-ui/svelte';
     import { fade } from 'svelte/transition';
     import QrCode from './QrCode.svelte';
@@ -15,6 +15,7 @@
     export let userType;
     export let phone;
     export let email;
+    export let media;
 
      
     let ticketsAmount = Math.floor(Math.random() * 40);
@@ -102,12 +103,12 @@
             <IconShare style="color:#fff; opacity: 80%"/>
         </div>
         <h4 class="text-sm text-background opacity-80 mb-6">Tickets amount{userType === "Attendee" ? "" : " left"}: {ticketsAmount}</h4>
-        {#if userType === "atendee"}
+        {#if userType === "attendee"}
             <h2 class="text-background font-md mb-2">{formatDate(date)}</h2>
             <p class="text-xs leading-5 text-background font-extralight mb-6">{eventDescription}</p>
         {/if}
         <div class="flex gap-2 items-center mb-2">
-            {#if userType === "atendee"}
+            {#if userType === "attendee"}
                 <button on:click={handleShowTicket} class="p-2 bg-background border-2 border-background text-primary font-medium rounded-lg">  {showTicket ? 'Hide Ticket' : 'Show Ticket'}</button>
                 <button use:melt={$trigger} class="p-2 bg-primary border-2 border-background text-background font-medium rounded-lg">Contact Host</button>
             {/if}
@@ -138,6 +139,10 @@
                             <IconMailUp style="color:#5B2784"/>
                             <a class="font-medium text-primary300" href="mailto:hostmail@gmail.com">{email}</a>
                         </div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <IconUserSearch style="color:#5B2784"/>
+                            <a class="font-medium text-primary300 truncate" href={media}>{media}</a>
+                        </div>
                     {/if}
                     {#if userType === "host"}
                         <QrCodeScanner />
@@ -148,7 +153,7 @@
         {#if showTicket && userType === "attendee"}
             <QrCode />
         {/if}
-        {#if userType === "atendee"}
+        {#if userType === "attendee"}
             <div class="mt-4 flex items-center gap-1">
                 <IconMapPin style="color:#fff;"/>
                 <h3 class="text-sm text-background">{getStreetAndNumber()}</h3>
