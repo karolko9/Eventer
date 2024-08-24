@@ -41,14 +41,14 @@
     }
 
     const findPostalCode = (arr) => {
-    let foundPostalCode = "";
-    arr.forEach(element => {
-        if (isPostalCode(element)) {
-            foundPostalCode = element;
-        }
-    });
-    return foundPostalCode;
-}
+        let foundPostalCode = "";
+        arr.forEach(element => {
+            if (isPostalCode(element)) {
+                foundPostalCode = element;
+            }
+        });
+        return foundPostalCode;
+    }
 
     const getStreetAndNumber = (address) => {
         let fullAddressArr = address.split(',');

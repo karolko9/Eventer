@@ -17,8 +17,9 @@
    async function fetchEvents() {
        try {
            if ($auth.isReady && $auth.isAuthenticated) {
-               const eventsList = await $auth.whoamiActor.get_all_events_with_details();
-               events = eventsList.map((event) => event);
+               const eventsList = await $auth.whoamiActor.get_user_events_hosted();
+               console.log(eventsList);
+            //    events = eventsList.map((event) => event);
        }
        } catch (error) {
            console.error("Error fetching events:", error);

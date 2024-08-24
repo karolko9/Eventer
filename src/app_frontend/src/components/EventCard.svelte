@@ -1,15 +1,22 @@
 <script>
     import { createEventDispatcher } from 'svelte';
     import { currentEvent } from '../stores/events';
-    import {IconShare, IconMapPin} from '@tabler/icons-svelte';
+    import { IconPhone, IconShare, IconMapPin, IconX, IconMailUp } from '@tabler/icons-svelte';
+    import { createDialog, melt } from '@melt-ui/svelte';
+    import { fade } from 'svelte/transition';
+    import QrCode from './QrCode.svelte';
 
     export let id;
     export let name;
     export let date;
     export let address;
+    export let eventDescription;
+    export let userType;
+    export let phone;
+    export let email;
+
      
     let ticketsAmount = Math.floor(Math.random() * 40);
-    let description = "ICP: Roadmap for Devs is an event that guides developers through building on the Internet Computer Protocol (ICP). It features expert speakers, hands-on workshops, and networking opportunities, providing essential insights and tools for effective ICP development.";
 
     const dispatch = createEventDispatcher();
 
@@ -26,10 +33,26 @@
 
         dispatch('navigate', { slug: id });
     }
+
+    const postalCodeRegex = /^\d{2}-\d{3}$/;
+
+    const isPostalCode = (element) => {
+        return postalCodeRegex.test(element);
+    }
+
+    const findPostalCode = (arr) => {
+        let foundPostalCode = "";
+        arr.forEach(element => {
+            if (isPostalCode(element)) {
+                foundPostalCode = element;
+            }
+        });
+        return foundPostalCode;
+    }
    
     const getStreetAndNumber = () => {
-        let fullAddressArr = address.split(',')
-        return fullAddressArr[2] + ", " + fullAddressArr[1];
+        let fullAddressArr = address.split(',');
+        return fullAddressArr[0] + ", " + fullAddressArr[3] + ", " + findPostalCode(fullAddressArr);
     }
 
     const formatDate = (isoString) => {
@@ -48,9 +71,29 @@
 
     let thumbnail = getThumbnail();
 
+    const {
+        elements: {
+        trigger,
+        overlay,
+        content,
+        title,
+        description,
+        close,
+        portalled,
+        },
+    states: { open },
+    } = createDialog({
+        forceVisible: true,
+    });
+
+    let showTicket = false;
+
+    const handleShowTicket = () => {
+        showTicket = !showTicket;
+    }
 </script>
 
-<article on:click={handleClick} class="w-full lg:w-[24%] h-fit bg-primary flex flex-col rounded-xl shadow-xl cursor-pointer">
+<article class="w-full lg:w-[24%] h-fit bg-primary flex flex-col rounded-xl shadow-xl cursor-pointer">
     <img class="w-full object-cover" src={thumbnail} alt="chuj"/>
     <div class="p-3">
         <div class="flex items-center justify-between">
@@ -59,8 +102,41 @@
         </div>
         <h4 class="text-sm text-background opacity-80 mb-6">Tickets amount: {ticketsAmount}</h4>
         <h2 class="text-background font-md mb-2">{formatDate(date)}</h2>
-        <p class="text-xs leading-5 text-background font-extralight mb-6">{description}</p>
-        <div class="flex items-center gap-1">
+        <p class="text-xs leading-5 text-background font-extralight mb-6">{eventDescription}</p>
+        <div class="flex gap-2 items-center mb-2">
+            {#if userType === "atendee"}
+                <button on:click={handleShowTicket} class="p-2 bg-background border-2 border-background text-primary font-medium rounded-lg">  {showTicket ? 'Hide Ticket' : 'Show Ticket'}</button>
+                <button use:melt={$trigger} class="p-2 bg-primary border-2 border-background text-background font-medium rounded-lg">Contact Host</button>
+            {/if}
+        </div>
+        {#if $open}
+            <div class="flex flex-col" use:melt={$portalled}>
+                <div use:melt={$overlay} class="fixed inset-0 z-50 bg-black/50" transition:fade={{ duration: 150 }}></div>
+                <div use:melt={$content} class="fixed left-1/2 top-1/2 z-50 max-h-[85vh] w-[90vw] max-w-[450px] -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white p-6 shadow-lg">
+                    <div class="flex justify-between items-center">
+                        <h2 use:melt={$title} class="m-0 text-lg font-medium text-black">
+                            Organizer contact information
+                        </h2>
+                        <button use:melt={$close}>
+                            <IconX style="color:#5B2784" />
+                        </button>
+                    </div>
+                    <p use:melt={$description} class="mb-4 mt-1 leading-normal text-zinc-600">Contact event host by provided details</p>
+                    <div class="flex items-center gap-2 mb-2">
+                        <IconPhone style="color:#5B2784"/>
+                        <a class="font-medium text-primary300" href="tel:123456789">{phone}</a>
+                    </div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <IconMailUp style="color:#5B2784"/>
+                        <a class="font-medium text-primary300" href="mailto:hostmail@gmail.com">{email}</a>
+                    </div>
+                </div>
+            </div>
+        {/if}
+        {#if showTicket}
+            <QrCode />
+        {/if}
+        <div class="mt-4 flex items-center gap-1">
             <IconMapPin style="color:#fff;"/>
             <h3 class="text-sm text-background">{getStreetAndNumber()}</h3>
         </div>

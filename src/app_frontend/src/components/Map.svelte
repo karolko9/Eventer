@@ -21,7 +21,9 @@
       if(localStorage.getItem("updated_profile")){
         zoomToUserLocation();
       } else{
-        showUpdateModal = true;
+        if($auth.isAuthenticated){
+          showUpdateModal = true;
+        }
       }
     });
   });
