@@ -6,6 +6,12 @@
     import { fade } from 'svelte/transition';
     import QrCode from './QrCode.svelte';
     import QrCodeScanner from "./QrCodeScanner.svelte"
+    import { onMount } from "svelte";
+    import { auth } from "../lib/auth";
+
+
+
+
 
     export let id;
     export let name;
@@ -16,8 +22,9 @@
     export let phone;
     export let email;
     export let media;
+    export let participants;
 
-     
+
     let ticketsAmount = Math.floor(Math.random() * 40);
 
     const dispatch = createEventDispatcher();
@@ -88,6 +95,7 @@
         forceVisible: true,
     });
 
+
     let showTicket = false;
 
     const handleShowTicket = () => {
@@ -107,6 +115,14 @@
             <h2 class="text-background font-md mb-2">{formatDate(date)}</h2>
             <p class="text-xs leading-5 text-background font-extralight mb-6">{eventDescription}</p>
         {/if}
+        <ul class="flex flex-col gap-2">
+            <li class="text-sm text-background opacity-80 mb-6">Number of participants: {participants.length}</li>
+            {#if userType === "host"}
+                {#each participants as participant}
+                    <li class="text-sm text-background opacity-80 mb-6">{participant}</li>
+                {/each}
+            {/if}
+        </ul>
         <div class="flex gap-2 items-center mb-2">
             {#if userType === "attendee"}
                 <button on:click={handleShowTicket} class="p-2 bg-background border-2 border-background text-primary font-medium rounded-lg">  {showTicket ? 'Hide Ticket' : 'Show Ticket'}</button>

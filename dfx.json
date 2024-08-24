@@ -30,6 +30,13 @@
       },
       "type": "custom",
       "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
+    },
+    "storage": {
+      "candid": "src/storage/storage.did",
+      "type": "rust",
+      "package": "storage",
+      "build": "./build.sh storage",
+      "wasm": "target/wasm32-unknown-unknown/release/storage.wasm"
     }
   },
   "defaults": {
