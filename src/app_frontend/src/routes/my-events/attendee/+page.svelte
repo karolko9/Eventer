@@ -34,7 +34,7 @@
 <section class="w-full h-mobile lg:h-desktop m-auto p-4 overflow-y-auto flex flex-col lg:flex-row lg:flex-wrap gap-4">
    {#if events.length > 0}
         {#each events as event}
-            <EventCard id={event.id} userType="attendee" name={event.name} date={event.time_start} address={event.address} eventDescription={event.description} phone={event.contact.phone} email={event.contact.email} media={event.contact.media} on:navigate={handleNavigate}/>
+            <EventCard id={event.id} userType="attendee" name={event.name} date={event.time_start} address={event.address} participants={event.hash_map_of_declared} eventDescription={event.description} phone={event.contact.phone} email={event.contact.email} media={event.contact.media} on:navigate={handleNavigate}/>
         {/each}
     {:else}
     <div class="flex flex-col items-center mx-auto self-center">

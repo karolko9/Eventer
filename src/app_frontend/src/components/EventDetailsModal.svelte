@@ -3,7 +3,7 @@
     import { createDialog, melt } from '@melt-ui/svelte';
     import { fade } from 'svelte/transition';
     import { auth } from "../lib/auth";
-    import { IconMapPin, IconCalendarEvent, IconUsers, IconTicket,  IconMail, IconX, IconPhone, IconMailUp } from '@tabler/icons-svelte';
+    import { IconMapPin, IconUserSearch, IconCalendarEvent, IconUsers, IconTicket,  IconMail, IconX, IconPhone, IconMailUp } from '@tabler/icons-svelte';
     import { getAsset } from "../lib/uploader";
 
     export let event;
@@ -140,6 +140,10 @@
                     <div class="flex items-center gap-2 mb-2">
                         <IconMailUp style="color:#5B2784"/>
                         <a class="font-medium text-primary300" href="mailto:hostmail@gmail.com">{eventDetails.contact.email}</a>
+                    </div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <IconUserSearch style="color:#5B2784"/>
+                        <a class="font-medium text-primary300 truncate" href={eventDetails.media}>{eventDetails.media}</a>
                     </div>
                 </div>
             </div>

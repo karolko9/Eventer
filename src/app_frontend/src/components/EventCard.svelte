@@ -161,7 +161,7 @@
                         </div>
                     {/if}
                     {#if userType === "host"}
-                        <QrCodeScanner />
+                        <QrCodeScanner participants={participants}/>
                     {/if}
                 </div>
             </div>
