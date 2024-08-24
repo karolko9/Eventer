@@ -5,6 +5,8 @@
     let scanResult = null;
     let isScanning = true;
 
+    export let participants;
+
     onMount(() => {
         const scanner = new Html5QrcodeScanner("reader", {
             qrbox: {
@@ -19,7 +21,16 @@
         function success(result) {
             if (isScanning) {
                 scanner.clear();
-                scanResult = result;
+                const foundParticipant = participants.find(participant => participant === result);
+
+                if (foundParticipant) {
+                    scanResult = "User has ticket";  
+                    console.log("user has ticket");
+                } else {
+                    scanResult = "User doesn't have ticket"; 
+                    console.log("user doesn't have ticket");
+
+                }                
                 isScanning = false; 
             }
         }
