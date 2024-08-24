@@ -37,7 +37,7 @@
 <section class="w-full h-mobile lg:h-desktop m-auto p-4 overflow-y-auto flex flex-col lg:flex-row lg:flex-wrap gap-4">
     {#if events.length > 0}
         {#each events as event}
-            <EventCard id={event.id} name={event.name} date={event.time_start} address={event.address} on:navigate={handleNavigate}/>
+            <EventCard id={event.id} participants={event.hash_map_of_declared} name={event.name} date={event.time_start} address={event.address} on:navigate={handleNavigate}/>
         {/each}
     {/if}
 </section>
