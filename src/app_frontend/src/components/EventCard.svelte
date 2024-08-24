@@ -5,6 +5,9 @@
     import { createDialog, melt } from '@melt-ui/svelte';
     import { fade } from 'svelte/transition';
     import QrCode from './QrCode.svelte';
+    import { onMount } from "svelte";
+
+
 
     export let id;
     export let name;
@@ -15,15 +18,24 @@
     export let phone;
     export let email;
 
+    onMount(() => {
+    //    $auth.init().then(() => {
+            fetchParticipantsForEvent(id);
+    //    });
+   });
+   
+    let participants = [];
+
+    
     async function fetchParticipantsForEvent(id) {
         try {
             if ($auth.isReady && $auth.isAuthenticated) {
                 let participantsList = await $auth.whoamiActor.get_event(id).map((event) => event.hash_map_of_declared);
 
                 if (participantsList && participantsList.length > 0) {
-                    const participantsList = participantsList[0].map((participant) => participant);
+                    const participants = participantsList[0].map((participant) => participant);
                     console.log("participants:", participantsList);
-                    return participantsList;
+                    // return participants;
                 } else {
                     console.log("No participants found.");
                 }
@@ -108,6 +120,7 @@
         forceVisible: true,
     });
 
+
     let showTicket = false;
 
     const handleShowTicket = () => {
@@ -125,6 +138,13 @@
         <h4 class="text-sm text-background opacity-80 mb-6">Tickets amount: {ticketsAmount}</h4>
         <h2 class="text-background font-md mb-2">{formatDate(date)}</h2>
         <p class="text-xs leading-5 text-background font-extralight mb-6">{eventDescription}</p>
+        {#if userType === "host"}
+            <ul class="flex flex-col gap-2">
+                {#each participants as participant}
+                    <li class="text-md text-primary">{participant}</li>
+                {/each}
+            </ul>
+        {/if}
         <div class="flex gap-2 items-center mb-2">
             {#if userType === "atendee"}
                 <button on:click={handleShowTicket} class="p-2 bg-background border-2 border-background text-primary font-medium rounded-lg">  {showTicket ? 'Hide Ticket' : 'Show Ticket'}</button>
