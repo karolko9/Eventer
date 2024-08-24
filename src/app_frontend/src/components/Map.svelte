@@ -163,13 +163,13 @@
         <div use:melt={$content} class="fixed left-1/2 top-1/2 z-50 max-h-[85vh] w-[90vw] max-w-[450px] -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white p-6 shadow-lg">
           <div class="flex justify-between items-center">
             <h2 use:melt={$title} class="m-0 text-lg font-medium text-black">Hi, thank you for choosing Eventer!</h2>
-            <button use:melt={$close}>
+            <button use:melt={$close} class="outline-none">
                 <IconX style="color:#5B2784" />
             </button>
           </div>
           <p use:melt={$description} class="mb-4 mt-1 leading-normal text-zinc-600">Before you start looking for event for todays's evening, let us help you. Please, complete Your profile after clicking button below.</p>
           <img src="undraw_partying.svg" alt="people with baloons" class="h-[140px]"/>
-          <button on:click={handleUpdateProfile} class="mt-2 p-2 bg-primary text-background rounded-lg text-center">Complete profile</button>
+          <button on:click={handleUpdateProfile} class="mt-2 p-2 bg-primary text-background rounded-lg text-center ">Complete profile</button>
         </div>
     </div>
   {/if}
