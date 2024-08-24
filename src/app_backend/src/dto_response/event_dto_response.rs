@@ -9,13 +9,15 @@ use std::collections::HashMap;
 pub struct EventMapResponse {
     pub location: (f64, f64),
     pub id: u128,
+    pub thumbnail: String
 }
 
 impl From<Event> for EventMapResponse {
     fn from(event: Event) -> Self {
         EventMapResponse{
             location: event.location(),
-            id: event.id()
+            id: event.id(),
+            thumbnail: event.thumbnail()
         }
     }
 }
@@ -51,6 +53,7 @@ pub struct EventDetailsResponse {
     pub description: String,
     pub contact: component::contact::Contact,
     pub hash_map_of_declared: Vec<Principal>, 
+    pub thumbnail: String
 }
 
 impl From<&Event> for EventDetailsResponse {
@@ -66,6 +69,7 @@ impl From<&Event> for EventDetailsResponse {
             price: event.price(),
             description: event.description().to_string(),
             contact: event.contact(),
+            thumbnail: event.thumbnail(),
             hash_map_of_declared: event.hash_map_of_declared().keys().cloned().collect(),
 
         }

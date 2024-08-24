@@ -11,4 +11,5 @@ pub struct EventDTO {
     pub phone: String,
     pub email: String,
     pub media: String,
+    pub thumbnail: String
 }
