@@ -14,6 +14,7 @@ pub struct UserDataModel {
     role: String,
     bio: String,
     list_of_events: HashSet<u128>,
+    list_of_hosted_events: HashSet<u128>,
 }
 
 impl UserDataModel {
@@ -33,6 +34,7 @@ impl UserDataModel {
             role: user_dto.role,
             bio: user_dto.bio,
             list_of_events: HashSet::new(),
+            list_of_hosted_events: HashSet::new(),
         })
     }
 
@@ -112,5 +114,15 @@ impl UserDataModel {
     // Metoda do dodawania wydarzeń
     pub fn add_event(&mut self, event: u128) {
         self.list_of_events.insert(event);
+    }
+
+    // Getter dla pola `events`
+    pub fn get_hosted_events(&self) -> &HashSet<u128> {
+        &self.list_of_hosted_events
+    }
+
+    // Metoda do dodawania wydarzeń
+    pub fn add_hosted_event(&mut self, event: u128) {
+        self.list_of_hosted_events.insert(event);
     }
 }

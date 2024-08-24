@@ -32,3 +32,20 @@ pub fn get_user_events(caller: Principal) -> Option<Vec<event_dto_response::Even
         Some(event_details)
     }
 }
+
+//1 User hosted events
+pub fn get_user_hosted_events(caller: Principal) -> Option<Vec<event_dto_response::EventDetailsResponse>> {
+
+    let user_hosted_events_ids = user_repository::get_user_hosted_events(caller);
+
+    if user_hosted_events_ids.is_empty(){
+        None
+    } else {
+        let events = event_repository::get_events(user_hosted_events_ids);
+        let event_details: Vec<event_dto_response::EventDetailsResponse> = events
+            .iter()
+            .map(|event| event_dto_response::EventDetailsResponse::from(event))
+            .collect();
+        Some(event_details)
+    }
+}

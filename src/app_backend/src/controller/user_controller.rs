@@ -36,6 +36,6 @@ fn get_user_events() -> Option<Vec<dto_response::event_dto_response::EventDetail
 }
 
 #[ic_cdk::query]
-fn get_user_events_hosted() -> Option<Vec<dto_response::event_dto_response::EventDetailsResponse>>{
-    service::query::user_service_query::get_user_events(ic_cdk::caller())
+fn get_user_hosted_events() -> Option<Vec<dto_response::event_dto_response::EventDetailsResponse>>{
+    service::query::user_service_query::get_user_hosted_events(ic_cdk::caller())
 }
