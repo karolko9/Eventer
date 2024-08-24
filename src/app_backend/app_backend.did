@@ -1,3 +1,4 @@
+type Contact = record { media : text; email : text; phone : text };
 type EventDTO = record {
   media : text;
   name : text;
@@ -13,6 +14,7 @@ type EventDTO = record {
 };
 type EventDetailsResponse = record {
   id : nat;
+  contact : Contact;
   name : text;
   tags : vec text;
   description : text;
@@ -41,15 +43,17 @@ type UserDataModel = record {
   role : text;
   list_of_events : vec nat;
   tags : vec text;
+  list_of_hosted_events : vec nat;
   location : record { float64; float64 };
 };
 service : {
   create_event : (EventDTO) -> (bool);
+  get_all_events : () -> (opt vec EventMapResponse) query;
   get_event : (nat) -> (opt EventDetailsResponse) query;
   get_event_by_tags_user : () -> (opt vec EventMapResponse) query;
   get_user : () -> (opt UserDataModel) query;
   get_user_events : () -> (opt vec EventDetailsResponse) query;
-  get_user_events_hosted : () -> (opt vec EventDetailsResponse) query;
+  get_user_hosted_events : () -> (opt vec EventDetailsResponse) query;
   join_event : (nat) -> (bool);
   register_user : (UserDTO) -> (bool);
 }
