@@ -20,6 +20,7 @@ type EventDetailsResponse = record {
   name : text;
   tags : vec text;
   description : text;
+  hash_map_of_declared : vec principal;
   address : text;
   price : float32;
   location : record { float64; float64 };
