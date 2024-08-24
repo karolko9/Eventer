@@ -8,7 +8,6 @@ use crate::dto_response::user_dto_response;
 use crate::model::user_model::UserDataModel;
 use crate::repository::event_repository;
 use crate::repository::user_repository;
-
 use crate::dto_request;
 
 //1 Get user data 

@@ -15,7 +15,29 @@
     export let phone;
     export let email;
 
-     
+    async function fetchParticipantsForEvent(id) {
+        try {
+            if ($auth.isReady && $auth.isAuthenticated) {
+                let participantsList = await $auth.whoamiActor.get_event(id).map((event) => event.hash_map_of_declared);
+
+                if (participantsList && participantsList.length > 0) {
+                    const participantsList = participantsList[0].map((participant) => participant);
+                    console.log("participants:", participantsList);
+                    return participantsList;
+                } else {
+                    console.log("No participants found.");
+                }
+            } else {
+                console.log("You cant use fetchParticipants when logged out");
+            }
+
+        } catch (error) {
+            console.error("Error fetching participants:", error);
+        }
+    }
+
+    constole.log(fetchParticipantsForEvent());
+
     let ticketsAmount = Math.floor(Math.random() * 40);
 
     const dispatch = createEventDispatcher();

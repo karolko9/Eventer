@@ -7,12 +7,16 @@
    
 
    let events = [];
+   let participants = [];
 
    onMount(() => {
        $auth.init().then(() => {
            fetchEvents();
        });
    });
+   
+
+
 
    async function fetchEvents() {
        try {
@@ -35,8 +39,8 @@
 
 <section class="w-full h-mobile lg:h-desktop m-auto p-4 overflow-y-auto flex flex-col lg:flex-row lg:flex-wrap gap-4">
    {#if events.length > 0}
-   {#each events as event}
-       <EventCard id={event.id} userType="host" name={event.name} date={event.time_start} address={event.address} eventDescription={event.description} phone={event.contact.phone} email={event.contact.email} on:navigate={handleNavigate}/>
-   {/each}
-{/if}
+        {#each events as event}
+            <EventCard id={event.id} userType="host" name={event.name} date={event.time_start} address={event.address} eventDescription={event.description} phone={event.contact.phone} email={event.contact.email} on:navigate={handleNavigate}/>
+        {/each}
+    {/if}
 </section>
