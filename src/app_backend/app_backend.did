@@ -1,6 +1,7 @@
 type Contact = record { media : text; email : text; phone : text };
 type EventDTO = record {
   media : text;
+  thumbnail : text;
   name : text;
   tags : vec text;
   description : text;
@@ -15,6 +16,7 @@ type EventDTO = record {
 type EventDetailsResponse = record {
   id : nat;
   contact : Contact;
+  thumbnail : text;
   name : text;
   tags : vec text;
   description : text;
@@ -26,6 +28,7 @@ type EventDetailsResponse = record {
 };
 type EventMapResponse = record {
   id : nat;
+  thumbnail : text;
   location : record { float64; float64 };
 };
 type UserDTO = record {
