@@ -20,6 +20,7 @@ pub struct Event {
     tags: HashSet<String>,
     description: String,
     contact: component::contact::Contact,
+    thumbnail: String
 }
 
 impl Event {
@@ -39,6 +40,7 @@ impl Event {
         email: String,
         phone: String,
         media: String,
+        thumbnail: String
     ) -> Result<Self, String> {
         let contact = component::contact::Contact::new(email, phone, media)?;
         Ok(Event {
@@ -55,6 +57,7 @@ impl Event {
             tags,
             description,
             contact,
+            thumbnail
         })
     }
 
@@ -111,6 +114,10 @@ impl Event {
         self.contact.clone()
     }
 
+    pub fn thumbnail(&self) -> String {
+        self.thumbnail.clone()
+    }
+
     // Setters
     pub fn set_name(&mut self, name: String) {
         self.name = name;
@@ -165,5 +172,9 @@ impl Event {
 
     pub fn set_description(&mut self, description: String) {
         self.description = description;
+    }
+
+    pub fn set_thumbnail(&mut self, thumbnail: String) {
+        self.thumbnail = thumbnail;
     }
 }

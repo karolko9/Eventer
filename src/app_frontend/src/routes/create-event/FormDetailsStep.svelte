@@ -5,6 +5,8 @@
 
     import { formProgress, formStep, formData } from '../../stores/createEvent.js';
 
+    import { uploadAsset } from '../../lib/uploader.js';
+
     let formDataStore = get(formData);
     let { name, event_tags, description, thumbnail } = formDataStore;
 
@@ -28,7 +30,13 @@
         reader.readAsDataURL(image);
         reader.onload = e => {
             thumbnail = e.target.result;
-            formData.update(data => ({ ...data, thumbnail }));
+
+            uploadAsset(image).then(assetId => {
+                formData.update(data => ({ ...data, thumbnail: assetId }));
+            }).catch(error => {
+                console.error(error);
+                thumbnail = null;
+            });
         };
     }
 
@@ -50,7 +58,7 @@
         formStep.set(1);
         formProgress.set(20);
 
-        formData.update(data => ({ ...data, name, event_tags, description, thumbnail }));
+        formData.update(data => ({ ...data, name, event_tags, description}));
     }
 </script>
 

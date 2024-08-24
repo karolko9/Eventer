@@ -8,13 +8,15 @@ use crate::model::event_model::Event;
 pub struct EventMapResponse {
     pub location: (f64, f64),
     pub id: u128,
+    pub thumbnail: String
 }
 
 impl From<Event> for EventMapResponse {
     fn from(event: Event) -> Self {
         EventMapResponse{
             location: event.location(),
-            id: event.id()
+            id: event.id(),
+            thumbnail: event.thumbnail()
         }
     }
 }
@@ -49,6 +51,7 @@ pub struct EventDetailsResponse {
     pub price: f32,
     pub description: String,
     pub contact: component::contact::Contact,
+    pub thumbnail: String
 }
 
 impl From<&Event> for EventDetailsResponse {
@@ -63,7 +66,8 @@ impl From<&Event> for EventDetailsResponse {
             tags: event.tags().iter().cloned().collect(),
             price: event.price(),
             description: event.description().to_string(),
-            contact: event.contact()
+            contact: event.contact(),
+            thumbnail: event.thumbnail()
         }
     }
 }

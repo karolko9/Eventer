@@ -11,7 +11,7 @@
     });
 
     let formDataStore = get(formData);
-    let { name, event_tags, description,date, start_hour, end_hour, location, address, price, media, phone, email, resetFormData} = formDataStore;
+    let { name, event_tags, description,date, start_hour, end_hour, location, address, price, media, phone, email, thumbnail, resetFormData} = formDataStore;
 
     let emailError = false;
     let phoneError = false;
@@ -36,7 +36,8 @@
                 email,
                 phone,
                 media,
-                price
+                price,
+                thumbnail
             };
 
             if ($auth.isReady && $auth.isAuthenticated) {
