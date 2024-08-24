@@ -18,6 +18,7 @@
        try {
            if ($auth.isReady && $auth.isAuthenticated) {
                const eventsList = await $auth.whoamiActor.get_user_hosted_events();
+               events = eventsList[0].map((event) => event);
                console.log("hosted events:", eventsList);
             //    events = eventsList.map((event) => event);
        }
