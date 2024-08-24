@@ -35,8 +35,12 @@ pub fn create_event(event_dto: dto_request::event_dto_request::EventDTO, caller:
         event_dto.phone,
         event_dto.media,
     )?;
+    register_blank_user(caller);
     user_repository::add_hosting_event_to_user(caller, event_id);
     Ok(event_repository::create_event(event, event_id))
+
+    // event_repository::create_event(event, event_id.clone());
+    // Ok(user_repository::add_hosting_event_to_user(caller, event_id))
 }
 
 //1 Join event

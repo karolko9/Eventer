@@ -16,8 +16,9 @@
        try {
            if ($auth.isReady && $auth.isAuthenticated) {
                const eventsList = await $auth.whoamiActor.get_user_events();
-               events = eventsList[0].map((event) => event);
-               console.log("user events:", eventsList);
+               if(eventsList.length > 0) {
+                    events = eventsList[0].map((event) => event);
+               }
        }
        } catch (error) {
            console.error("Error fetching events:", error);
@@ -32,8 +33,13 @@
 
 <section class="w-full h-mobile lg:h-desktop m-auto p-4 overflow-y-auto flex flex-col lg:flex-row lg:flex-wrap gap-4">
    {#if events.length > 0}
-    {#each events as event}
-        <EventCard id={event.id} userType="atendee" name={event.name} date={event.time_start} address={event.address} eventDescription={event.description} phone={event.contact.phone} email={event.contact.email} on:navigate={handleNavigate}/>
-    {/each}
+        {#each events as event}
+            <EventCard id={event.id} userType="attendee" name={event.name} date={event.time_start} address={event.address} eventDescription={event.description} phone={event.contact.phone} email={event.contact.email} media={event.contact.media} on:navigate={handleNavigate}/>
+        {/each}
+    {:else}
+    <div class="flex flex-col items-center mx-auto self-center">
+        <img src="/undraw_void.svg" alt="void" class="h-[200px] w-[200px]"/>
+        <h1 class="mt-4 text-xl font-medium text-primary">Events not found</h1>
+    </div>
     {/if}
 </section>

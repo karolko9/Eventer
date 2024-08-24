@@ -6,7 +6,6 @@
     let typeNumber = 4;
     let errorCorrectionLevel = 'L';
     let qr = qrcode(typeNumber, errorCorrectionLevel);
-    console.log(qr)
     qr.addData("https://www.youtube.com/watch?v=BBJa32lCaaY");
     qr.make();
     let qrImageTag = qr.createImgTag(6).replace('<img', '<img style="border-radius:14px;"');

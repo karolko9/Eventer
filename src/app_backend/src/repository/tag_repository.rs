@@ -20,5 +20,3 @@ pub fn get_events_id_by_tags(tags: Vec<String>) -> HashSet<u128>{
 
     event_ids
 }
-
-
