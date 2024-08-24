@@ -5,8 +5,8 @@ use candid::CandidType;
 
 #[derive(CandidType, Clone, Debug)]
 pub struct Tag {
-    name: String,
-    events_ids: HashSet<u128>,
+    pub name: String,
+    pub events_ids: HashSet<u128>,
 }
 
 impl Tag{

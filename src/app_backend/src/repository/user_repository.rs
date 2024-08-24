@@ -45,6 +45,8 @@ pub fn get_user_hosted_events(caller: Principal) -> HashSet<u128> {
     })
 }
 
+//
+
 pub fn add_event_to_user(caller: Principal, event_id: u128) -> Result<(), ()> {
 
     USER_DATA_MODEL.with(|users| {

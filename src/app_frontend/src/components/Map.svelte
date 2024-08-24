@@ -7,7 +7,7 @@
   import EventDetailsModal from './EventDetailsModal.svelte';
   import Searchbox from './Searchbox.svelte';
   import Loader from './Loader.svelte';
-  import { IconLogin, IconConfetti, IconX } from '@tabler/icons-svelte';
+  import { IconLogin, IconConfetti, IconX, IconHeart } from '@tabler/icons-svelte';
   import { addToast } from "../components/Toast.svelte";
   import { createDialog, melt } from '@melt-ui/svelte';
   import { fade } from 'svelte/transition';
@@ -99,7 +99,6 @@
       }
     }catch(error){
       console.error(error);
-      addToast({data: { title: 'Error', description: 'Something went wrong!', color: 'bg-red-500'}})
     }
   }
 
@@ -179,6 +178,9 @@
       <p class="text-xs text-primary300 font-medium">Sign In</p>
     </button>
   {/if}
+  <button on:click={handleAuth} class="absolute left-[20px]  bottom-[20px] w-fit h-fit p-2 flex flex-col items-center justify-center border-[1px] border-color bg-background rounded-xl">
+    <IconHeart style="color:#5B2784"/>
+  </button>
   {#if showLoader}
     <Loader imageSrc="undraw_world_re.svg" description="Preparing map"/>
   {/if}

@@ -49,8 +49,9 @@ type UserDataModel = record {
   list_of_hosted_events : vec nat;
   location : record { float64; float64 };
 };
-service : {
+service : () -> {
   create_event : (EventDTO) -> (bool);
+  fetch_all_tag_names : () -> (vec text) query;
   get_all_events : () -> (opt vec EventMapResponse) query;
   get_event : (nat) -> (opt EventDetailsResponse) query;
   get_event_by_tags_user : () -> (opt vec EventMapResponse) query;
