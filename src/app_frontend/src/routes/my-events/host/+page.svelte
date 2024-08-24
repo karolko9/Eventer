@@ -17,8 +17,8 @@
    async function fetchEvents() {
        try {
            if ($auth.isReady && $auth.isAuthenticated) {
-               const eventsList = await $auth.whoamiActor.get_user_events_hosted();
-               console.log(eventsList);
+               const eventsList = await $auth.whoamiActor.get_user_hosted_events();
+               console.log("hosted events:", eventsList);
             //    events = eventsList.map((event) => event);
        }
        } catch (error) {
@@ -35,7 +35,7 @@
 <section class="w-full h-mobile lg:h-desktop m-auto p-4 overflow-y-auto flex flex-col lg:flex-row lg:flex-wrap gap-4">
    {#if events.length > 0}
    {#each events as event}
-       <EventCard id={event.id} name={event.name} date={event.time_start} address={event.address} on:navigate={handleNavigate}/>
+       <EventCard id={event.id} userType="host" name={event.name} date={event.time_start} address={event.address} eventDescription={event.description} phone={event.contact.phone} email={event.contact.email} on:navigate={handleNavigate}/>
    {/each}
 {/if}
 </section>
