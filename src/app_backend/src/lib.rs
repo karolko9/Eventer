@@ -15,6 +15,7 @@ pub mod repository;
 pub mod controller;
 pub mod error;
 pub mod component;
+pub mod init;
 
 thread_local! {
     static USER_DATA_MODEL: RefCell<UserDataModels> = RefCell::default();
@@ -34,6 +35,6 @@ type EventMap = HashMap<u128, Event>;
 
 type EventOnlineMap = HashMap<u128, EventOnline>;
 
-type TagMap = HashMap<String, Tag>;
+pub type TagMap = HashMap<String, Tag>;
 
 ic_cdk::export_candid!();
