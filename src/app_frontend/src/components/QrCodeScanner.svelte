@@ -21,7 +21,12 @@
         function success(result) {
             if (isScanning) {
                 scanner.clear();
-                const foundParticipant = participants.find(participant => participant === result);
+                console.log(result);
+                const foundParticipant = participants.find(participant => {
+                    console.log(participant);
+                    console.log(participant.toText());
+                    return participant.toText() === result;
+                });
 
                 if (foundParticipant) {
                     scanResult = "User has ticket";  

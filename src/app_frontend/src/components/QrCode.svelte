@@ -3,28 +3,28 @@
     import  qrcode  from "qrcode-generator"
     import { AuthClient } from "@dfinity/auth-client";
     import { onMount } from "svelte";
-  import { auth } from "$lib/auth";
+    import { auth } from "$lib/auth";
 
-    // new Html5QrcodeScanner('reader', {})
-
-    let Principal = "";
-
+    let principal = "";
+    let qrImageTag = "";
+    
     onMount(() => {
+        $auth.init();
         setPrincipal();
     });
 
     async function setPrincipal() {
-        const authClient = await AuthClient.create();
-        Principal = await authClient.getIdentity()?.getPrincipal();
-    }
+        principal = await $auth.authClient.getIdentity()?.getPrincipal();
+        console.log(principal);
 
-    
-    let typeNumber = 4;
-    let errorCorrectionLevel = 'L';
-    let qr = qrcode(typeNumber, errorCorrectionLevel);
-    qr.addData(Principal);
-    qr.make();
-    let qrImageTag = qr.createImgTag(6).replace('<img', '<img style="border-radius:14px;"');
+        let typeNumber = 4;
+        let errorCorrectionLevel = 'L';
+        let qr = qrcode(typeNumber, errorCorrectionLevel);
+        console.log(principal.toText());
+        qr.addData(principal.toText());
+        qr.make();
+        qrImageTag = qr.createImgTag(6).replace('<img', '<img style="border-radius:14px;"');
+    }
 </script>
 
 
