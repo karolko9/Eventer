@@ -16,8 +16,9 @@
        try {
            if ($auth.isReady && $auth.isAuthenticated) {
                const eventsList = await $auth.whoamiActor.get_user_events();
-               events = eventsList[0].map((event) => event);
-               console.log("user events:", eventsList);
+               if(eventsList.length > 0) {
+                    events = eventsList[0].map((event) => event);
+               }
        }
        } catch (error) {
            console.error("Error fetching events:", error);
