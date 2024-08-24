@@ -6,8 +6,14 @@
     import { auth } from "../../lib/auth.js";
     import { addToast } from "../../components/Toast.svelte";
 
+    let isLoggedIn = false;
+
     onMount(() => {
-        $auth.init()
+        $auth.init().then(() => {
+            if($auth.isAuthenticated){
+                isLoggedIn = true;
+            }
+        })
     });
 
     
@@ -100,6 +106,12 @@
         }
     }
 
+    const handleLogout = () => {
+        $auth.logout().then(() => {
+            goto("/");
+        });
+    }
+
 </script>
 
 <header class="relative p-4 flex items-center justify-between">
@@ -171,6 +183,9 @@
     </article>
     <div class="flex flex-col items-center lg:items-start lg:flex-row gap-2 lg:gap-3">
         <button on:click={submitHandler} class="w-full lg:w-[200px] mt-3 p-3 bg-primary border-2 border-primary text-background lg:self-start rounded-md">Save</button>
+        {#if isLoggedIn}
+            <button on:click={handleLogout} class="w-full lg:w-[200px] mt-3 p-3 bg-background border-2 border-primary text-primary font-semibold lg:self-start rounded-md">Log out</button>
+        {/if}
     </div>
 </form>
 
