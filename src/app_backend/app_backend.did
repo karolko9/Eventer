@@ -28,6 +28,21 @@ type EventMapResponse = record {
   id : nat;
   location : record { float64; float64 };
 };
+type EventOnlineDTO = record {
+  url : text;
+  name : text;
+  tags : vec text;
+  time_start : text;
+  time_end : text;
+};
+type EventOnlineDetailsResponse = record {
+  id : nat;
+  url : text;
+  name : text;
+  tags : vec text;
+  time_start : text;
+  time_end : text;
+};
 type UserDTO = record {
   bio : text;
   job : text;
@@ -39,6 +54,8 @@ type UserDTO = record {
 type UserDataModel = record {
   bio : text;
   job : text;
+  list_of_events_online : vec nat;
+  list_of_hosted_events_online : vec nat;
   name : text;
   role : text;
   list_of_events : vec nat;
@@ -48,13 +65,21 @@ type UserDataModel = record {
 };
 service : () -> {
   create_event : (EventDTO) -> (bool);
+  create_event_online : (EventOnlineDTO) -> (bool);
   fetch_all_tag_names : () -> (vec text) query;
   get_all_events : () -> (opt vec EventMapResponse) query;
+  get_all_online_events : () -> (opt vec EventOnlineDetailsResponse) query;
   get_event : (nat) -> (opt EventDetailsResponse) query;
   get_event_by_tags_user : () -> (opt vec EventMapResponse) query;
+  get_event_online : (nat) -> (opt EventOnlineDetailsResponse) query;
   get_user : () -> (opt UserDataModel) query;
   get_user_events : () -> (opt vec EventDetailsResponse) query;
+  get_user_events_online : () -> (opt vec EventOnlineDetailsResponse) query;
   get_user_hosted_events : () -> (opt vec EventDetailsResponse) query;
+  get_user_hosted_events_online : () -> (
+      opt vec EventOnlineDetailsResponse,
+    ) query;
   join_event : (nat) -> (bool);
+  join_event_online : (nat) -> (bool);
   register_user : (UserDTO) -> (bool);
 }

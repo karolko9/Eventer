@@ -4,6 +4,7 @@ use candid::Principal;
 
 use crate::dto_request::user_dto_request;
 use crate::model::event_model::Event;
+use crate::model::event_online_model::EventOnline;
 use crate::model::user_model::UserDataModel;
 use crate::USER_DATA_MODEL;
 
@@ -22,6 +23,8 @@ pub fn get_user(user: Principal) -> Option<UserDataModel> {
         user_data_model
     })
 }
+
+//EVENTS:
 
 pub fn get_user_events(caller: Principal) -> HashSet<u128> {
     USER_DATA_MODEL.with(|user_data_model| {
@@ -45,7 +48,6 @@ pub fn get_user_hosted_events(caller: Principal) -> HashSet<u128> {
     })
 }
 
-//
 
 pub fn add_event_to_user(caller: Principal, event_id: u128) -> Result<(), ()> {
 
@@ -72,6 +74,58 @@ pub fn add_hosting_event_to_user(caller: Principal, event_id: u128) -> Result<()
         }
     })
 }
+
+//EVENT ONLINE:
+
+pub fn get_user_events_online(caller: Principal) -> HashSet<u128> {
+    USER_DATA_MODEL.with(|user_data_model| {
+        let user_data = user_data_model.borrow();
+        if let Some(user) = user_data.get(&caller) {
+            user.get_events_online().clone()
+        } else {
+            HashSet::<u128>::new()
+        }
+    })
+}
+
+pub fn get_user_hosted_events_online(caller: Principal) -> HashSet<u128> {
+    USER_DATA_MODEL.with(|user_data_model| {
+        let user_data = user_data_model.borrow();
+        if let Some(user) = user_data.get(&caller) {
+            user.get_hosted_events_online().clone()
+        } else {
+            HashSet::<u128>::new()
+        }
+    })
+}
+
+pub fn add_event_online_to_user(caller: Principal, event_id: u128) -> Result<(), ()> {
+
+    USER_DATA_MODEL.with(|users| {
+        let mut users_map = users.borrow_mut();
+        if let Some(user) = users_map.get_mut(&caller) {
+            user.add_event_online(event_id);
+            Ok(())
+        } else {
+            Err(())
+        }
+    })
+}
+
+pub fn add_hosting_event_online_to_user(caller: Principal, event_id: u128) -> Result<(), ()> {
+
+    USER_DATA_MODEL.with(|users| {
+        let mut users_map = users.borrow_mut();
+        if let Some(user) = users_map.get_mut(&caller) {
+            user.add_hosted_event_online(event_id);
+            Ok(())
+        } else {
+            Err(())
+        }
+    })
+}
+
+//DB:
 
 pub fn update_user_database(user: Principal, user_dto: user_dto_request::UserDTO) -> Result<(), ()> {
     
