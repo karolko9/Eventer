@@ -22,38 +22,8 @@
     export let phone;
     export let email;
     export let media;
+    export let participants;
 
-    onMount(() => {
-       $auth.init().then(() => {
-            fetchParticipantsForEvent(id);
-       });
-   });
-   
-    let participants = [];
-
-    
-    async function fetchParticipantsForEvent(id) {
-        try {
-            if ($auth.isReady && $auth.isAuthenticated) {
-                let participantsList = await $auth.whoamiActor.get_event(id).map((event) => event.hash_map_of_declared);
-
-                if (participantsList && participantsList.length > 0) {
-                    const participants = participantsList[0].map((participant) => participant);
-                    console.log("participants:", participantsList);
-                    // return participants;
-                } else {
-                    console.log("No participants found.");
-                }
-            } else {
-                console.log("You cant use fetchParticipants when logged out");
-            }
-
-        } catch (error) {
-            console.error("Error fetching participants:", error);
-        }
-    }
-
-    constole.log(fetchParticipantsForEvent());
 
     let ticketsAmount = Math.floor(Math.random() * 40);
 
@@ -145,13 +115,14 @@
             <h2 class="text-background font-md mb-2">{formatDate(date)}</h2>
             <p class="text-xs leading-5 text-background font-extralight mb-6">{eventDescription}</p>
         {/if}
-        {#if userType === "host"}
-            <ul class="flex flex-col gap-2">
+        <ul class="flex flex-col gap-2">
+            <li class="text-sm text-background opacity-80 mb-6">Number of participants: {participants.length}</li>
+            {#if userType === "host"}
                 {#each participants as participant}
-                    <li class="text-md text-primary">{participant}</li>
+                    <li class="text-sm text-background opacity-80 mb-6">{participant}</li>
                 {/each}
-            </ul>
-        {/if}
+            {/if}
+        </ul>
         <div class="flex gap-2 items-center mb-2">
             {#if userType === "attendee"}
                 <button on:click={handleShowTicket} class="p-2 bg-background border-2 border-background text-primary font-medium rounded-lg">  {showTicket ? 'Hide Ticket' : 'Show Ticket'}</button>

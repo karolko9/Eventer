@@ -7,14 +7,15 @@
    
 
    let events = [];
-   let participants = [];
 
-   onMount(() => {
-       $auth.init().then(() => {
-           fetchEvents();
-       });
-   });
-   
+    onMount(() => {
+        $auth.init().then(() => {
+            fetchEvents();
+
+        });
+    });
+    
+
 
 
 
@@ -25,6 +26,7 @@
                if(eventsList.length > 0) {
                     events = eventsList[0].map((event) => event);
                }
+               console.log("events fetched succesfully")
        }
        } catch (error) {
            console.error("Error fetching events:", error);
@@ -40,7 +42,7 @@
 <section class="w-full h-mobile lg:h-desktop m-auto p-4 overflow-y-auto flex flex-col lg:flex-row lg:flex-wrap gap-4">
     {#if events.length > 0}
         {#each events as event}
-            <EventCard id={event.id} userType="host" name={event.name} date={event.time_start} address={event.address} eventDescription={event.description} on:navigate={handleNavigate}/>
+            <EventCard id={event.id} userType="host" name={event.name} participants={event.hash_map_of_declared} date={event.time_start} address={event.address} eventDescription={event.description} on:navigate={handleNavigate}/>
         {/each}
     {:else}
     <div class="flex flex-col items-center mx-auto self-center">
