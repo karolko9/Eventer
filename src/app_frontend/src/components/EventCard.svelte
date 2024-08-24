@@ -6,6 +6,8 @@
     import { fade } from 'svelte/transition';
     import QrCode from './QrCode.svelte';
     import { onMount } from "svelte";
+    import { auth } from "../lib/auth";
+
 
 
 
@@ -19,9 +21,9 @@
     export let email;
 
     onMount(() => {
-    //    $auth.init().then(() => {
+       $auth.init().then(() => {
             fetchParticipantsForEvent(id);
-    //    });
+       });
    });
    
     let participants = [];
