@@ -37,7 +37,10 @@ pub fn create_event(
         event_dto.phone,
         event_dto.media,
         event_dto.thumbnail,
+        HashSet::new(),
     )?;
+
+    // todo: check if user exists
     register_blank_user(caller);
     user_repository::add_hosting_event_to_user(caller, event_id);
     Ok(event_repository::create_event(event, event_id))
@@ -82,7 +85,7 @@ pub fn register_blank_user(user: Principal) -> bool {
 }
 
 
-// gives ticket
+
 pub fn join_event(caller: Principal, event_id: u128) -> bool {
     let mut event_joined = false;
 

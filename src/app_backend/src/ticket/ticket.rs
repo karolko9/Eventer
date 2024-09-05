@@ -1,4 +1,5 @@
 use candid::{CandidType, Principal};
+use getrandom::Error;
 use ic_cdk::api::management_canister::ecdsa::{
     ecdsa_public_key, sign_with_ecdsa, EcdsaCurve, EcdsaKeyId, EcdsaPublicKeyArgument,
     SignWithEcdsaArgument,
@@ -6,9 +7,11 @@ use ic_cdk::api::management_canister::ecdsa::{
 use serde::{Deserialize, Serialize};
 use std::convert::TryFrom;
 
+use crate::repository::event_repository;
+
 #[derive(CandidType, Serialize, Deserialize, Debug)]
 pub struct Ticket {
-    event_id: String,
+    pub event_id: u128,
     user: Principal,
 }
 
@@ -68,8 +71,8 @@ async fn generate_ticket_signature(ticket: Ticket) -> Result<TicketSignature, St
     })
 }
 
-#[ic_cdk::update]
-async fn verify_ticket_signature(
+
+pub async fn verify_ticket_signature(
     signature_hex: String,
     ticket: Ticket,
 ) -> Result<TicketVerification, String> {
@@ -79,7 +82,7 @@ async fn verify_ticket_signature(
     );
     let message_bytes = ticket_data.as_bytes();
 
-    let signature_bytes = hex::decode(signature_hex).expect("failed to hex-decode signature");
+    let signature_bytes = hex::decode(signature_hex.clone()).expect("failed to hex-decode signature");
 
     use k256::ecdsa::signature::Verifier;
     let signature = k256::ecdsa::Signature::try_from(signature_bytes.as_slice())
@@ -92,6 +95,12 @@ async fn verify_ticket_signature(
         .expect("failed to deserialize sec1 encoding into public key")
         .verify(message_bytes, &signature)
         .is_ok();
+
+    if(event_repository::is_ticket_used(ticket.event_id.clone(), signature_hex.clone()) == false){
+        return Err("Ticket is already used".to_string());
+    }
+
+    event_repository::add_used_ticket(ticket.event_id.clone(), signature_hex);
 
     Ok(TicketVerification { is_signature_valid })
 }

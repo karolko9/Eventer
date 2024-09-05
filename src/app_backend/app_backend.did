@@ -33,12 +33,11 @@ type EventMapResponse = record {
   location : record { float64; float64 };
 };
 type PublicKeyReply = record { public_key_hex : text };
-type Result = variant { Ok : TicketSignature; Err : text };
-type Result_1 = variant { Ok : PublicKeyReply; Err : text };
-type Result_2 = variant { Ok : TicketVerification; Err : text };
-type Ticket = record { user : principal; event_id : text };
+type Result = variant { Ok; Err : text };
+type Result_1 = variant { Ok : TicketSignature; Err : text };
+type Result_2 = variant { Ok : PublicKeyReply; Err : text };
+type Ticket = record { user : principal; event_id : nat };
 type TicketSignature = record { signature_hex : text };
-type TicketVerification = record { is_signature_valid : bool };
 type UserDTO = record {
   bio : text;
   job : text;
@@ -58,9 +57,10 @@ type UserDataModel = record {
   location : record { float64; float64 };
 };
 service : () -> {
+  add_tag_to_event : (principal, nat, text) -> (Result);
   create_event : (EventDTO) -> (bool);
   fetch_all_tag_names : () -> (vec text) query;
-  generate_ticket_signature : (Ticket) -> (Result);
+  generate_ticket_signature : (Ticket) -> (Result_1);
   get_all_events : () -> (opt vec EventMapResponse) query;
   get_event : (nat) -> (opt EventDetailsResponse) query;
   get_event_by_tags_user : () -> (opt vec EventMapResponse) query;
@@ -68,7 +68,7 @@ service : () -> {
   get_user_events : () -> (opt vec EventDetailsResponse) query;
   get_user_hosted_events : () -> (opt vec EventDetailsResponse) query;
   join_event : (nat) -> (bool);
-  public_key : () -> (Result_1);
+  public_key : () -> (Result_2);
   register_user : (UserDTO) -> (bool);
-  verify_ticket_signature : (text, Ticket) -> (Result_2);
+  verify_ticket_signature_by_admin : (principal, text, Ticket) -> (Result);
 }

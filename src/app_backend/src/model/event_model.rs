@@ -20,7 +20,8 @@ pub struct Event {
     tags: HashSet<String>,
     description: String,
     contact: component::contact::Contact,
-    thumbnail: String
+    thumbnail: String,
+    used_tickets: HashSet<String>,
 }
 
 impl Event {
@@ -40,7 +41,8 @@ impl Event {
         email: String,
         phone: String,
         media: String,
-        thumbnail: String
+        thumbnail: String,
+        used_tickets: HashSet<String>,
     ) -> Result<Self, String> {
         let contact = component::contact::Contact::new(email, phone, media)?;
         Ok(Event {
@@ -57,7 +59,8 @@ impl Event {
             tags,
             description,
             contact,
-            thumbnail
+            thumbnail,
+            used_tickets,
         })
     }
 
@@ -176,5 +179,13 @@ impl Event {
 
     pub fn set_thumbnail(&mut self, thumbnail: String) {
         self.thumbnail = thumbnail;
+    }
+
+    pub fn add_used_ticket(&mut self, ticket: String) {
+        self.used_tickets.insert(ticket);
+    }
+
+    pub fn used_tickets(&self) -> &HashSet<String> {
+        &self.used_tickets
     }
 }
