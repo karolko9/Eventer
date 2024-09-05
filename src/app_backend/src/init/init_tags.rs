@@ -10,20 +10,7 @@ use candid::Principal;
 
 #[ic_cdk::init]
 pub fn init_tag() {
-    let default_tags = vec![
-        Tag{
-            name: "Crypto".to_string(),
-            events_ids: HashSet::new(), 
-        },
-        Tag{
-            name: "Blockchain".to_string(),
-            events_ids: HashSet::new(),
-        },
-        Tag{
-            name: "ICP".to_string(),
-            events_ids: HashSet::new(),
-        },
-    ];
+    let default_tags = init::def_tags::load_defaults();
     let mut tag_map = TagMap::new();
     for tag in default_tags {
         tag_map.insert(tag.name.clone(), tag);

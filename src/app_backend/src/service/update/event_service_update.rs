@@ -55,7 +55,6 @@ pub fn add_event_to_tags(event_id: u128, tags: HashSet<String>) {
             if let Some(tag) = tags_map.get_mut(&tag_name) {
                 tag.add_event(event_id);
             } else {
-                // Użycie `expect()` do rozpakowania wyniku
                 tags_map.insert(tag_name.clone(), Tag::new(tag_name.clone()).expect("Failed to create new tag")); 
             }
         }
