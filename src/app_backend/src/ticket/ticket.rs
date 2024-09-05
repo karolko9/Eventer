@@ -13,6 +13,18 @@ use crate::repository::event_repository;
 pub struct Ticket {
     pub event_id: u128,
     user: Principal,
+    pub event_name: String,
+}
+
+impl Ticket {
+    pub fn new(event_id: u128, user: Principal, event_name: String) -> Self {
+        Self {
+            event_id,
+            user,
+            event_name,
+        }
+    }
+    
 }
 
 #[derive(CandidType, Serialize, Debug)]
@@ -47,11 +59,11 @@ async fn public_key() -> Result<PublicKeyReply, String> {
     })
 }
 
-#[ic_cdk::update]
-async fn generate_ticket_signature(ticket: Ticket) -> Result<TicketSignature, String> {
+
+pub async fn generate_ticket_signature(ticket: Ticket) -> Result<TicketSignature, String> {
     let ticket_data = format!(
-        "{}:{}",
-        ticket.event_id, ticket.user
+        "{}:{}:{}",
+        ticket.event_id, ticket.user, ticket.event_name
     );
 
     let message_hash = sha256(&ticket_data).to_vec();
@@ -77,8 +89,8 @@ pub async fn verify_ticket_signature(
     ticket: Ticket,
 ) -> Result<TicketVerification, String> {
     let ticket_data = format!(
-        "{}:{}",
-        ticket.event_id, ticket.user
+        "{}:{}:{}",
+        ticket.event_id, ticket.user, ticket.event_name
     );
     let message_bytes = ticket_data.as_bytes();
 

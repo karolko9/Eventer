@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::collections::HashSet;
+use std::f32::consts::E;
 
 use crate::dto_request;
 use crate::dto_response;
@@ -8,6 +9,8 @@ use crate::repository::event_id_repository;
 use crate::repository::event_repository;
 use crate::repository::user_repository;
 use crate::service::query::user_service_query;
+use crate::ticket;
+use crate::ticket::ticket::TicketSignature;
 use candid::Principal;
 
 //1 Create event
@@ -86,8 +89,10 @@ pub fn register_blank_user(user: Principal) -> bool {
 
 
 
-pub fn join_event(caller: Principal, event_id: u128) -> bool {
+pub async fn join_event(caller: Principal, event_id: u128) -> Result<TicketSignature, String> {
     let mut event_joined = false;
+
+    let mut event_name = String::new();
 
     EVENTS.with(|events| {
         let mut events_map = events.borrow_mut();
@@ -106,26 +111,36 @@ pub fn join_event(caller: Principal, event_id: u128) -> bool {
                 }
             }
 
-            event.add_participant(caller);
+            event.add_participant(caller.clone());
             event_joined = true;
+            event_name = event.name().clone().to_owned();
         }
     });
 
+
+
     if event_joined {
+
+        // TODO payment
+
+
         if user_repository::user_exists(caller) == false {
             register_blank_user(caller);
         }
 
+
         USER_DATA_MODEL.with(|users| {
             let mut users_map = users.borrow_mut();
-            if let Some(user) = users_map.get_mut(&caller) {
-                user.add_event(event_id);
-                true
-            } else {
-                false
-            }
-        })
+            let user = users_map.get_mut(&caller).unwrap();
+            user.add_event(event_id);
+        });
+
+
+
+        
     } else {
-        false
+        return Err("Event not found".to_string());
     }
+    let ticket_gen: ticket::ticket::Ticket = ticket::ticket::Ticket::new(event_id, caller, event_name.to_string());
+    Ok(ticket::ticket::generate_ticket_signature(ticket_gen).await?)
 }
