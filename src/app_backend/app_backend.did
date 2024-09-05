@@ -32,6 +32,12 @@ type EventMapResponse = record {
   thumbnail : text;
   location : record { float64; float64 };
 };
+type PublicKeyReply = record { public_key_hex : text };
+type Result = variant { Ok; Err : text };
+type Result_1 = variant { Ok : TicketSignature; Err : text };
+type Result_2 = variant { Ok : PublicKeyReply; Err : text };
+type Ticket = record { user : principal; event_id : nat; event_name : text };
+type TicketSignature = record { signature_hex : text };
 type UserDTO = record {
   bio : text;
   job : text;
@@ -59,6 +65,7 @@ service : () -> {
   get_user : () -> (opt UserDataModel) query;
   get_user_events : () -> (opt vec EventDetailsResponse) query;
   get_user_hosted_events : () -> (opt vec EventDetailsResponse) query;
-  join_event : (nat) -> (bool);
+  join_event : (nat) -> (Result_1);
+  public_key : () -> (Result_2);
   register_user : (UserDTO) -> (bool);
 }
