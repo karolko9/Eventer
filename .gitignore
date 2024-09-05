@@ -26,4 +26,4 @@ dist/
 .env
 
 #timestamps
-src\app_frontend\vite.config.js.timestamp-**
+/src/app_frontend/*.timestamp-*
