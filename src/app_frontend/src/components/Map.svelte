@@ -1,5 +1,5 @@
 <script>
-  import { MapLibre, Marker, Popup } from 'svelte-maplibre';
+  import { MapLibre, Marker } from 'svelte-maplibre';
   import { auth } from "../lib/auth";
   import { onMount } from "svelte";
   import { goto } from '$app/navigation'
