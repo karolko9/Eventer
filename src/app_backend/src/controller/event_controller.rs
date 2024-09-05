@@ -29,6 +29,6 @@ fn get_event_by_tags_user() -> Option<Vec<dto_response::event_dto_response::Even
 }
 
 #[ic_cdk::query]
-fn get_all_events() -> Option<Vec<dto_response::event_dto_response::EventMapResponse>>{
+fn get_all_offline_events() -> Option<Vec<dto_response::event_dto_response::EventMapResponse>>{
     service::query::event_service_query::get_all_events()
 }

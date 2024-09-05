@@ -30,10 +30,16 @@ pub fn create_event_online(event_dto: dto_request::event_online_dto_request::Eve
         event_dto.url,
         event_dto.time_start,
         event_dto.time_end,
+        event_dto.price,
         vec![caller],
         HashSet::new(),
         event_dto.tags.into_iter().collect::<HashSet<_>>(),
-    );
+        event_dto.description,
+        event_dto.email,
+        event_dto.phone,
+        event_dto.media,
+        event_dto.thumbnail
+    )?;
     register_blank_user(caller);
     add_event_to_online_tags(event.id().clone(), event.tags().clone());
     user_repository::add_hosting_event_to_user(caller, event_id);

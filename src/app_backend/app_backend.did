@@ -34,16 +34,27 @@ type EventMapResponse = record {
 };
 type EventOnlineDTO = record {
   url : text;
+  media : text;
+  thumbnail : text;
   name : text;
   tags : vec text;
+  description : text;
+  email : text;
+  phone : text;
+  price : float32;
   time_start : text;
   time_end : text;
 };
 type EventOnlineDetailsResponse = record {
   id : nat;
   url : text;
+  contact : Contact;
+  thumbnail : text;
   name : text;
   tags : vec text;
+  description : text;
+  hash_map_of_declared : vec principal;
+  price : float32;
   time_start : text;
   time_end : text;
 };
@@ -73,11 +84,14 @@ service : () -> {
   fetch_all_online_tag_names : () -> (vec text) query;
   fetch_all_tag_names : () -> (vec text) query;
   fill_tags_with_defaults : () -> ();
-  get_all_events : () -> (opt vec EventMapResponse) query;
+  get_all_offline_events : () -> (opt vec EventMapResponse) query;
   get_all_online_events : () -> (opt vec EventOnlineDetailsResponse) query;
   get_event : (nat) -> (opt EventDetailsResponse) query;
   get_event_by_tags_user : () -> (opt vec EventMapResponse) query;
   get_event_online : (nat) -> (opt EventOnlineDetailsResponse) query;
+  get_online_events_by_users_tags : () -> (
+      opt vec EventOnlineDetailsResponse,
+    ) query;
   get_user : () -> (opt UserDataModel) query;
   get_user_events : () -> (opt vec EventDetailsResponse) query;
   get_user_events_online : () -> (opt vec EventOnlineDetailsResponse) query;

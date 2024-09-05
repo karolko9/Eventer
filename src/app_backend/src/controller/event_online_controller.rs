@@ -18,10 +18,10 @@ fn get_event_online(event_id: u128) -> Option<dto_response::event_online_dto_res
     service::query::event_online_service_query::get_online_event(event_id) 
 }
 
-// #[ic_cdk::query]
-// fn get_event_by_tags_user() -> Option<Vec<dto_response::event_dto_response::EventMapResponse>> {
-//     service::query::event_service_query::get_event_by_tag_user(ic_cdk::caller())           
-// }
+#[ic_cdk::query]
+fn get_online_events_by_users_tags() -> Option<Vec<dto_response::event_online_dto_response::EventOnlineDetailsResponse>> {
+    service::query::event_online_service_query::get_online_events_by_users_tags(ic_cdk::caller())           
+}
 
 #[ic_cdk::query]
 fn get_all_online_events() -> Option<Vec<dto_response::event_online_dto_response::EventOnlineDetailsResponse>>{
