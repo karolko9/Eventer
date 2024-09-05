@@ -14,7 +14,3 @@ pub fn get_all_online_tag_names() -> Vec<String> {
         tags.borrow().keys().cloned().collect()
     })
 }
-
-pub fn fill_tags_with_defaults(){
-    init::init_tags::init_tag();
-}
