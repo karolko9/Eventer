@@ -4,8 +4,8 @@ use std::collections::HashSet;
 use crate::dto_request;
 use crate::dto_response;
 use crate::model::event_model::Event;
-use crate::repository::event_repository;
 use crate::repository::event_id_repository;
+use crate::repository::event_repository;
 use crate::repository::user_repository;
 use crate::service::query::user_service_query;
 use candid::Principal;
@@ -13,8 +13,10 @@ use candid::Principal;
 //1 Create event
 use std::error::Error;
 
-pub fn create_event(event_dto: dto_request::event_dto_request::EventDTO, caller: Principal) -> Result<(), Box<dyn Error>> {
-    
+pub fn create_event(
+    event_dto: dto_request::event_dto_request::EventDTO,
+    caller: Principal,
+) -> Result<(), Box<dyn Error>> {
     let event_id = event_id_repository::generate_event_id();
 
     //Create from for event TODO
@@ -34,7 +36,7 @@ pub fn create_event(event_dto: dto_request::event_dto_request::EventDTO, caller:
         event_dto.email,
         event_dto.phone,
         event_dto.media,
-        event_dto.thumbnail
+        event_dto.thumbnail,
     )?;
     register_blank_user(caller);
     user_repository::add_hosting_event_to_user(caller, event_id);
@@ -53,8 +55,8 @@ pub fn create_event(event_dto: dto_request::event_dto_request::EventDTO, caller:
 // }
 
 // join event old - new doesnt work
-use crate::EVENTS;
 use crate::UserDataModel;
+use crate::EVENTS;
 use crate::USER_DATA_MODEL;
 
 pub fn register_blank_user(user: Principal) -> bool {
@@ -66,28 +68,27 @@ pub fn register_blank_user(user: Principal) -> bool {
         role: "".to_string(),
         bio: "".to_string(),
     };
-    if user_repository::user_exists(user) {
-        false
-    } else {
-        let user_data = match UserDataModel::new(user_dto) {
-            Ok(data) => data,
-            Err(_) => return false,
-        };
 
-        USER_DATA_MODEL.with(|user_data_model| {
-            let mut user_data_map = user_data_model.borrow_mut();
-            user_data_map.insert(user, user_data);
-        });
-        true
-    }
+    let user_data = match UserDataModel::new(user_dto) {
+        Ok(data) => data,
+        Err(_) => return false,
+    };
+
+    USER_DATA_MODEL.with(|user_data_model| {
+        let mut user_data_map = user_data_model.borrow_mut();
+        user_data_map.insert(user, user_data);
+    });
+    true
 }
 
+
+// gives ticket
 pub fn join_event(caller: Principal, event_id: u128) -> bool {
     let mut event_joined = false;
 
     EVENTS.with(|events| {
         let mut events_map = events.borrow_mut();
-        
+
         if let Some(event) = events_map.get_mut(&event_id) {
             let host = event.list_of_admin().first();
             if let Some(host) = host {
@@ -95,7 +96,7 @@ pub fn join_event(caller: Principal, event_id: u128) -> bool {
                     return; // Host cannot join their own event
                 }
             }
-            
+
             if let Some(declaration) = event.hash_map_of_declared().get(&caller) {
                 if declaration == "declared" {
                     return; // User has already declared
@@ -108,8 +109,10 @@ pub fn join_event(caller: Principal, event_id: u128) -> bool {
     });
 
     if event_joined {
-        register_blank_user(caller);
-        
+        if user_repository::user_exists(caller) == false {
+            register_blank_user(caller);
+        }
+
         USER_DATA_MODEL.with(|users| {
             let mut users_map = users.borrow_mut();
             if let Some(user) = users_map.get_mut(&caller) {

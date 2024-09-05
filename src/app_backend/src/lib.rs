@@ -17,6 +17,11 @@ pub mod error;
 pub mod component;
 pub mod init;
 
+// ticket
+pub mod ticket;
+
+use ticket::ticket::{Ticket, TicketSignature, PublicKeyReply, TicketVerification}; // Import the missing types
+
 thread_local! {
     static USER_DATA_MODEL: RefCell<UserDataModels> = RefCell::default();
     
