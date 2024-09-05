@@ -3,7 +3,6 @@ use ic_cdk::api::management_canister::ecdsa::{
     ecdsa_public_key, sign_with_ecdsa, EcdsaCurve, EcdsaKeyId, EcdsaPublicKeyArgument,
     SignWithEcdsaArgument,
 };
-use ic_cdk::{query, update};
 use serde::{Deserialize, Serialize};
 use std::convert::TryFrom;
 
@@ -28,7 +27,7 @@ pub struct PublicKeyReply {
     pub public_key_hex: String,
 }
 
-#[update]
+#[ic_cdk::update]
 async fn public_key() -> Result<PublicKeyReply, String> {
     let request = EcdsaPublicKeyArgument {
         canister_id: None,
@@ -45,7 +44,7 @@ async fn public_key() -> Result<PublicKeyReply, String> {
     })
 }
 
-#[update]
+#[ic_cdk::update]
 async fn generate_ticket_signature(ticket: Ticket) -> Result<TicketSignature, String> {
     let ticket_data = format!(
         "{}:{}",
@@ -69,7 +68,7 @@ async fn generate_ticket_signature(ticket: Ticket) -> Result<TicketSignature, St
     })
 }
 
-#[update]
+#[ic_cdk::update]
 async fn verify_ticket_signature(
     signature_hex: String,
     ticket: Ticket,
