@@ -7,7 +7,7 @@ use std::{
 
 #[derive(Debug, Clone)]
 pub struct Event {
-    id: u128,
+    pub id: u128,
     name: String,
     location: (f64, f64),
     address: String,
@@ -17,7 +17,7 @@ pub struct Event {
     list_of_admin: Vec<Principal>,
     hash_map_of_declared: HashMap<Principal, String>, // TODO: HashSet?
     hash_map_of_user_who_check: HashMap<Principal, String>,
-    tags: HashSet<String>,
+    pub tags: HashSet<String>,
     description: String,
     contact: component::contact::Contact,
     thumbnail: String

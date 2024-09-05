@@ -9,6 +9,8 @@ use crate::repository::event_id_repository;
 use crate::repository::user_repository;
 use crate::service::query::user_service_query;
 use candid::Principal;
+use crate::TAGS;
+use crate::Tag;
 
 //1 Create event
 use std::error::Error;
@@ -36,12 +38,28 @@ pub fn create_event(event_dto: dto_request::event_dto_request::EventDTO, caller:
         event_dto.media,
         event_dto.thumbnail
     )?;
+    add_event_to_tags(event.id().clone(),event.tags().clone());
     register_blank_user(caller);
     user_repository::add_hosting_event_to_user(caller, event_id);
     Ok(event_repository::create_event(event, event_id))
 
     // event_repository::create_event(event, event_id.clone());
     // Ok(user_repository::add_hosting_event_to_user(caller, event_id))
+}
+
+pub fn add_event_to_tags(event_id: u128, tags: HashSet<String>) {
+    TAGS.with(|tags_ref_cell| {
+        let mut tags_map = tags_ref_cell.borrow_mut();
+
+        for tag_name in tags {
+            if let Some(tag) = tags_map.get_mut(&tag_name) {
+                tag.add_event(event_id);
+            } else {
+                // Użycie `expect()` do rozpakowania wyniku
+                tags_map.insert(tag_name.clone(), Tag::new(tag_name.clone()).expect("Failed to create new tag")); 
+            }
+        }
+    });
 }
 
 //1 Join event

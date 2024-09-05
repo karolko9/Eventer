@@ -12,6 +12,8 @@ use crate::repository::event_id_repository;
 use crate::repository::user_repository;
 use crate::service::query::user_service_query;
 use candid::Principal;
+use crate::ONLINE_TAGS;
+use crate::Tag;
 
 //CREATE ONLINE EVENT:
 
@@ -33,9 +35,28 @@ pub fn create_event_online(event_dto: dto_request::event_online_dto_request::Eve
         event_dto.tags.into_iter().collect::<HashSet<_>>(),
     );
     register_blank_user(caller);
+    //add_event_to_online_tags(event.id().clone(), event.tags().clone());
     user_repository::add_hosting_event_to_user(caller, event_id);
     Ok(event_online_repository::create_online_event(event, event_id))
 }
+//dont know where it should be (for now lets say it can be here)
+
+/*pub fn add_event_to_online_tags(event_id: u128, tags: HashSet<String>) {
+    ONLINE_TAGS.with(|online_tags| {
+
+        let mut tags_map = online_tags.borrow_mut();
+        for tag_name in tags {
+            if let Some(tag) = tags_map.get_mut(&tag_name) {
+                tag.add_event(event_id);
+            } else {
+                tags_map.insert(tag_name.clone(), Tag::new(tag_name)); // Create new tag
+            }
+        }
+
+    });
+}*/
+
+//if the tags are fixed we are not going to do this
 
 //could be here or in the other place (???)
 pub fn register_blank_user(user: Principal) -> bool {

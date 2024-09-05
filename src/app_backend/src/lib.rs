@@ -27,6 +27,7 @@ thread_local! {
     static NEXT_EVENT_ONLINE_ID: RefCell<u128> = RefCell::new(0);
 
     static TAGS: RefCell<TagMap> = RefCell::default();
+    static ONLINE_TAGS: RefCell<TagMap> = RefCell::default();
 }
 
 type UserDataModels = HashMap<Principal, UserDataModel>;

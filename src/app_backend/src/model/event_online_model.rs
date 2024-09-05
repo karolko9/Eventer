@@ -3,14 +3,14 @@ use std::collections::{HashMap, HashSet};
 
 #[derive(Debug, Clone)]
 pub struct EventOnline {
-    id: u128,
+    pub id: u128,
     name: String,
     url: String,
     time_start: String,
     time_end: String,
     list_of_admin: Vec<Principal>,
     hash_map_of_declared: HashSet<Principal>,
-    tags: HashSet<String>,
+    pub tags: HashSet<String>,
 }
 
 impl EventOnline {
