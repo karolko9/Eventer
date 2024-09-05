@@ -25,5 +25,8 @@ dist/
 # environment variables
 .env
 
+# bun
+bun.lockb
+
 #timestamps
 /src/app_frontend/*.timestamp-*
