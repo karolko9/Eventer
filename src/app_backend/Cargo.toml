@@ -14,4 +14,5 @@ ic-cdk = "0.13"
 ic-cdk-timers = "0.7" # Feel free to remove this dependency if you don't need timers
 #warp = "0.3"
 serde = { version = "1.0", features = ["derive"] }
+icrc-ledger-types = "0.1.5"
 #serde_json = "1.0"

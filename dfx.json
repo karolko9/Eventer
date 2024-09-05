@@ -10,6 +10,13 @@
       "build": "./build.sh app_backend",
       "wasm": "target/wasm32-unknown-unknown/release/app_backend.wasm"
     },
+    "icrc1_ledger_canister": {
+      "type": "custom",
+      "candid": "icrc1_ledger.did",
+      "wasm" : "icrc1_ledger.wasm.gz",
+      "specified_id": "mxzaz-hqaaa-aaaar-qaada-cai"
+      
+    },
     "app_frontend": {
       "dependencies": [
         "app_backend"

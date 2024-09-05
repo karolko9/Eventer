@@ -1,3 +1,4 @@
+type Account = record { owner : principal; subaccount : opt blob };
 type Contact = record { media : text; email : text; phone : text };
 type EventDTO = record {
   media : text;
@@ -32,6 +33,8 @@ type EventMapResponse = record {
   thumbnail : text;
   location : record { float64; float64 };
 };
+type Result = variant { Ok : nat; Err : text };
+type TransferArgs = record { to_account : Account; amount : nat };
 type UserDTO = record {
   bio : text;
   job : text;
@@ -61,4 +64,5 @@ service : () -> {
   get_user_hosted_events : () -> (opt vec EventDetailsResponse) query;
   join_event : (nat) -> (bool);
   register_user : (UserDTO) -> (bool);
+  transfer : (TransferArgs) -> (Result);
 }
