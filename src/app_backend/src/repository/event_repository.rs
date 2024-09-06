@@ -58,3 +58,34 @@ pub fn add_user_to_event(event_id: u128, caller: Principal) -> Result<(), String
         }
     })
 }
+
+pub fn is_user_admin(caller: Principal, event_id: u128) -> bool {
+    EVENTS.with(|events| {
+        let events_map = events.borrow();
+        if let Some(event) = events_map.get(&event_id) {
+            event.list_of_admin().contains(&caller)
+        } else {
+            false
+        }
+    })
+}
+
+pub fn add_used_ticket(event_id: u128, signature_hex: String) {
+    EVENTS.with(|events| {
+        let mut events_map = events.borrow_mut();
+        if let Some(event) = events_map.get_mut(&event_id) {
+            event.add_used_ticket(signature_hex);
+        }
+    });
+}
+
+pub fn is_ticket_used(event_id: u128, signature_hex: String) -> bool {
+    EVENTS.with(|events| {
+        let events_map = events.borrow();
+        if let Some(event) = events_map.get(&event_id) {
+            event.used_tickets().contains(&signature_hex)
+        } else {
+            false
+        }
+    })
+}
