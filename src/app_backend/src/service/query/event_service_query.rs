@@ -40,7 +40,9 @@ pub fn get_all_events() -> Option<Vec<EventMapResponse>>{
     })
 }
 
-
+pub fn is_user_admin(caller: Principal, event_id: u128) -> bool {
+    event_repository::is_user_admin(caller, event_id)
+}
 
 
 

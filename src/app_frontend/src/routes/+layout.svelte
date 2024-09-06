@@ -2,11 +2,14 @@
     import Menu from "../components/Menu.svelte";
     import "../app.css";
     import Toast from "../components/Toast.svelte";
-
+    import { currentUserType } from "../stores/userTypeStore";
+    import { page } from '$app/stores';
 </script>
 
 <div class="fixed inset-0 flex flex-col-reverse lg:flex-row">
-    <Menu />
+    {#if $currentUserType && $page.url.pathname !== '/'}
+        <Menu />
+    {/if}
     <Toast />
     <main class="flex-1 h-full relative">
         <slot />
