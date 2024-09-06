@@ -26,6 +26,7 @@ dependencies = [
  "ic-cdk-timers",
  "icrc-ledger-types",
  "serde",
+ "sha2",
 ]
 
 [[package]]

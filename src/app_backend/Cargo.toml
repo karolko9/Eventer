@@ -11,6 +11,7 @@ crate-type = ["cdylib"]
 [dependencies]
 candid = "0.10"
 ic-cdk = "0.13"
+sha2 = "0.10"  # Make sure to use the latest version
 ic-cdk-timers = "0.7" # Feel free to remove this dependency if you don't need timers
 #warp = "0.3"
 serde = { version = "1.0", features = ["derive"] }

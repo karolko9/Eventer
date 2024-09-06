@@ -5,6 +5,8 @@ use icrc_ledger_types::icrc1::account::Account;
 use icrc_ledger_types::icrc1::transfer::{BlockIndex, NumTokens};
 use icrc_ledger_types::icrc2::transfer_from::{TransferFromArgs, TransferFromError};
 use serde::Serialize;
+use sha2::{Sha256, Digest};
+
 
 #[derive(CandidType, Deserialize, Serialize)]
 pub struct TransferArgs {
@@ -13,7 +15,20 @@ pub struct TransferArgs {
 }
 
 // #[ic_cdk::update]
-pub async fn transfer(args: TransferArgs) -> Result<BlockIndex, String> {
+pub async fn transfer(host: Principal, amount: f32) -> Result<BlockIndex, String> {
+    let mut hasher = Sha256::new();
+    hasher.update(host.as_slice());
+    let result = hasher.finalize();
+    let mut subaccount = [0u8; 32];
+    subaccount.copy_from_slice(&result[..32]);
+
+    let args = TransferArgs {
+        amount: u32::try_from(amount.round() as u32).unwrap().into(),
+        to_account: Account {
+            owner: host,
+            subaccount: Some(subaccount),
+        },
+    };
     ic_cdk::println!(
         "Transferring {} tokens to account {}",
         &args.amount,
