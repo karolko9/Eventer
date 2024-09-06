@@ -1,9 +1,6 @@
 use std::collections::HashSet;
 
-use crate::{dto_request, dto_response};
-use crate::model::event_model::Event;
-use crate::model::event_online_model::EventOnline;
-use serde::{Deserialize, Serialize};
+use crate::dto_request;
 use candid::CandidType;
 
 #[derive(CandidType, Clone, Debug)]
@@ -18,6 +15,8 @@ pub struct UserDataModel {
     list_of_events_online: HashSet<u128>,
     list_of_hosted_events: HashSet<u128>,
     list_of_hosted_events_online: HashSet<u128>,
+    list_of_seen_events: HashSet<u128>,
+    list_of_seen_events_online: HashSet<u128>,
 }
 
 impl UserDataModel {
@@ -40,6 +39,8 @@ impl UserDataModel {
             list_of_events_online: HashSet::new(),
             list_of_hosted_events: HashSet::new(),
             list_of_hosted_events_online: HashSet::new(),
+            list_of_seen_events: HashSet::new(),
+            list_of_seen_events_online: HashSet::new(),
         })
     }
 
@@ -149,5 +150,25 @@ impl UserDataModel {
     // Metoda do dodawania wydarzeń
     pub fn add_hosted_event_online(&mut self, event: u128) {
         self.list_of_hosted_events_online.insert(event);
+    }
+
+    // Getter dla pola `list_of_seen_events`
+    pub fn get_seen_events(&self) -> &HashSet<u128> {
+        &self.list_of_seen_events
+    }
+
+    // Add dla pola `list_of_seen_events`
+    pub fn add_seen_events(&mut self, event_id: u128){
+        self.list_of_seen_events.insert(event_id);
+    }
+
+    // Getter dla pola `list_of_seen_events_online`
+    pub fn get_seen_events_online(&self) -> &HashSet<u128>{
+        &self.list_of_seen_events_online
+    }
+
+    // Add dla pola `list_of_seen_events_online`
+    pub fn add_seen_events_online(&mut self, event_id: u128){
+        self.list_of_seen_events_online.insert(event_id);
     }
 }

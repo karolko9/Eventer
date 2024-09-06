@@ -1,6 +1,3 @@
-// use candid::Principal;
-
-
 use crate::model::user_model::UserDataModel;
 use crate::service; 
 

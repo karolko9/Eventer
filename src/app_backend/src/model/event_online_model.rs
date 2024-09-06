@@ -1,16 +1,21 @@
 use candid::Principal;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
+use crate::component;
 
 #[derive(Debug, Clone)]
 pub struct EventOnline {
-    id: u128,
+    pub id: u128,
     name: String,
     url: String,
     time_start: String,
     time_end: String,
+    price: f32,
     list_of_admin: Vec<Principal>,
     hash_map_of_declared: HashSet<Principal>,
-    tags: HashSet<String>,
+    pub tags: HashSet<String>,
+    description: String,
+    contact: component::contact::Contact,
+    thumbnail: String
 }
 
 impl EventOnline {
@@ -20,20 +25,31 @@ impl EventOnline {
         url: String,
         time_start: String,
         time_end: String,
+        price: f32,
         list_of_admin: Vec<Principal>,
         hash_map_of_declared: HashSet<Principal>,
         tags: HashSet<String>,
-    ) -> Self {
-        EventOnline {
+        description: String,
+        email: String,
+        phone: String,
+        media: String,
+        thumbnail: String
+    ) -> Result<Self, String> {
+        let contact = component::contact::Contact::new(email, phone, media)?;
+        Ok(EventOnline {
             id,
             name,
             url,
             time_start,
             time_end,
+            price,
             list_of_admin,
             hash_map_of_declared,
             tags,
-        }
+            description,
+            contact,
+            thumbnail
+        })
     }
     
     //GETTERS 
@@ -58,6 +74,10 @@ impl EventOnline {
         &self.time_end
     }
 
+    pub fn price(&self) -> f32 {
+        self.price
+    }
+
     pub fn list_of_admin(&self) -> &Vec<Principal> {
         &self.list_of_admin
     }
@@ -68,6 +88,18 @@ impl EventOnline {
 
     pub fn tags(&self) -> &HashSet<String> {
         &self.tags
+    }
+
+    pub fn description(&self) -> &str {
+        &self.description
+    }
+
+    pub fn contact(&self) -> component::contact::Contact{
+        self.contact.clone()
+    }
+
+    pub fn thumbnail(&self) -> String {
+        self.thumbnail.clone()
     }
 
     //SETTERS
@@ -98,6 +130,14 @@ impl EventOnline {
 
     pub fn set_tags(&mut self, tags: HashSet<String>) {
         self.tags = tags;
+    }
+
+    pub fn set_description(&mut self, description: String) {
+        self.description = description;
+    }
+
+    pub fn set_thumbnail(&mut self, thumbnail: String) {
+        self.thumbnail = thumbnail;
     }
 
     //adding to hash_map_of_declared

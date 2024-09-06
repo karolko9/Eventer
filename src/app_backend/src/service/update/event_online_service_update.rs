@@ -1,17 +1,18 @@
-use std::collections::HashMap;
 use std::collections::HashSet;
 
 use crate::dto_request;
 use crate::UserDataModel;
 use crate::USER_DATA_MODEL;
 use crate::EVENT_ONLINE;
-use crate::dto_response;
 use crate::EventOnline;
+use crate::repository;
 use crate::repository::event_online_repository;
 use crate::repository::event_id_repository;
 use crate::repository::user_repository;
-use crate::service::query::user_service_query;
+use crate::dto_response::event_online_dto_response::EventOnlineDetailsResponse;
 use candid::Principal;
+use crate::ONLINE_TAGS;
+use crate::Tag;
 
 //CREATE ONLINE EVENT:
 
@@ -28,16 +29,36 @@ pub fn create_event_online(event_dto: dto_request::event_online_dto_request::Eve
         event_dto.url,
         event_dto.time_start,
         event_dto.time_end,
+        event_dto.price,
         vec![caller],
         HashSet::new(),
         event_dto.tags.into_iter().collect::<HashSet<_>>(),
-    );
+        event_dto.description,
+        event_dto.email,
+        event_dto.phone,
+        event_dto.media,
+        event_dto.thumbnail
+    )?;
     register_blank_user(caller);
+    add_event_to_online_tags(event.id().clone(), event.tags().clone());
     user_repository::add_hosting_event_to_user(caller, event_id);
     Ok(event_online_repository::create_online_event(event, event_id))
 }
 
-//could be here or in the other place (???)
+pub fn add_event_to_online_tags(event_id: u128, tags: HashSet<String>) {
+    ONLINE_TAGS.with(|tags_ref_cell| {
+        let mut tags_map = tags_ref_cell.borrow_mut();
+
+        for tag_name in tags {
+            if let Some(tag) = tags_map.get_mut(&tag_name) {
+                tag.add_event(event_id);
+            } else {
+                tags_map.insert(tag_name.clone(), Tag::new(tag_name.clone()).expect("Failed to create new tag")); 
+            }
+        }
+    });
+}
+
 pub fn register_blank_user(user: Principal) -> bool {
     let user_dto = dto_request::user_dto_request::UserDTO {
         name: "".to_string(),
@@ -103,4 +124,9 @@ pub fn join_event_online(caller: Principal, event_id: u128) -> bool {
     } else {
         false
     }
+}
+
+pub fn recommended_events_online(user: Principal, page: usize) -> Option<Vec<EventOnlineDetailsResponse>>{
+    let recommended_events = repository::event_online_repository::get_recommended_events_online_for_user(user);
+    repository::event_online_repository::get_paginated_recommended_events_online(recommended_events, page, user)
 }

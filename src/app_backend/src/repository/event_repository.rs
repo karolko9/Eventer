@@ -1,8 +1,12 @@
 use std::collections::HashSet;
+use std::hash::Hash;
 
 use candid::Principal;
 
 use crate::model::event_model::Event;
+use crate::USER_DATA_MODEL;
+use crate::dto_response::event_dto_response::EventDetailsResponse;
+use crate::repository;
 use crate::EVENTS;
 
 pub fn create_event(new_event: Event, event_id: u128) {
@@ -69,6 +73,28 @@ pub fn is_user_admin(caller: Principal, event_id: u128) -> bool {
         }
     })
 }
+// SEEN EVENTS - SECTION:
+
+//notes:
+// - change to EventDetails OK
+// - all of the recommended_events_for_user in a variable OK
+// - return 20 first of the recommended_events_for_user OK
+
+//Task 2:
+//return items that user hasnt seen:
+pub fn filter_unseen_events(user: Principal, event_ids: HashSet<u128>) -> HashSet<u128> {
+    USER_DATA_MODEL.with(|user_data_model| {
+        let user_data_map = user_data_model.borrow();
+        if let Some(user_data) = user_data_map.get(&user) {
+            event_ids
+                .into_iter()
+                .filter(|event_id| !user_data.get_seen_events().contains(event_id))
+                .collect()
+        } else {
+            event_ids
+        }
+    })
+}
 
 pub fn add_used_ticket(event_id: u128, signature_hex: String) {
     EVENTS.with(|events| {
@@ -88,4 +114,57 @@ pub fn is_ticket_used(event_id: u128, signature_hex: String) -> bool {
             false
         }
     })
+}
+pub fn get_recommended_events_for_user(caller: Principal) -> Option<Vec<EventDetailsResponse>> {
+    let user_tags = repository::user_repository::get_user(caller)
+        .map_or(Vec::new(), |user| user.get_tags().iter().cloned().collect());
+
+    /*let user_tags = repository::user_repository::get_user(caller)
+    .map_or_else(
+        || HashSet::new(), // Return an empty HashSet if user is not found
+        |user| user.get_tags().iter().cloned().collect()
+    );*/
+
+    let events_id = repository::tag_repository::get_events_id_by_tags(user_tags);
+
+    let unseen_event_ids = filter_unseen_events(caller, events_id);
+
+    let events = repository::event_repository::get_events(unseen_event_ids);
+
+    if events.is_empty() {
+        None
+    } else {
+        let event_map_response: Vec<EventDetailsResponse> = events
+            .iter()
+            .map(EventDetailsResponse::from)
+            .collect();
+        Some(event_map_response)
+    }
+}
+
+pub fn get_paginated_recommended_events(
+    recommended_events: Option<Vec<EventDetailsResponse>>, 
+    page: usize,
+    user: Principal,
+) -> Option<Vec<EventDetailsResponse>> {
+    const EVENTS_PER_PAGE: usize = 20;
+    
+    if let Some(events) = recommended_events {
+        let start = page * EVENTS_PER_PAGE;
+
+        let paginated_events: Vec<EventDetailsResponse> = events
+            .iter()
+            .skip(start)
+            .take(EVENTS_PER_PAGE)
+            .cloned()
+            .collect();
+
+        for event in &paginated_events {
+              repository::user_repository::mark_event_as_seen(user,event.id);
+        }
+
+        Some(paginated_events)
+    } else {
+        None
+    }
 }

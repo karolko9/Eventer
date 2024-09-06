@@ -3,7 +3,7 @@ use std::collections::HashSet;
 use std::f32::consts::E;
 
 use crate::dto_request;
-use crate::dto_response;
+use crate::dto_response::event_dto_response::EventDetailsResponse;
 use crate::model::event_model::Event;
 use crate::repository::event_id_repository;
 use crate::repository::event_repository;
@@ -12,6 +12,9 @@ use crate::service::query::user_service_query;
 use crate::ticket;
 use crate::ticket::ticket::TicketSignature;
 use candid::Principal;
+use crate::TAGS;
+use crate::Tag;
+use crate::repository;
 
 //1 Create event
 use std::error::Error;
@@ -42,14 +45,27 @@ pub fn create_event(
         event_dto.thumbnail,
         HashSet::new(),
     )?;
-
-    // todo: check if user exists
+    add_event_to_tags(event.id().clone(),event.tags().clone());
     register_blank_user(caller);
     user_repository::add_hosting_event_to_user(caller, event_id);
     Ok(event_repository::create_event(event, event_id))
 
     // event_repository::create_event(event, event_id.clone());
     // Ok(user_repository::add_hosting_event_to_user(caller, event_id))
+}
+
+pub fn add_event_to_tags(event_id: u128, tags: HashSet<String>) {
+    TAGS.with(|tags_ref_cell| {
+        let mut tags_map = tags_ref_cell.borrow_mut();
+
+        for tag_name in tags {
+            if let Some(tag) = tags_map.get_mut(&tag_name) {
+                tag.add_event(event_id);
+            } else {
+                tags_map.insert(tag_name.clone(), Tag::new(tag_name.clone()).expect("Failed to create new tag")); 
+            }
+        }
+    });
 }
 
 //1 Join event
@@ -143,4 +159,9 @@ pub async fn join_event(caller: Principal, event_id: u128) -> Result<TicketSigna
     }
     let ticket_gen: ticket::ticket::Ticket = ticket::ticket::Ticket::new(event_id, caller, event_name.to_string());
     Ok(ticket::ticket::generate_ticket_signature(ticket_gen).await?)
+}
+
+pub fn recommended_events(user: Principal, page: usize) -> Option<Vec<EventDetailsResponse>>{
+    let recommended_events = repository::event_repository::get_recommended_events_for_user(user);
+    repository::event_repository::get_paginated_recommended_events(recommended_events, page, user)
 }

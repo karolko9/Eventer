@@ -32,11 +32,29 @@ type EventMapResponse = record {
   thumbnail : text;
   location : record { float64; float64 };
 };
+type EventOnlineDTO = record {
+  url : text;
+  media : text;
+  thumbnail : text;
+  name : text;
+  tags : vec text;
+  description : text;
+  email : text;
+  phone : text;
+  price : float32;
+  time_start : text;
+  time_end : text;
+};
 type EventOnlineDetailsResponse = record {
   id : nat;
   url : text;
+  contact : Contact;
+  thumbnail : text;
   name : text;
   tags : vec text;
+  description : text;
+  hash_map_of_declared : vec principal;
+  price : float32;
   time_start : text;
   time_end : text;
 };
@@ -59,20 +77,33 @@ type UserDataModel = record {
   job : text;
   list_of_events_online : vec nat;
   list_of_hosted_events_online : vec nat;
+  list_of_seen_events : vec nat;
   name : text;
   role : text;
   list_of_events : vec nat;
   tags : vec text;
   list_of_hosted_events : vec nat;
+  list_of_seen_events_online : vec nat;
   location : record { float64; float64 };
 };
 service : () -> {
   add_tag_to_event : (principal, nat, text) -> (Result);
   create_event : (EventDTO) -> (bool);
-  fetch_all_tag_names : () -> (vec text) query;
+  create_event_online : (EventOnlineDTO) -> (bool);
+  download_recommended_events : () -> (opt vec EventDetailsResponse);
+  download_recommended_events_online : () -> (
+      opt vec EventOnlineDetailsResponse,
+    );
+  fetch_all_offline_tag_names : () -> (vec text) query;
+  fetch_all_online_tag_names : () -> (vec text) query;
+  fill_tags_with_defaults : () -> ();
   get_all_events : () -> (opt vec EventMapResponse) query;
   get_event : (nat) -> (opt EventDetailsResponse) query;
   get_event_by_tags_user : () -> (opt vec EventMapResponse) query;
+  get_event_online : (nat) -> (opt EventOnlineDetailsResponse) query;
+  get_online_events_by_users_tags : () -> (
+      opt vec EventOnlineDetailsResponse,
+    ) query;
   get_user : () -> (opt UserDataModel) query;
   get_user_events : () -> (opt vec EventDetailsResponse) query;
   get_user_events_online : () -> (opt vec EventOnlineDetailsResponse) query;

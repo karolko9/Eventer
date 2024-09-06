@@ -3,8 +3,6 @@ use std::collections::HashSet;
 use candid::Principal;
 
 use crate::dto_request::user_dto_request;
-use crate::model::event_model::Event;
-use crate::model::event_online_model::EventOnline;
 use crate::model::user_model::UserDataModel;
 use crate::USER_DATA_MODEL;
 
@@ -154,4 +152,17 @@ pub fn update_user_database(user: Principal, user_dto: user_dto_request::UserDTO
             }
             Ok(())
         })
+}
+
+//SEEN
+pub fn mark_event_as_seen(user: Principal, event_id: u128) -> Result<(), ()> {
+    USER_DATA_MODEL.with(|user_data_model| {
+        let mut user_data_map = user_data_model.borrow_mut();
+        if let Some(user_data) = user_data_map.get_mut(&user) {
+            user_data.add_seen_events(event_id);
+            Ok(())
+        } else {
+            Err(())
+        }
+    })
 }

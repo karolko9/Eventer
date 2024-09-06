@@ -1,6 +1,6 @@
 use candid::Principal;
 
-use std::{cell::RefCell, collections::HashMap};
+use std::{cell::RefCell, collections::HashMap, collections::HashSet};
 
 mod model;
 mod service;
@@ -32,6 +32,7 @@ thread_local! {
     static NEXT_EVENT_ONLINE_ID: RefCell<u128> = RefCell::new(0);
 
     static TAGS: RefCell<TagMap> = RefCell::default();
+    static ONLINE_TAGS: RefCell<TagMap> = RefCell::default();
 }
 
 type UserDataModels = HashMap<Principal, UserDataModel>;

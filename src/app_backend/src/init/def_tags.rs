@@ -1,6 +1,4 @@
-use std::collections::HashMap;
 use crate::model::tag_model::Tag;
-use crate::TAGS;
 use std::collections::HashSet;
 
 
@@ -19,4 +17,4 @@ pub fn load_defaults() -> Vec<Tag>{
             events_ids: HashSet::new(),
         },
     ]
-} 
+}

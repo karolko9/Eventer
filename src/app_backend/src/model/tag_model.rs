@@ -1,6 +1,4 @@
-use candid::Principal;
 use std::collections::HashSet;
-use serde::{Deserialize, Serialize};
 use candid::CandidType;
 
 #[derive(CandidType, Clone, Debug)]
@@ -26,4 +24,7 @@ impl Tag{
         self.events_ids.insert(event_id);
     }
 
+    pub fn add_event(&mut self, event_id: u128) {
+        self.events_ids.insert(event_id);
+    }
 }

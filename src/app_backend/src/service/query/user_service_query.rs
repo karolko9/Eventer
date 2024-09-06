@@ -1,17 +1,11 @@
 use candid::Principal;
 
-use crate::dto_request::event_dto_request;
-use crate::dto_request::user_dto_request;
 use crate::dto_response::event_dto_response;
 use crate::dto_response::event_online_dto_response;
-use crate::dto_response::event_dto_response::EventDetailsResponse;
-use crate::dto_response::event_online_dto_response::EventOnlineDetailsResponse;
-use crate::dto_response::user_dto_response;
 use crate::model::user_model::UserDataModel;
 use crate::repository::event_repository;
 use crate::repository::event_online_repository;
 use crate::repository::user_repository;
-use crate::dto_request;
 
 //1 Get user data 
 pub fn get_user(user: Principal) -> Option<UserDataModel> {
