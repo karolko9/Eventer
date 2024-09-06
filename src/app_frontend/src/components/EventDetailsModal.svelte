@@ -110,19 +110,13 @@
                 const eventDetails = await $auth.whoamiActor.get_event(parseInt(id));
                 const eventPrice = parseInt(eventDetails.price); 
                 
-            const approveArgs = {
-                fee: 0,
-                memo: [], 
-                from_subaccount: [], 
-                created_at_time: [],
-                amount: eventPrice, 
-                expected_allowance: [], 
-                expires_at: [],
-                spender: { 
-                    owner: $auth.identity.getPrincipal(),
-                    subaccount: []
-                }
-            };
+                const approveArgs = {
+                    amount: eventPrice,
+                    spender: { 
+                        owner: $auth.identity.getPrincipal(),
+                        subaccount: null
+                    }
+                };
 
 
                 const approveResponse = await ledger_actor.icrc2_approve(approveArgs);
