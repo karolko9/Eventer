@@ -1,0 +1,1 @@
+[1m[36mDeploying ledger with tokens signed to default - karol 10icp[0m

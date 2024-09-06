@@ -10,6 +10,12 @@ use crate::repository::user_repository;
 use crate::service::query::user_service_query;
 use candid::Principal;
 
+use icrc_ledger_types::icrc1::account::Account;
+use icrc_ledger_types::icrc1::transfer::{BlockIndex, NumTokens};
+
+use super::token_service_transfer;
+
+
 //1 Create event
 use std::error::Error;
 
@@ -101,6 +107,20 @@ pub fn join_event(caller: Principal, event_id: u128) -> bool {
                     return; // User has already declared
                 }
             }
+
+            
+            let tx_args = token_service_transfer::TransferArgs { 
+                amount: event.price(), 
+                to_account: Account::from(host.clone()),  // Transfer to host account
+            };
+            let tx_result = token_service_transfer::transfer(tx_args);
+            ic_cdk::println!("tx_result: {}", tx_result);            
+            if let Err(e) = tx_result {
+                ic_cdk::println!("Transfer failed: {:?}", e);
+                return;
+            }
+
+
 
             event.add_participant(caller);
             event_joined = true;

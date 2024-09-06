@@ -1,20 +1,14 @@
 #!/bin/bash
 
-# Define colors
-RESET="\033[0m"
-BOLD="\033[1m"
-GREEN="\033[32m"
-YELLOW="\033[33m"
-CYAN="\033[36m"
-RED="\033[31m"
 
-echo -e "${BOLD}${CYAN}Deploying ledger with tokens signed to default - karol 10icp${RESET}"
-
+# Deploy the ICrc1 ledger
 dfx deploy icrc1_ledger_canister --argument "(variant {
   Init = record {
     token_symbol = \"ICRC1\";
     token_name = \"L-ICRC1\";
-
+    minting_account = record {
+      owner = principal \"$(dfx identity --identity anonymous get-principal)\"
+    };
     transfer_fee = 10_000;
     metadata = vec {};
     initial_balances = vec {
@@ -22,34 +16,33 @@ dfx deploy icrc1_ledger_canister --argument "(variant {
         record {
           owner = principal \"$(dfx identity --identity default get-principal)\";
         };
-        10_000_000_000; 
+        10_000_000_000;
       };
     };
-
+    archive_options = record {
+      num_blocks_to_archive = 1000;
+      trigger_threshold = 2000;
+      controller_id = principal \"$(dfx identity --identity anonymous get-principal)\";
+    };
     feature_flags = opt record {
       icrc2 = true;
     };
   }
 })"
 
-echo -e "${BOLD}${GREEN}Host principal: \"$(dfx identity --identity host get-principal)\"${RESET}"
 
-echo -e "${BOLD}${YELLOW}Querying balances...${RESET}"
+# check balance
+# dfx canister call icrc1_ledger_canister icrc1_balance_of "(record {
+#   owner = principal \"$(dfx identity --identity default get-principal)\";
+# })"
 
-dfx canister call icrc1_ledger_canister icrc1_balance_of "(record {
-  owner = principal \"$(dfx identity --identity default get-principal)\";
-})"
+# dfx canister call icrc1_ledger_canister icrc1_balance_of "(record {
+#   owner = principal \"$(dfx identity --identity host get-principal)\";
+# })"
 
-dfx canister call icrc1_ledger_canister icrc1_balance_of "(record {
-  owner = principal \"$(dfx identity --identity host get-principal)\";
-})"
+# dfx deploy app_backend
 
-echo -e "${BOLD}${CYAN}Deploying app_backend...${RESET}"
-
-dfx deploy app_backend
-
-echo -e "${BOLD}${YELLOW}Approving amount for app_backend...${RESET}"
-
+# approve
 dfx canister call --identity default icrc1_ledger_canister icrc2_approve "(
   record {
     spender= record {
@@ -59,21 +52,11 @@ dfx canister call --identity default icrc1_ledger_canister icrc2_approve "(
   }
 )"
 
-echo -e "${BOLD}${CYAN}Transferring amount to host principal...${RESET}"
-
-dfx canister call app_backend transfer "(record {
-  amount = 1_000_000_000;
+tx_result=$(dfx canister call app_backend transfer "(record {
+  amount = 1;
   to_account = record {
     owner = principal \"$(dfx identity --identity host get-principal)\";
   };
-})"
+})")
 
-echo -e "${BOLD}${YELLOW}Querying balances after transfer...${RESET}"
-
-dfx canister call icrc1_ledger_canister icrc1_balance_of "(record {
-  owner = principal \"$(dfx identity --identity default get-principal)\";
-})"
-
-dfx canister call icrc1_ledger_canister icrc1_balance_of "(record {
-  owner = principal \"$(dfx identity --identity host get-principal)\";
-})"
+echo "tx result: ${tx_result}"

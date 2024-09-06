@@ -1,7 +1,5 @@
 use candid::Principal;
 
-use icrc_ledger_types::icrc1::transfer::BlockIndex;
-use crate::controller::token_transfer::TransferArgs;
 
 use std::{cell::RefCell, collections::HashMap};
 
