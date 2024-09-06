@@ -5,23 +5,40 @@
     import { onMount } from "svelte";
     import { auth } from "$lib/auth";
 
+    export let eventId;
     let principal = "";
     let qrImageTag = "";
-    
+
     onMount(() => {
         $auth.init();
-        setPrincipal();
+        generateQrCode();
     });
 
-    async function setPrincipal() {
-        principal = await $auth.authClient.getIdentity()?.getPrincipal();
-        console.log(principal);
+    const getStoredEventById = (id) => {
+        let storedEvents = JSON.parse(localStorage.getItem('events')) || [];
+
+        const event = storedEvents.find(event => parseInt(event.event_id) === id);
+
+        if (event) {
+            if (event.signature_hex && event.signature_hex.Ok && event.signature_hex.Ok.signature_hex) {
+                event.signature_hex = event.signature_hex.Ok.signature_hex;
+            }
+            console.log("Event found:", event);
+            return event;
+        } else {
+            console.log("Event not found.");
+            return null;
+        }
+    }
+
+    async function generateQrCode() {
+       
+        const ticketData = getStoredEventById(eventId);
 
         let typeNumber = 4;
         let errorCorrectionLevel = 'L';
         let qr = qrcode(typeNumber, errorCorrectionLevel);
-        console.log(principal.toText());
-        qr.addData(principal.toText());
+        qr.addData(ticketData);
         qr.make();
         qrImageTag = qr.createImgTag(6).replace('<img', '<img style="border-radius:14px;"');
     }

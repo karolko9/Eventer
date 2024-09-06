@@ -67,11 +67,39 @@
         return formattedDate;
     }
 
+    const saveEventInStorage = (id, name, principal, signature) => {
+        const eventObject = {
+            event_id: id.toString(),
+            event_name: name,
+            principal: principal,
+            signature_hex: signature
+        };
+
+        let storedEvents = JSON.parse(localStorage.getItem('events')) || [];
+
+        const eventExists = storedEvents.some(event => event.event_id === eventObject.event_id);
+
+        if (!eventExists) {
+            // If it doesn't exist, push the new event to the storedEvents array
+            storedEvents.push(eventObject);
+
+            // Store the updated array back in localStorage
+            localStorage.setItem('events', JSON.stringify(storedEvents));
+
+            console.log("Event saved to local storage.");
+        }else {
+            console.log("Event already exists in local storage.");
+        }
+    }
+
     const joinEvent = async (id) => {
         if ($auth.isReady && $auth.isAuthenticated) {
             try{
                 const response = await $auth.whoamiActor.join_event(parseInt(id));
-                console.log("Response:" , response);
+                console.log("JoinEvent Response:" , response);
+                if(response){
+                    saveEventInStorage(event.id, eventDetails.name, $auth.identity.getPrincipal().toString(), response)
+                }
             }catch(error){
                 console.error(error)
             } 
