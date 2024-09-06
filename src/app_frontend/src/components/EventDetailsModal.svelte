@@ -1,10 +1,14 @@
 <script>
+	import { AuthClient } from '@dfinity/auth-client';
     import { onMount } from "svelte";
     import { createDialog, melt } from '@melt-ui/svelte';
     import { fade } from 'svelte/transition';
     import { auth } from "../lib/auth";
     import { IconMapPin, IconUserSearch, IconCalendarEvent, IconUsers, IconTicket,  IconMail, IconX, IconPhone, IconMailUp } from '@tabler/icons-svelte';
     import { getAsset } from "../lib/uploader";
+
+    import { HttpAgent } from '@dfinity/agent';
+    import { createActor, canisterId } from '../../../declarations/icrc1_ledger_canister/icrc1_ledger_canister.did';
 
     export let event;
     export let openModal;
@@ -95,6 +99,15 @@
     const joinEvent = async (id) => {
         if ($auth.isReady && $auth.isAuthenticated) {
             try {
+                
+                let identity =  $auth.AuthClient.getIdentity();
+                console.log("Identity:", identity);
+                const agent = new HttpAgent({ identity });
+                console.log("Agent:", agent);
+                const ledger_actor = createActor(canisterId, { agent });
+                console.log("ledger_actor:", ledger_actor);
+
+
                 const eventDetails = await $auth.whoamiActor.get_event(parseInt(id));
                 const eventPrice = parseInt(eventDetails.price); 
                 
@@ -113,7 +126,7 @@
                 };
 
 
-                const approveResponse = await $auth.whoamiActor.icrc2_approve(approveArgs);
+                const approveResponse = await ledger_actor.icrc2_approve(approveArgs);
                 console.log("Approve Response:", approveResponse);
 
                 if (approveResponse.ok) {

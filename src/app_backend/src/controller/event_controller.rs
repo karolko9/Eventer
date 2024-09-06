@@ -10,6 +10,7 @@ use crate::service;
 //  Result<(), event_error::Error_event>
 #[ic_cdk::update]
 fn create_event(event_dto: dto_request::event_dto_request::EventDTO) -> bool{
+    
     match service::update::event_service_update::create_event(event_dto, ic_cdk::caller()) {
         Ok(_) => true,
         Err(_) => false,
