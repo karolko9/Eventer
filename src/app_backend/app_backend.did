@@ -98,6 +98,7 @@ service : () -> {
   fetch_all_online_tag_names : () -> (vec text) query;
   fill_tags_with_defaults : () -> ();
   get_all_events : () -> (opt vec EventMapResponse) query;
+  get_all_online_events : () -> (opt vec EventOnlineDetailsResponse) query;
   get_event : (nat) -> (opt EventDetailsResponse) query;
   get_event_by_tags_user : () -> (opt vec EventMapResponse) query;
   get_event_online : (nat) -> (opt EventOnlineDetailsResponse) query;

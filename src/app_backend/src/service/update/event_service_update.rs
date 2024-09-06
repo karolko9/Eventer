@@ -133,27 +133,15 @@ pub async fn join_event(caller: Principal, event_id: u128) -> Result<TicketSigna
         }
     });
 
-
-
     if event_joined {
-
-        // TODO payment
-
-
         if user_repository::user_exists(caller) == false {
             register_blank_user(caller);
         }
-
-
         USER_DATA_MODEL.with(|users| {
             let mut users_map = users.borrow_mut();
             let user = users_map.get_mut(&caller).unwrap();
             user.add_event(event_id);
-        });
-
-
-
-        
+        }); 
     } else {
         return Err("Event not found".to_string());
     }

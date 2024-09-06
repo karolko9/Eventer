@@ -19,16 +19,10 @@ pub fn get_all_online_events() -> Option<Vec<EventOnlineDetailsResponse>>{ //DTO
             .collect()
     })
 }
-
-//Ready:
-//Get events that are corelated with tags
 pub fn get_online_events_by_users_tags(caller: Principal) -> Option<Vec<EventOnlineDetailsResponse>>{
     let user_tags = user_repository::get_user(caller).map_or(Vec::new(), |user| user.get_tags().iter().cloned().collect() );
-
     let events_id = tag_repository::get_online_events_id_by_tags(user_tags);
-
     let events = event_online_repository::get_online_events(events_id);
-
     if events.is_empty() {
         None
     } else {

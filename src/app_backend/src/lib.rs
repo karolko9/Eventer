@@ -3,7 +3,7 @@ use candid::Principal;
 use std::{cell::RefCell, collections::HashMap, collections::HashSet};
 
 mod model;
-mod service;
+pub mod service;
 
 use model::{event_model::Event, event_online_model::EventOnline ,user_model::UserDataModel, tag_model::Tag};
 
