@@ -117,6 +117,8 @@ pub async fn join_event(caller: Principal, event_id: u128) -> bool {
         }
     }
 
+    
+
     match token_service_transfer::transfer(*host.clone().unwrap(), event.price()).await {
         Ok(tx_result) => {
             ic_cdk::println!("tx_result: {}", tx_result);

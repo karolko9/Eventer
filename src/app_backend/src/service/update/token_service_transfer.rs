@@ -5,7 +5,8 @@ use icrc_ledger_types::icrc1::account::Account;
 use icrc_ledger_types::icrc1::transfer::{BlockIndex, NumTokens};
 use icrc_ledger_types::icrc2::transfer_from::{TransferFromArgs, TransferFromError};
 use serde::Serialize;
-use sha2::{Sha256, Digest};
+use icrc_ledger_types::icrc2::approve::{ApproveArgs, ApproveError}; 
+use utils::principal_to_subaccount;
 
 
 #[derive(CandidType, Deserialize, Serialize)]
@@ -16,11 +17,8 @@ pub struct TransferArgs {
 
 // #[ic_cdk::update]
 pub async fn transfer(host: Principal, amount: f32) -> Result<BlockIndex, String> {
-    let mut hasher = Sha256::new();
-    hasher.update(host.as_slice());
-    let result = hasher.finalize();
-    let mut subaccount = [0u8; 32];
-    subaccount.copy_from_slice(&result[..32]);
+
+    let mut subaccount = principal_to_subaccount(host.clone());
 
     let args = TransferArgs {
         amount: u32::try_from(amount.round() as u32).unwrap().into(),
@@ -43,7 +41,7 @@ pub async fn transfer(host: Principal, amount: f32) -> Result<BlockIndex, String
         // the amount we want to transfer
         amount: args.amount,
         // the subaccount we want to spend the tokens from (in this case we assume the default subaccount has been approved)
-        spender_subaccount: None,
+        spender_subaccount: subaccount,
         // if not specified, the default fee for the canister is used
         fee: None,
         // the account we want to transfer tokens to
@@ -51,6 +49,10 @@ pub async fn transfer(host: Principal, amount: f32) -> Result<BlockIndex, String
         // a timestamp indicating when the transaction was created by the caller; if it is not specified by the caller then this is set to the current ICP time
         created_at_time: None,
     };
+
+
+    
+
 
     // 1. Asynchronously call another canister function using `ic_cdk::call`.
     ic_cdk::call::<(TransferFromArgs,), (Result<BlockIndex, TransferFromError>,)>(
