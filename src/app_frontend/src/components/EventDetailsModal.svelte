@@ -1,5 +1,4 @@
 <script>
-	import { AuthClient } from '@dfinity/auth-client';
     import { onMount } from "svelte";
     import { createDialog, melt } from '@melt-ui/svelte';
     import { fade } from 'svelte/transition';
@@ -8,7 +7,7 @@
     import { getAsset } from "../lib/uploader";
 
     import { HttpAgent } from '@dfinity/agent';
-    import { createActor, canisterId } from '../../../declarations/icrc1_ledger_canister/icrc1_ledger_canister.did';
+    // import { createActor, canisterId } from 'declarations/icrc1_ledger_canister';
 
     export let event;
     export let openModal;
@@ -126,7 +125,7 @@
                 };
 
 
-                const approveResponse = await ledger_actor.icrc2_approve(approveArgs);
+                // const approveResponse = await ledger_actor.icrc2_approve(approveArgs);
                 console.log("Approve Response:", approveResponse);
 
                 if (approveResponse.ok) {
