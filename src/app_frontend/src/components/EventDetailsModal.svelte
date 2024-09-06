@@ -7,7 +7,7 @@
     import { getAsset } from "../lib/uploader";
 
     import { HttpAgent } from '@dfinity/agent';
-    // import { createActor, canisterId } from 'declarations/icrc1_ledger_canister';
+    import { createActor, canisterId } from 'declarations/icrc1_ledger_canister';
 
     export let event;
     export let openModal;
@@ -99,7 +99,7 @@
         if ($auth.isReady && $auth.isAuthenticated) {
             try {
                 
-                let identity =  $auth.AuthClient.getIdentity();
+                let identity =  $auth.identity;
                 console.log("Identity:", identity);
                 const agent = new HttpAgent({ identity });
                 console.log("Agent:", agent);
@@ -110,22 +110,22 @@
                 const eventDetails = await $auth.whoamiActor.get_event(parseInt(id));
                 const eventPrice = parseInt(eventDetails.price); 
                 
-                const approveArgs = {
-                    fee: null, 
-                    memo: null, 
-                    from_subaccount: null,
-                    created_at_time: null, 
-                    amount: eventPrice, 
-                    expected_allowance: null, 
-                    expires_at: null, 
-                    spender: { 
-                        owner: $auth.identity.getPrincipal(),
-                        subaccount: null
-                    }
-                };
+            const approveArgs = {
+                fee: 0,
+                memo: [], 
+                from_subaccount: [], 
+                created_at_time: [],
+                amount: eventPrice, 
+                expected_allowance: [], 
+                expires_at: [],
+                spender: { 
+                    owner: $auth.identity.getPrincipal(),
+                    subaccount: []
+                }
+            };
 
 
-                // const approveResponse = await ledger_actor.icrc2_approve(approveArgs);
+                const approveResponse = await ledger_actor.icrc2_approve(approveArgs);
                 console.log("Approve Response:", approveResponse);
 
                 if (approveResponse.ok) {

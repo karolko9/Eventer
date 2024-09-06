@@ -13,6 +13,8 @@ use crate::ticket;
 use crate::ticket::ticket::TicketSignature;
 use candid::Principal;
 
+use super::token_service_update;
+
 //1 Create event
 use std::error::Error;
 
@@ -94,29 +96,42 @@ pub async fn join_event(caller: Principal, event_id: u128) -> Result<TicketSigna
 
     let mut event_name = String::new();
 
-    EVENTS.with(|events| {
-        let mut events_map = events.borrow_mut();
-
-        if let Some(event) = events_map.get_mut(&event_id) {
-            let host = event.list_of_admin().first();
-            if let Some(host) = host {
-                if host.to_string() == caller.to_string() {
-                    return; // Host cannot join their own event
-                }
-            }
-
-            if let Some(declaration) = event.hash_map_of_declared().get(&caller) {
-                if declaration == "declared" {
-                    return; // User has already declared
-                }
-            }
-
-            event.add_participant(caller.clone());
-            event_joined = true;
-            event_name = event.name().clone().to_owned();
-        }
+    // Use the `EVENTS.with` to access the events data, but not inside an async block
+    let event_opt = EVENTS.with(|events| {
+        let events_map = events.borrow();
+        events_map.get(&event_id).cloned() // Return the event if it exists
     });
 
+    // If the event doesn't exist, return false
+    let mut event = match event_opt {
+        Some(e) => e,
+        None => return false,
+    };
+
+    let host = event.list_of_admin().first();
+    if let Some(host) = host {
+        if host.to_string() == caller.to_string() {
+            return false; // Host cannot join their own event
+        }
+    }
+
+    if let Some(declaration) = event.hash_map_of_declared().get(&caller) {
+        if declaration == "declared" {
+            return false; // User has already declared
+        }
+    }
+
+    
+
+    match token_service_transfer::transfer(*host.clone().unwrap(), event.price()).await {
+        Ok(tx_result) => {
+            ic_cdk::println!("tx_result: {}", tx_result);
+        }
+        Err(e) => {
+            ic_cdk::println!("Transfer failed: {:?}", e);
+            return false;
+        }
+    }
 
 
     if event_joined {

@@ -11,8 +11,18 @@ pub struct TransferArgs {
     to_account: Account,
 }
 
-#[ic_cdk::update]
-async fn transfer(args: TransferArgs) -> Result<BlockIndex, String> {
+// #[ic_cdk::update]
+pub async fn transfer(host: Principal, amount: f32) -> Result<BlockIndex, String> {
+
+    let mut subaccount = principal_to_subaccount(host.clone());
+
+    let args = TransferArgs {
+        amount: u32::try_from(amount.round() as u32).unwrap().into(),
+        to_account: Account {
+            owner: host,
+            subaccount: Some(subaccount),
+        },
+    };
     ic_cdk::println!(
         "Transferring {} tokens to account {}",
         &args.amount,
