@@ -71,20 +71,26 @@ type UserDataModel = record {
   job : text;
   list_of_events_online : vec nat;
   list_of_hosted_events_online : vec nat;
+  list_of_seen_events : vec nat;
   name : text;
   role : text;
   list_of_events : vec nat;
   tags : vec text;
   list_of_hosted_events : vec nat;
+  list_of_seen_events_online : vec nat;
   location : record { float64; float64 };
 };
 service : () -> {
   create_event : (EventDTO) -> (bool);
   create_event_online : (EventOnlineDTO) -> (bool);
+  download_recommended_events : () -> (opt vec EventDetailsResponse);
+  download_recommended_events_online : () -> (
+      opt vec EventOnlineDetailsResponse,
+    );
+  fetch_all_offline_tag_names : () -> (vec text) query;
   fetch_all_online_tag_names : () -> (vec text) query;
-  fetch_all_tag_names : () -> (vec text) query;
   fill_tags_with_defaults : () -> ();
-  get_all_offline_events : () -> (opt vec EventMapResponse) query;
+  get_all_events : () -> (opt vec EventMapResponse) query;
   get_all_online_events : () -> (opt vec EventOnlineDetailsResponse) query;
   get_event : (nat) -> (opt EventDetailsResponse) query;
   get_event_by_tags_user : () -> (opt vec EventMapResponse) query;

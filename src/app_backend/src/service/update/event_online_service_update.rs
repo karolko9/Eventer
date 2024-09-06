@@ -1,16 +1,15 @@
-use std::collections::HashMap;
 use std::collections::HashSet;
 
 use crate::dto_request;
 use crate::UserDataModel;
 use crate::USER_DATA_MODEL;
 use crate::EVENT_ONLINE;
-use crate::dto_response;
 use crate::EventOnline;
+use crate::repository;
 use crate::repository::event_online_repository;
 use crate::repository::event_id_repository;
 use crate::repository::user_repository;
-use crate::service::query::user_service_query;
+use crate::dto_response::event_online_dto_response::EventOnlineDetailsResponse;
 use candid::Principal;
 use crate::ONLINE_TAGS;
 use crate::Tag;
@@ -125,4 +124,9 @@ pub fn join_event_online(caller: Principal, event_id: u128) -> bool {
     } else {
         false
     }
+}
+
+pub fn recommended_events_online(user: Principal, page: usize) -> Option<Vec<EventOnlineDetailsResponse>>{
+    let recommended_events = repository::event_online_repository::get_recommended_events_online_for_user(user);
+    repository::event_online_repository::get_paginated_recommended_events_online(recommended_events, page, user)
 }

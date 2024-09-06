@@ -1,8 +1,5 @@
-use std::collections::HashMap;
-
-use crate::dto_response::event_online_dto_response::{ EventOnlineDetailsResponse}; //TODO
-use crate::EventOnline;
-use crate::repository::{event_online_repository, event_repository, user_repository, tag_repository};
+use crate::dto_response::event_online_dto_response::EventOnlineDetailsResponse; //TODO
+use crate::repository::{event_online_repository, user_repository, tag_repository};
 use candid::Principal;
 
 //Get Event:
@@ -23,6 +20,8 @@ pub fn get_all_online_events() -> Option<Vec<EventOnlineDetailsResponse>>{ //DTO
     })
 }
 
+//Ready:
+//Get events that are corelated with tags
 pub fn get_online_events_by_users_tags(caller: Principal) -> Option<Vec<EventOnlineDetailsResponse>>{
     let user_tags = user_repository::get_user(caller).map_or(Vec::new(), |user| user.get_tags().iter().cloned().collect() );
 

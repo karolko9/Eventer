@@ -6,7 +6,7 @@ use crate::component;
 use crate::model::event_online_model::EventOnline;
 
 
-#[derive(CandidType, Serialize, Deserialize)]
+#[derive(CandidType, Serialize, Deserialize, Clone)]
 pub struct EventOnlineDetailsResponse {
     pub url: String,
     pub id: u128,

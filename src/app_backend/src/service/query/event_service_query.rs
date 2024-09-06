@@ -1,8 +1,6 @@
-use std::collections::HashMap;
-
-use crate::dto_response::event_dto_response::{EventMapName, EventMapResponse, EventDetailsResponse};
-use crate::model::event_model::Event;
+use crate::dto_response::event_dto_response::{ EventMapResponse, EventDetailsResponse};
 use crate::repository::{event_repository, user_repository, tag_repository};
+use crate::repository;
 use candid::Principal;
 
 //1 Get event
@@ -12,7 +10,8 @@ pub fn get_event(event_id: u128) -> Option<EventDetailsResponse> {
         .map(EventDetailsResponse::from)
 }
 
-//1 even one tag is enough
+//Ready:
+//Get events that are corelated with tags
 pub fn get_event_by_tag_user(caller: Principal) -> Option<Vec<EventMapResponse>> {
     let user_tags = user_repository::get_user(caller).map_or(Vec::new(), |user| user.get_tags().iter().cloned().collect());
 
@@ -29,6 +28,7 @@ pub fn get_event_by_tag_user(caller: Principal) -> Option<Vec<EventMapResponse>>
             .collect();
         Some(event_map_response)
     }
+    //it returns a all events that has matching even one tag!
 }
 
 
@@ -39,8 +39,6 @@ pub fn get_all_events() -> Option<Vec<EventMapResponse>>{
             .collect()
     })
 }
-
-
 
 
 

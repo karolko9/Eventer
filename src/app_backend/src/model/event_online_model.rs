@@ -1,5 +1,5 @@
 use candid::Principal;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 use crate::component;
 
 #[derive(Debug, Clone)]

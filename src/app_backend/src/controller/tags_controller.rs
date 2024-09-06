@@ -1,11 +1,9 @@
-use crate::TAGS;
-use crate::ONLINE_TAGS;
 use crate::service;
 
 //QUERY
 
 #[ic_cdk::query]
-fn fetch_all_tag_names() -> Vec<String> {
+fn fetch_all_offline_tag_names() -> Vec<String> {
     service::query::tag_service_query::get_all_tag_names()
 }
 

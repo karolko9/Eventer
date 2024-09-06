@@ -1,7 +1,5 @@
 use crate::TAGS;
 use crate::ONLINE_TAGS;
-use crate::model::tag_model::Tag;
-use crate::init;
 
 pub fn get_all_tag_names() -> Vec<String> {
     TAGS.with(|tags| {

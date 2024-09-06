@@ -27,3 +27,9 @@ fn get_online_events_by_users_tags() -> Option<Vec<dto_response::event_online_dt
 fn get_all_online_events() -> Option<Vec<dto_response::event_online_dto_response::EventOnlineDetailsResponse>>{
     service::query::event_online_service_query::get_all_online_events()
 }
+
+//RECOMENDATIONS
+#[ic_cdk::update]
+fn download_recommended_events_online() -> Option<Vec<dto_response::event_online_dto_response::EventOnlineDetailsResponse>> {
+    service::update::event_online_service_update::recommended_events_online(ic_cdk::caller(),0)
+}

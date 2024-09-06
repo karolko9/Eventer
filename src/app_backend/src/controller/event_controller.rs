@@ -1,8 +1,7 @@
 use crate::dto_request;
 use crate::dto_response;
-
-use crate::dto_response::event_dto_response::EventMapResponse;
 use crate::service; 
+use std::collections::HashSet;
 
 // use crate::error::event_error;
 
@@ -29,6 +28,12 @@ fn get_event_by_tags_user() -> Option<Vec<dto_response::event_dto_response::Even
 }
 
 #[ic_cdk::query]
-fn get_all_offline_events() -> Option<Vec<dto_response::event_dto_response::EventMapResponse>>{
+fn get_all_events() -> Option<Vec<dto_response::event_dto_response::EventMapResponse>>{
     service::query::event_service_query::get_all_events()
+}
+
+//RECOMENDATIONS
+#[ic_cdk::update]
+fn download_recommended_events() -> Option<Vec<dto_response::event_dto_response::EventDetailsResponse>> {
+    service::update::event_service_update::recommended_events(ic_cdk::caller(),0)
 }

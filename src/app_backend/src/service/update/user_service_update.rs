@@ -1,10 +1,6 @@
 use candid::Principal;
-
 use crate::dto_request;
-use crate::dto_response;
-use crate::model::user_model::UserDataModel;
 use crate::repository::user_repository;
-use crate::USER_DATA_MODEL;
 
 
 //1 Register user or update if exist

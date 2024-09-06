@@ -1,8 +1,7 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 use crate::TAGS;
 use crate::ONLINE_TAGS;
-use crate::model::tag_model::Tag;
 
 pub fn get_events_id(tag_name: String) -> Option<HashSet<u128>> {
     TAGS.with(|tags| {

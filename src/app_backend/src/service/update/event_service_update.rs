@@ -2,15 +2,15 @@ use std::collections::HashMap;
 use std::collections::HashSet;
 
 use crate::dto_request;
-use crate::dto_response;
+use crate::dto_response::event_dto_response::EventDetailsResponse;
 use crate::model::event_model::Event;
 use crate::repository::event_repository;
 use crate::repository::event_id_repository;
 use crate::repository::user_repository;
-use crate::service::query::user_service_query;
 use candid::Principal;
 use crate::TAGS;
 use crate::Tag;
+use crate::repository;
 
 //1 Create event
 use std::error::Error;
@@ -139,4 +139,9 @@ pub fn join_event(caller: Principal, event_id: u128) -> bool {
     } else {
         false
     }
+}
+
+pub fn recommended_events(user: Principal, page: usize) -> Option<Vec<EventDetailsResponse>>{
+    let recommended_events = repository::event_repository::get_recommended_events_for_user(user);
+    repository::event_repository::get_paginated_recommended_events(recommended_events, page, user)
 }

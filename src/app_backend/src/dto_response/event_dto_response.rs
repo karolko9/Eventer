@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use candid::{CandidType, Principal};
 use crate::component;
 use crate::model::event_model::Event;
-use std::collections::HashMap;
+use std::clone::Clone;
 
 
 #[derive(CandidType, Serialize, Deserialize)]
@@ -40,7 +40,7 @@ impl From<Event> for EventMapName {
 }
 
 
-#[derive(CandidType, Serialize, Deserialize)]
+#[derive(CandidType, Serialize, Deserialize, Clone)]
 pub struct EventDetailsResponse {
     pub location: (f64, f64),
     pub address: String,

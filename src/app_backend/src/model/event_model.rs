@@ -1,7 +1,6 @@
 use crate::component;
 use candid::Principal;
 use std::{
-    borrow::Borrow,
     collections::{HashMap, HashSet},
 };
 

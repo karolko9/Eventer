@@ -1,11 +1,7 @@
-use std::collections::HashMap;
-use crate::model::tag_model::Tag;
 use crate::TAGS;
 use crate::ONLINE_TAGS;
 use crate::TagMap;
 use crate::init;
-use std::collections::HashSet;
-use candid::Principal;
 
 
 #[ic_cdk::init]
