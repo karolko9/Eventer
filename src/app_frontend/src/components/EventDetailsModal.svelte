@@ -94,29 +94,56 @@
 
     const joinEvent = async (id) => {
         if ($auth.isReady && $auth.isAuthenticated) {
-            try{
-                const response = await $auth.whoamiActor.join_event(parseInt(id));
-                console.log("JoinEvent Response:" , response);
-                if(response){
-                    saveEventInStorage(event.id, eventDetails.name, $auth.identity.getPrincipal().toString(), response)
+            try {
+                const eventDetails = await $auth.whoamiActor.get_event(parseInt(id));
+                const eventPrice = parseInt(eventDetails.price); 
+                
+                const approveArgs = {
+                    fee: null, 
+                    memo: null, 
+                    from_subaccount: null,
+                    created_at_time: null, 
+                    amount: eventPrice, 
+                    expected_allowance: null, 
+                    expires_at: null, 
+                    spender: { 
+                        owner: $auth.identity.getPrincipal(),
+                        subaccount: null
+                    }
+                };
+
+
+                const approveResponse = await $auth.whoamiActor.icrc2_approve(approveArgs);
+                console.log("Approve Response:", approveResponse);
+
+                if (approveResponse.ok) {
+                    const joinEventResponse = await $auth.whoamiActor.join_event(parseInt(id));
+                    console.log("Join Event Response:", joinEventResponse);
+
+                    if (joinEventResponse) {
+                        saveEventInStorage(event.id, eventDetails.name, $auth.identity.getPrincipal().toString(), joinEventResponse);
+                    }
+                } else {
+                    console.error("Approval failed, cannot join event.");
                 }
-            }catch(error){
-                console.error(error)
-            } 
+            } catch (error) {
+                console.error("Error joining event:", error);
+            }
         }
     }
 
+
     const {
-    elements: {
-      trigger,
-      overlay,
-      content,
-      title,
-      description,
-      close,
-      portalled,
-    },
-    states: { open },
+        elements: {
+            trigger,
+            overlay,
+            content,
+            title,
+            description,
+            close,
+            portalled,
+        },
+        states: { open },
   } = createDialog({
     forceVisible: true,
   });

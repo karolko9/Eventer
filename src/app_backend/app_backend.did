@@ -1,3 +1,4 @@
+type Account = record { owner : principal; subaccount : opt blob };
 type Contact = record { media : text; email : text; phone : text };
 type EventDTO = record {
   media : text;
@@ -36,8 +37,10 @@ type PublicKeyReply = record { public_key_hex : text };
 type Result = variant { Ok; Err : text };
 type Result_1 = variant { Ok : TicketSignature; Err : text };
 type Result_2 = variant { Ok : PublicKeyReply; Err : text };
+type Result_3 = variant { Ok : nat; Err : text };
 type Ticket = record { user : principal; event_id : nat; event_name : text };
 type TicketSignature = record { signature_hex : text };
+type TransferArgs = record { to_account : Account; amount : nat };
 type UserDTO = record {
   bio : text;
   job : text;
@@ -69,5 +72,6 @@ service : () -> {
   join_event : (nat) -> (Result_1);
   public_key : () -> (Result_2);
   register_user : (UserDTO) -> (bool);
+  transfer : (TransferArgs) -> (Result_3);
   verify_ticket_signature_by_admin : (principal, text, Ticket) -> (Result);
 }
