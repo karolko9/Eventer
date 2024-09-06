@@ -6,6 +6,7 @@ use crate::service;
 
 use crate::dto_request;
 use crate::dto_response;
+use crate::ticket::ticket::TicketSignature;
 
 // use crate::error::user_error;
 
@@ -23,12 +24,12 @@ fn register_user(user_dto: dto_request::user_dto_request::UserDTO) -> bool {
 
 
 #[ic_cdk::update]
-fn join_event(event_id: u128) -> bool {
+async fn join_event(event_id: u128) -> Result<TicketSignature, String> {
     // match service::update::event_service_update::join_event(ic_cdk::caller(), event_id){
     //     Ok(_) => true,
     //     Err(_) => false,
     // }
-    service::update::event_service_update::join_event(ic_cdk::caller(), event_id)
+    service::update::event_service_update::join_event(ic_cdk::caller(), event_id).await
 }
 
 #[ic_cdk::update]

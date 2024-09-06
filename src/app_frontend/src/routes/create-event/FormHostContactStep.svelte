@@ -46,7 +46,7 @@
                     formProgress.set(100);
                     addToast({ data: { title: 'Success', description: 'The event was created!', color: 'bg-green'}})
                     setTimeout(() => {
-                        goto('/');
+                        goto('/my-events/host');
                     }, 2000)
                 }else{
                     addToast({ data: { title: 'Error', description: 'Something went wrong!', color: 'bg-red-500'}})

@@ -21,4 +21,15 @@ pub fn get_events_id_by_tags(tags: Vec<String>) -> HashSet<u128>{
     event_ids
 }
 
-//???
+pub fn add_tag_to_event(event_id: u128, tag: String) {
+    TAGS.with(|tags| {
+        let mut tags_map = tags.borrow_mut();
+        if let Some(tag) = tags_map.get_mut(&tag) {
+            tag.add_event_id(event_id);
+        } else {
+            let mut tagS = Tag::new(tag.clone()).unwrap();
+            tagS.add_event_id(event_id);
+            tags_map.insert(tag, tagS);
+        }
+    });
+}

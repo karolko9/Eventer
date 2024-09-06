@@ -32,21 +32,12 @@ type EventMapResponse = record {
   thumbnail : text;
   location : record { float64; float64 };
 };
-type EventOnlineDTO = record {
-  url : text;
-  name : text;
-  tags : vec text;
-  time_start : text;
-  time_end : text;
-};
-type EventOnlineDetailsResponse = record {
-  id : nat;
-  url : text;
-  name : text;
-  tags : vec text;
-  time_start : text;
-  time_end : text;
-};
+type PublicKeyReply = record { public_key_hex : text };
+type Result = variant { Ok; Err : text };
+type Result_1 = variant { Ok : TicketSignature; Err : text };
+type Result_2 = variant { Ok : PublicKeyReply; Err : text };
+type Ticket = record { user : principal; event_id : nat; event_name : text };
+type TicketSignature = record { signature_hex : text };
 type UserDTO = record {
   bio : text;
   job : text;
@@ -68,6 +59,7 @@ type UserDataModel = record {
   location : record { float64; float64 };
 };
 service : () -> {
+  add_tag_to_event : (principal, nat, text) -> (Result);
   create_event : (EventDTO) -> (bool);
   create_event_online : (EventOnlineDTO) -> (bool);
   fetch_all_tag_names : () -> (vec text) query;
@@ -80,10 +72,16 @@ service : () -> {
   get_user_events : () -> (opt vec EventDetailsResponse) query;
   get_user_events_online : () -> (opt vec EventOnlineDetailsResponse) query;
   get_user_hosted_events : () -> (opt vec EventDetailsResponse) query;
+<<<<<<< HEAD
   get_user_hosted_events_online : () -> (
       opt vec EventOnlineDetailsResponse,
     ) query;
   join_event : (nat) -> (bool);
   join_event_online : (nat) -> (bool);
+=======
+  join_event : (nat) -> (Result_1);
+  public_key : () -> (Result_2);
+>>>>>>> 6efa982b038742e65559added21a9eb49b73fb6b
   register_user : (UserDTO) -> (bool);
+  verify_ticket_signature_by_admin : (principal, text, Ticket) -> (Result);
 }

@@ -3,7 +3,7 @@
     import { createDialog, melt } from '@melt-ui/svelte';
     import { fade } from 'svelte/transition';
     import { auth } from "../lib/auth";
-    import { IconMapPin, IconCalendarEvent, IconUsers, IconTicket,  IconMail, IconX, IconPhone, IconMailUp } from '@tabler/icons-svelte';
+    import { IconMapPin, IconUserSearch, IconCalendarEvent, IconUsers, IconTicket,  IconMail, IconX, IconPhone, IconMailUp } from '@tabler/icons-svelte';
     import { getAsset } from "../lib/uploader";
 
     export let event;
@@ -67,11 +67,39 @@
         return formattedDate;
     }
 
+    const saveEventInStorage = (id, name, principal, signature) => {
+        const eventObject = {
+            event_id: id.toString(),
+            event_name: name,
+            principal: principal,
+            signature_hex: signature
+        };
+
+        let storedEvents = JSON.parse(localStorage.getItem('events')) || [];
+
+        const eventExists = storedEvents.some(event => event.event_id === eventObject.event_id);
+
+        if (!eventExists) {
+            // If it doesn't exist, push the new event to the storedEvents array
+            storedEvents.push(eventObject);
+
+            // Store the updated array back in localStorage
+            localStorage.setItem('events', JSON.stringify(storedEvents));
+
+            console.log("Event saved to local storage.");
+        }else {
+            console.log("Event already exists in local storage.");
+        }
+    }
+
     const joinEvent = async (id) => {
         if ($auth.isReady && $auth.isAuthenticated) {
             try{
                 const response = await $auth.whoamiActor.join_event(parseInt(id));
-                console.log("Response:" , response);
+                console.log("JoinEvent Response:" , response);
+                if(response){
+                    saveEventInStorage(event.id, eventDetails.name, $auth.identity.getPrincipal().toString(), response)
+                }
             }catch(error){
                 console.error(error)
             } 
@@ -94,9 +122,8 @@
   });
 </script>
 
-<main class:open={openModal} class="h-[500px] lg:h-full w-full lg:w-[400px] bottom-[-500px] lg:left-[-500px] lg:bottom-0 p-4 bg-white overflow-y-scroll absolute z-10 duration-300 ease-in-out border-r-2 border-gray-200 rounded-md ">
+<main class:open={openModal} class="h-[50vh] lg:h-full w-full lg:w-[400px] bottom-[-50vh] lg:left-[-500px] lg:bottom-0 p-4 bg-white overflow-y-scroll absolute z-10 duration-300 ease-in-out border-r-2 border-gray-200 rounded-md ">
     {#if eventDetails != null} 
-        <img src={thumbnailBlob} class="w-full object-cover mb-4 rounded-md" alt="thumbnail"/>
         <h1 class="mb-2 text-lg font-semibold">{eventDetails.name}</h1>
         <div class="flex items-center gap-3 mb-2">
             <IconCalendarEvent />
@@ -106,20 +133,21 @@
             <IconMapPin />
             <p style="text-md">{getStreetAndNumber(eventDetails.address)}</p>
         </div>
-        <div class="flex gap-3 mb-4">
-            <IconUsers />
-            <p style="text-md">Tickets: <span class="text-green">available</span></p>
-        </div> 
+        <div class="flex gap-3 mb-2">
+            <IconTicket />
+            <p style="text-md">Tickets available from {eventDetails.price}zł</p>
+        </div>
         <div class="w-full flex gap-2  mb-4">
             <button on:click={() => joinEvent(eventDetails.id)} class="w-fit flex items-center gap-1 p-2 whitespace-nowrap bg-primary rounded-xl">
                 <IconTicket style="color: #fff"/>
-                <p class="text-background">Join event</p>
+                <p class="text-background">Buy ticket</p>
             </button>
             <button use:melt={$trigger} class="w-fit flex items-center gap-1 p-2 whitespace-nowrap bg-primary rounded-xl">
                 <IconMail style="color: #fff"/>
                 <p class="text-background">Contact</p>
             </button>
         </div>
+        <img src={thumbnailBlob} class="w-full object-cover mb-4 rounded-md" alt="thumbnail"/>
         {#if $open}
             <div class="flex flex-col" use:melt={$portalled}>
                 <div use:melt={$overlay} class="fixed inset-0 z-50 bg-black/50" transition:fade={{ duration: 150 }}></div>
@@ -139,21 +167,16 @@
                     </div>
                     <div class="flex items-center gap-2 mb-2">
                         <IconMailUp style="color:#5B2784"/>
-                        <a class="font-medium text-primary300" href="mailto:hostmail@gmail.com">{eventDetails.contact.email}</a>
+                        <a class="font-medium text-primary300 truncate" href="mailto:hostmail@gmail.com">{eventDetails.contact.email}</a>
+                    </div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <IconUserSearch style="color:#5B2784"/>
+                        <a class="font-medium text-primary300 truncate" href={eventDetails.media}>{eventDetails.contact.media}</a>
                     </div>
                 </div>
             </div>
         {/if}
         <p class="text-sm font-light mb-4 break-words">{eventDetails.description}</p>
-        <div class="flex gap-2 mb-2">
-            <IconTicket style="color: #000"/>
-            <div class="flex flex-col">
-                <p class="text-md">Form: {eventDetails.price}zł</p>
-                <p class="text-sm opacity-80">Price includes 4zł service fee</p>
-            </div>
-        </div>
-        
-        <button class="py-3 px-10 text-md font-medium bg-primary text-background rounded-[20px]">Buy Ticket</button>
     {/if}
 </main>
 

@@ -3,15 +3,18 @@
    import { goto } from '$app/navigation'
    import { auth } from "../../../lib/auth";
    import EventCard from "../../../components/EventCard.svelte";
-  
+   import { createDialog, melt } from '@melt-ui/svelte';
+   import { fade } from 'svelte/transition';
    
 
    let events = [];
 
     onMount(() => {
         $auth.init().then(() => {
+            if(!$auth.isAuthenticated){
+                showLoginModal = true;
+            }
             fetchEvents();
-
         });
     });
     

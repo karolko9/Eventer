@@ -161,13 +161,13 @@
                         </div>
                     {/if}
                     {#if userType === "host"}
-                        <QrCodeScanner />
+                        <QrCodeScanner participants={participants}/>
                     {/if}
                 </div>
             </div>
         {/if}
         {#if showTicket && userType === "attendee"}
-            <QrCode />
+            <QrCode eventId={parseInt(id)}/>
         {/if}
         {#if userType === "attendee"}
             <div class="mt-4 flex items-center gap-1">

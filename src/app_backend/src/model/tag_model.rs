@@ -21,4 +21,9 @@ impl Tag{
     pub fn get_events_ids(&self) -> &HashSet<u128>{
         &self.events_ids
     }
+
+    pub fn add_event_id(&mut self, event_id: u128){
+        self.events_ids.insert(event_id);
+    }
+
 }

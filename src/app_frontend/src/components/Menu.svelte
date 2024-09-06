@@ -1,5 +1,9 @@
 <script>
-    import { IconMap, IconCalendarCheck, IconCirclePlus, IconUser, IconSettings} from '@tabler/icons-svelte';
+    import { IconMap, IconCalendarCheck, IconCirclePlus, IconUser, IconSettings, IconDeviceImac} from '@tabler/icons-svelte';
+    import { currentUserType } from "../stores/userTypeStore";
+
+    // Reactive store value
+    let userType = $currentUserType;
 
     const iconMapping = {
         "map": IconMap,
@@ -7,16 +11,19 @@
         "plus": IconCirclePlus,
         "user": IconUser,
         "settings": IconSettings,
+        "online": IconDeviceImac
     };
 
+    // Menu items array with showToHost and showToAttendee properties
     const menuItems = [
-        { href: "/", label: "Events Map", icon:"map", hideOnMobile: false },
-        { href: "/my-events/attendee", label: "My Events", icon:"events", hideOnMobile: false },
-        { href: "/create-event", label: "Create Event", icon:"plus", hideOnMobile: false },
-        { href: "/profile", label: "Profile", icon:"user", hideOnMobile: true },
-        // { href: "/settings", label: "Settings", icon:"settings", hideOnMobile: true }
+        { href: "/map", label: "Events Map", icon:"map", showToHost: false, showToAttendee: true },
+        { href: "/online-events", label: "Online Events", icon:"online", showToHost: false, showToAttendee: true},
+        { href: `/my-events/${userType === "attendee" ? "attendee" : "host" }`, label: "My Events", icon:"events", showToHost: true, showToAttendee: true },
+        { href: "/create-event", label: "Create Event", icon:"plus", showToHost: true, showToAttendee: false },
+        { href: "/profile", label: "Profile", icon:"user", showToHost: true, showToAttendee: true }, 
     ];
 
+    // Helper function to return the icon component
     const getIconComponent = (iconName) => {
         return iconMapping[iconName] || null;
     }
@@ -25,14 +32,16 @@
 <nav>
     <ul class="border-t-2 lg:border-r-2 border-gray-200 border-solid">
         {#each menuItems as item, index}
-            <li class="{item.hideOnMobile}">
-                <a href={item.href}>
-                    {#if getIconComponent(item.icon)}
-                        <svelte:component this={getIconComponent(item.icon)} style="color: #5B2784; width:30px; height:30px;" />
-                    {/if}
-                    <p>{item.label}</p>
-                </a>
-            </li>
+            {#if (userType === "attendee" && item.showToAttendee) || (userType === "host" && item.showToHost)}
+                <li>
+                    <a href={item.href}>
+                        {#if getIconComponent(item.icon)}
+                            <svelte:component this={getIconComponent(item.icon)} style="color: #5B2784; width:30px; height:30px;" />
+                        {/if}
+                        <p>{item.label}</p>
+                    </a>
+                </li>
+            {/if}
         {/each}
     </ul>
 </nav>
