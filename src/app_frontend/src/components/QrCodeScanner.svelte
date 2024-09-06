@@ -1,13 +1,36 @@
 <script>
     import { onMount } from "svelte";
     import { Html5QrcodeScanner } from "html5-qrcode";
+    import { auth } from "$lib/auth";
 
     let scanResult = null;
     let isScanning = true;
 
     export let participants;
+    
+    const verifySignature = async (text, ticket ) => {
+        if ($auth.isReady && $auth.isAuthenticated) {
+            try{
+                const response = await $auth.whoamiActor.verify_ticket_signature_by_admin(text, ticket);
+                console.log(response)
+                if(response === undefined){
+                    return "Ticket not found";
+                }
+                if(response.Ok === null){
+                    return "Ticket is verified correctly";
+                }else{
+                    return "Ticket is verified correctly";
+                }
+            }catch(error){
+                console.error(error)
+                return "Ticket was already used."
+            } 
+        }
+    }
 
     onMount(() => {
+        $auth.init();
+
         const scanner = new Html5QrcodeScanner("reader", {
             qrbox: {
                 width: 250,
@@ -18,24 +41,23 @@
 
         scanner.render(success, error);
 
-        function success(result) {
+        async function success(result) {
             if (isScanning) {
                 scanner.clear();
-                console.log(result);
-                const foundParticipant = participants.find(participant => {
-                    console.log(participant);
-                    console.log(participant.toText());
-                    return participant.toText() === result;
-                });
+                const convertedResult = JSON.parse(result);
 
-                if (foundParticipant) {
-                    scanResult = "User has ticket";  
-                    console.log("user has ticket");
-                } else {
-                    scanResult = "User doesn't have ticket"; 
-                    console.log("user doesn't have ticket");
+                const { principal, event_name, event_id, signature_hex} = convertedResult;
+            
+                const ticket = {
+                    event_id: parseInt(event_id),
+                    user: principal,
+                    event_name: event_name
+                }
 
-                }                
+                scanResult = await verifySignature(signature_hex, ticket);
+                
+                console.log(scanResult);
+               
                 isScanning = false; 
             }
         }
@@ -62,7 +84,7 @@
 
 <div class="">
     {#if scanResult}
-        <div>Success: <a href={"http://" + scanResult}>{scanResult}</a></div>
+        <div>{scanResult}</div>
     {:else}
         <div id="reader" style="display:flex; flex-direction:column; align-items:center; padding: 8px; margin-top:8px;"></div>
     {/if}

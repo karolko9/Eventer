@@ -12,10 +12,10 @@ pub fn create_event(new_event: Event, event_id: u128) {
     });
 }
 
-pub fn get_events(events_id: HashSet<u128>) -> Vec<Event> {
+pub fn get_events(events_ids: HashSet<u128>) -> Vec<Event> {
     let mut event_list = Vec::new();
 
-    for event_id in events_id {
+    for event_id in events_ids {
         if let Some(event) = EVENTS.with(|events| events.borrow().get(&event_id).cloned()) {
             event_list.push(event);
         }

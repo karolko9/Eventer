@@ -12,12 +12,12 @@ use crate::repository::event_repository;
 #[derive(CandidType, Serialize, Deserialize, Debug)]
 pub struct Ticket {
     pub event_id: u128,
-    user: Principal,
+    user: String,
     pub event_name: String,
 }
 
 impl Ticket {
-    pub fn new(event_id: u128, user: Principal, event_name: String) -> Self {
+    pub fn new(event_id: u128, user: String, event_name: String) -> Self {
         Self {
             event_id,
             user,
@@ -108,7 +108,7 @@ pub async fn verify_ticket_signature(
         .verify(message_bytes, &signature)
         .is_ok();
 
-    if(event_repository::is_ticket_used(ticket.event_id.clone(), signature_hex.clone()) == false){
+    if(event_repository::is_ticket_used(ticket.event_id.clone(), signature_hex.clone())){
         return Err("Ticket is already used".to_string());
     }
 

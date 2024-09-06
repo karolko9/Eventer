@@ -5,6 +5,7 @@
    import EventCard from "../../../components/EventCard.svelte";
    import { createDialog, melt } from '@melt-ui/svelte';
    import { fade } from 'svelte/transition';
+   import { IconLogin } from '@tabler/icons-svelte';
    
 
    let events = [];
@@ -19,7 +20,13 @@
     });
     
 
-
+    const handleAuth = () => {
+      if ($auth.isAuthenticated) {
+        $auth.logout();
+      } else {
+        $auth.login();
+      }
+    }
 
 
    async function fetchEvents() {
@@ -53,4 +60,11 @@
         <h1 class="mt-4 text-xl font-medium text-primary">Events not found</h1>
     </div>
     {/if}
+    {#if !$auth.isAuthenticated}
+        <button on:click={handleAuth} class="absolute right-[20px]  bottom-[20px] w-fit h-fit p-2 flex flex-col items-center justify-center border-[1px] border-color bg-primary rounded-xl">
+            <IconLogin style="color:#fff"/>
+            <p class="text-xs text-background font-medium">Sign In</p>
+        </button>
+    {/if}
+
 </section>

@@ -4,6 +4,7 @@
     import { AuthClient } from "@dfinity/auth-client";
     import { onMount } from "svelte";
     import { auth } from "$lib/auth";
+    import pako from "pako"
 
     export let eventId;
     let principal = "";
@@ -23,8 +24,7 @@
             if (event.signature_hex && event.signature_hex.Ok && event.signature_hex.Ok.signature_hex) {
                 event.signature_hex = event.signature_hex.Ok.signature_hex;
             }
-            console.log("Event found:", event);
-            return event;
+            return JSON.stringify(event);
         } else {
             console.log("Event not found.");
             return null;
@@ -35,7 +35,7 @@
        
         const ticketData = getStoredEventById(eventId);
 
-        let typeNumber = 4;
+        let typeNumber = 10;
         let errorCorrectionLevel = 'L';
         let qr = qrcode(typeNumber, errorCorrectionLevel);
         qr.addData(ticketData);

@@ -141,6 +141,6 @@ pub async fn join_event(caller: Principal, event_id: u128) -> Result<TicketSigna
     } else {
         return Err("Event not found".to_string());
     }
-    let ticket_gen: ticket::ticket::Ticket = ticket::ticket::Ticket::new(event_id, caller, event_name.to_string());
+    let ticket_gen: ticket::ticket::Ticket = ticket::ticket::Ticket::new(event_id, caller.to_string(), event_name.to_string());
     Ok(ticket::ticket::generate_ticket_signature(ticket_gen).await?)
 }
