@@ -11,7 +11,6 @@ use std::collections::HashSet;
 fn create_event(event_dto: dto_request::event_dto_request::EventDTO) -> Result<(),String>{
     match service::update::event_service_update::create_event(event_dto, ic_cdk::caller()) {
         Ok(_) => Ok(()),
-
         Err(e) => Err(format!("Failed to create event: {:?}", e)),
     }
 }

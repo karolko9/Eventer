@@ -7,7 +7,7 @@ use ic_cdk::api::management_canister::ecdsa::{
 use serde::{Deserialize, Serialize};
 use std::convert::TryFrom;
 
-use crate::repository::event_repository;
+use crate::{error::user_error::ErrorUser, repository::event_repository};
 
 #[derive(CandidType, Serialize, Deserialize, Debug)]
 pub struct Ticket {
@@ -43,7 +43,7 @@ pub struct PublicKeyReply {
 }
 
 #[ic_cdk::update]
-async fn public_key() -> Result<PublicKeyReply, String> {
+async fn public_key() -> Result<PublicKeyReply, ErrorUser> {
     let request = EcdsaPublicKeyArgument {
         canister_id: None,
         derivation_path: vec![],
@@ -52,7 +52,7 @@ async fn public_key() -> Result<PublicKeyReply, String> {
 
     let (response,) = ecdsa_public_key(request)
         .await
-        .map_err(|e| format!("ecdsa_public_key failed {}", e.1))?;
+        .map_err(|e| (ErrorUser::SignWithEcdsaFailed(format!("ECDSA error: {}",e.1))))?;
 
     Ok(PublicKeyReply {
         public_key_hex: hex::encode(response.public_key),
@@ -60,7 +60,7 @@ async fn public_key() -> Result<PublicKeyReply, String> {
 }
 
 
-pub async fn generate_ticket_signature(ticket: Ticket) -> Result<TicketSignature, String> {
+pub async fn generate_ticket_signature(ticket: Ticket) -> Result<TicketSignature, ErrorUser> {
     let ticket_data = format!(
         "{}:{}:{}",
         ticket.event_id, ticket.user, ticket.event_name
@@ -76,7 +76,7 @@ pub async fn generate_ticket_signature(ticket: Ticket) -> Result<TicketSignature
 
     let (response,) = sign_with_ecdsa(request)
         .await
-        .map_err(|e| format!("sign_with_ecdsa failed {}", e.1))?;
+        .map_err(|e| (ErrorUser::SignWithEcdsaFailed(format!("ECDSA error: {}",e.1))))?;
 
     Ok(TicketSignature {
         signature_hex: hex::encode(response.signature),
@@ -87,7 +87,7 @@ pub async fn generate_ticket_signature(ticket: Ticket) -> Result<TicketSignature
 pub async fn verify_ticket_signature(
     signature_hex: String,
     ticket: Ticket,
-) -> Result<TicketVerification, String> {
+) -> Result<TicketVerification, ErrorUser> {
     let ticket_data = format!(
         "{}:{}:{}",
         ticket.event_id, ticket.user, ticket.event_name
@@ -109,7 +109,8 @@ pub async fn verify_ticket_signature(
         .is_ok();
 
     if(event_repository::is_ticket_used(ticket.event_id.clone(), signature_hex.clone()) == false){
-        return Err("Ticket is already used".to_string());
+        return Err(ErrorUser::TicketAlreadyUsed);
+        //"Ticket is already used"
     }
 
     event_repository::add_used_ticket(ticket.event_id.clone(), signature_hex);

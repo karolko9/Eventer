@@ -4,6 +4,9 @@ use std::f32::consts::E;
 
 use crate::dto_request;
 use crate::dto_response::event_dto_response::EventDetailsResponse;
+use crate::error::event_error::ErrorEvent;
+use crate::error::user_error::ErrorUser;
+use crate::error::tag_error::ErrorTag;
 use crate::model::event_model::Event;
 use crate::repository::event_id_repository;
 use crate::repository::event_repository;
@@ -62,7 +65,7 @@ pub fn add_event_to_tags(event_id: u128, tags: HashSet<String>) {
             if let Some(tag) = tags_map.get_mut(&tag_name) {
                 tag.add_event(event_id);
             } else {
-                tags_map.insert(tag_name.clone(), Tag::new(tag_name.clone()).expect("Failed to create new tag")); 
+                tags_map.insert(tag_name.clone(), Tag::new(tag_name.clone()).expect("CreatingNewTagFailed")); 
             }
         }
     });
@@ -81,7 +84,7 @@ use crate::UserDataModel;
 use crate::EVENTS;
 use crate::USER_DATA_MODEL;
 
-pub fn register_blank_user(user: Principal) -> Result<(),String> {
+pub fn register_blank_user(user: Principal) -> Result<(),ErrorUser> {
     let user_dto = dto_request::user_dto_request::UserDTO {
         name: "".to_string(),
         location: (0.0, 0.0),
@@ -105,7 +108,7 @@ pub fn register_blank_user(user: Principal) -> Result<(),String> {
 
 
 
-pub async fn join_event(caller: Principal, event_id: u128) -> Result<TicketSignature, String> {
+pub async fn join_event(caller: Principal, event_id: u128) -> Result<TicketSignature, ErrorUser> {
     let mut event_joined = false;
 
     let mut event_name = String::new();
@@ -117,13 +120,13 @@ pub async fn join_event(caller: Principal, event_id: u128) -> Result<TicketSigna
             let host = event.list_of_admin().first();
             if let Some(host) = host {
                 if host.to_string() == caller.to_string() {
-                    return Err("Host cannot join their own event".to_string()) // Host cannot join their own event
+                    return Err(ErrorUser::HostCannotJoinTheirOwnEvent) // Host cannot join their own event
                 }
             }
 
             if let Some(declaration) = event.hash_map_of_declared().get(&caller) {
                 if declaration == "declared" {
-                    return Err("User has already declared".to_string()) // User has already declared
+                    return Err(ErrorUser::UserIsAlreadyDeclared) // User has already declared
                 }
             }
 
@@ -144,7 +147,7 @@ pub async fn join_event(caller: Principal, event_id: u128) -> Result<TicketSigna
             user.add_event(event_id);
         }); 
     } else {
-        return Err("Event not found".to_string());
+        return Err(ErrorUser::EventNotFound);
     }
     let ticket_gen: ticket::ticket::Ticket = ticket::ticket::Ticket::new(event_id, caller, event_name.to_string());
     Ok(ticket::ticket::generate_ticket_signature(ticket_gen).await?)

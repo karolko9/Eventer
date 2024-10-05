@@ -1,4 +1,5 @@
 use candid::Principal;
+use crate::error::event_online_error::ErrorEventOnline;
 use crate::model::event_online_model::EventOnline;
 use crate::EVENT_ONLINE;
 use std::collections::HashSet;
@@ -48,14 +49,14 @@ pub fn get_all_events_online() -> Option<Vec<EventOnline>>{
     })
 }
 
-pub fn add_user_to_online_event(event_id: u128, caller: Principal) -> Result<(), String> {
+pub fn add_user_to_online_event(event_id: u128, caller: Principal) -> Result<(), ErrorEventOnline> {
     EVENT_ONLINE.with(|events| {
         let mut events_map = events.borrow_mut();
         if let Some(event) = events_map.get_mut(&event_id) {
             event.add_participant(caller);
             Ok(())
         } else {
-            Err("Event not found".to_string())
+            Err(ErrorEventOnline::EventOnlineNotFound)
         }
     })
 }

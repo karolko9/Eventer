@@ -1,4 +1,6 @@
 use candid::Principal;
+use crate::error::event_error::ErrorEvent;
+use crate::error::user_error::ErrorUser;
 
 use std::{cell::RefCell, collections::HashMap, collections::HashSet};
 

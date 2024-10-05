@@ -1,6 +1,6 @@
 use candid::Principal;
 use std::collections::HashSet;
-use crate::component;
+use crate::{component, error::user_error::ErrorUser};
 
 #[derive(Debug, Clone)]
 pub struct EventOnline {

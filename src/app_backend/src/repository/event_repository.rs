@@ -3,6 +3,7 @@ use std::hash::Hash;
 
 use candid::Principal;
 
+use crate::error::event_error::ErrorEvent;
 use crate::model::event_model::Event;
 use crate::USER_DATA_MODEL;
 use crate::dto_response::event_dto_response::EventDetailsResponse;
@@ -61,14 +62,14 @@ pub fn get_all_events() -> Option<Vec<Event>> {
     })
 }
 
-pub fn add_user_to_event(event_id: u128, caller: Principal) -> Result<(), String> {
+pub fn add_user_to_event(event_id: u128, caller: Principal) -> Result<(), ErrorEvent> {
     EVENTS.with(|events| {
         let mut events_map = events.borrow_mut();
         if let Some(event) = events_map.get_mut(&event_id) {
             event.add_participant(caller);
             Ok(())
         } else {
-            Err("Event not found".to_string())
+            Err(ErrorEvent::EventNotFound)
         }
     })
 }

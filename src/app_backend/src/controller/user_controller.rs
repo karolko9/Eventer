@@ -1,3 +1,6 @@
+use k256::pkcs8::der::ErrorKind;
+
+use crate::error::user_error::ErrorUser;
 use crate::model::user_model::UserDataModel;
 use crate::service; 
 
@@ -7,6 +10,7 @@ use crate::ticket::ticket::TicketSignature;
 
 // use crate::error::user_error;
 
+
 // GET USER
 #[ic_cdk::query]
 fn get_user() -> Option<UserDataModel> {
@@ -15,13 +19,13 @@ fn get_user() -> Option<UserDataModel> {
 
 // REGISTER USER
 #[ic_cdk::update]
-fn register_user(user_dto: dto_request::user_dto_request::UserDTO) -> Result<bool, String> {
+fn register_user(user_dto: dto_request::user_dto_request::UserDTO) -> Result<bool, ErrorUser> {
     service::update::user_service_update::register_user(ic_cdk::caller(), user_dto)
 }
 
 
 #[ic_cdk::update]
-async fn join_event(event_id: u128) -> Result<TicketSignature, String> {
+async fn join_event(event_id: u128) -> Result<TicketSignature, ErrorUser> {
     // match service::update::event_service_update::join_event(ic_cdk::caller(), event_id){
     //     Ok(_) => true,
     //     Err(_) => false,
@@ -30,7 +34,7 @@ async fn join_event(event_id: u128) -> Result<TicketSignature, String> {
 }
 
 #[ic_cdk::update]
-fn join_event_online(event_id: u128) -> Result<bool,String> {
+fn join_event_online(event_id: u128) -> Result<bool,ErrorUser> {
     service::update::event_online_service_update::join_event_online(ic_cdk::caller(), event_id)
 }
 

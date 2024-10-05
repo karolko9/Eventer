@@ -1,5 +1,8 @@
 use std::collections::HashSet;
 use candid::CandidType;
+use getrandom::Error;
+
+use crate::error::tag_error::ErrorTag;
 
 #[derive(CandidType, Clone, Debug)]
 pub struct Tag {
@@ -8,9 +11,9 @@ pub struct Tag {
 }
 
 impl Tag{
-    pub fn new(name: String) -> Result<Self, String> {
+    pub fn new(name: String) -> Result<Self, ErrorTag> {
         if name.is_empty(){
-            return Err("Name is not assigned".to_string())
+            return Err(ErrorTag::NameNotAssigned)
         }
         Ok(Tag{
             name: name,

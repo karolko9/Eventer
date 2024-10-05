@@ -1,4 +1,4 @@
-use crate::component;
+use crate::{component, error::{event_error::ErrorEvent, user_error::ErrorUser}};
 use candid::Principal;
 use std::{
     collections::{HashMap, HashSet},
@@ -125,12 +125,14 @@ impl Event {
         self.name = name;
     }
 
-    pub fn set_location(&mut self, latitude: f64, longitude: f64) -> Result<(), String> {
+    pub fn set_location(&mut self, latitude: f64, longitude: f64) -> Result<(), ErrorEvent> {
         if latitude < -90.0 || latitude > 90.0 {
-            return Err("Latitude must be between -90 and 90.".to_string());
+            return Err(ErrorEvent::LatitudeIsIncorrect);
+            //"Latitude must be between -90 and 90.".to_string()
         }
         if longitude < -180.0 || longitude > 180.0 {
-            return Err("Longitude must be between -180 and 180.".to_string());
+            return Err(ErrorEvent::LongitudeIsIncorrect);
+            //"Longitude must be between -180 and 180.".to_string()
         }
         self.location = (latitude, longitude);
         Ok(())

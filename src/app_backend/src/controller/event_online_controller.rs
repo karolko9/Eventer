@@ -5,10 +5,10 @@ use crate::service;
 
 //CREATE EVENT ONLINE
 #[ic_cdk::update]
-fn create_event_online(event_online_dto: dto_request::event_online_dto_request::EventOnlineDTO) -> bool{
+fn create_event_online(event_online_dto: dto_request::event_online_dto_request::EventOnlineDTO) -> Result<(),String>{
     match service::update::event_online_service_update::create_event_online(event_online_dto, ic_cdk::caller()) {
-        Ok(_) => true,
-        Err(_) => false,
+        Ok(_) => Ok(()),
+        Err(e) => Err(format!("Failed to create event: {:?}", e))
     }
 }
 

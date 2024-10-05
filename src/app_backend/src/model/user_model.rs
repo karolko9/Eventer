@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::dto_request;
+use crate::{dto_request, error::user_error::ErrorUser};
 use candid::CandidType;
 
 #[derive(CandidType, Clone, Debug)]
@@ -20,13 +20,14 @@ pub struct UserDataModel {
 }
 
 impl UserDataModel {
-    pub fn new(user_dto: dto_request::user_dto_request::UserDTO) -> Result<Self, String> {
+    pub fn new(user_dto: dto_request::user_dto_request::UserDTO) -> Result<Self, ErrorUser> {
         if user_dto.location.0 < -90.0
             || user_dto.location.0 > 90.0
             || user_dto.location.1 < -180.0
             || user_dto.location.1 > 180.0
         {
-            return Err("Location coordinates must be between -90 to 90 ,-180 to 180.".to_string());
+            return Err(ErrorUser::LocationCoordinatesAreIncorrect);
+            //LocationCoordinatesMustBeBetweenCertainNumbers-90To90-180To180
         }
         Ok(UserDataModel {
             name: user_dto.name,
@@ -60,12 +61,13 @@ impl UserDataModel {
     }
 
     // Setter dla pola `location`
-    pub fn set_location(&mut self, latitude: f64, longitude: f64) -> Result<(), String> {
+    pub fn set_location(&mut self, latitude: f64, longitude: f64) -> Result<(), ErrorUser> {
         if latitude < -90.0 || latitude > 90.0 {
-            return Err("Latitude must be between -90 and 90.".to_string());
+            return Err(ErrorUser::LatitudeIsIncorrect);
+            //LatitudeMustBeBetweenMIN90AndPLUS90
         }
         if longitude < -180.0 || longitude > 180.0 {
-            return Err("Longitude must be between -180 and 180.".to_string());
+            return Err(ErrorUser::LongitudeIsIncorrect);
         }
         self.location = (latitude, longitude);
         Ok(())

@@ -2,7 +2,7 @@ BACKEND FUNCTIONS WITH RESULTS:
     
     sections:
         - contact:
-            > FUNCTION: .new()
+            > FUNCTION: contact::new()
                 > WHEN: if everything is empty
                     > ERROR: "Empty"
         - admin_e:
@@ -15,10 +15,10 @@ BACKEND FUNCTIONS WITH RESULTS:
                 > WHEN: user is not an admin
                     > ERROR: "User is not an admin"
                 > NOTES: Is this finished? Where is the error then ticket isnt valid (ADDED)
-        - event_controller:
-            > FUNCTION: 
-                > WHEN:
-                > ERROR: 
+        - tag_model:
+            > FUNCTION: Tag::new() (only on backend)
+                > ERROR: NameNotAssigned
+                > NOTES: add_tag_to_event panics when error occured
         - controller:
             > FUNCTION: 
                 > WHEN:
