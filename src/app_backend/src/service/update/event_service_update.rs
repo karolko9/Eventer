@@ -81,7 +81,7 @@ use crate::UserDataModel;
 use crate::EVENTS;
 use crate::USER_DATA_MODEL;
 
-pub fn register_blank_user(user: Principal) -> bool {
+pub fn register_blank_user(user: Principal) -> Result<(),String> {
     let user_dto = dto_request::user_dto_request::UserDTO {
         name: "".to_string(),
         location: (0.0, 0.0),
@@ -93,14 +93,14 @@ pub fn register_blank_user(user: Principal) -> bool {
 
     let user_data = match UserDataModel::new(user_dto) {
         Ok(data) => data,
-        Err(_) => return false,
+        Err(e) => return Err(e)
     };
 
     USER_DATA_MODEL.with(|user_data_model| {
         let mut user_data_map = user_data_model.borrow_mut();
         user_data_map.insert(user, user_data);
     });
-    true
+    Ok(())
 }
 
 
@@ -110,20 +110,20 @@ pub async fn join_event(caller: Principal, event_id: u128) -> Result<TicketSigna
 
     let mut event_name = String::new();
 
-    EVENTS.with(|events| {
+    let ev = EVENTS.with(|events| {
         let mut events_map = events.borrow_mut();
 
         if let Some(event) = events_map.get_mut(&event_id) {
             let host = event.list_of_admin().first();
             if let Some(host) = host {
                 if host.to_string() == caller.to_string() {
-                    return; // Host cannot join their own event
+                    return Err("Host cannot join their own event".to_string()) // Host cannot join their own event
                 }
             }
 
             if let Some(declaration) = event.hash_map_of_declared().get(&caller) {
                 if declaration == "declared" {
-                    return; // User has already declared
+                    return Err("User has already declared".to_string()) // User has already declared
                 }
             }
 
@@ -131,6 +131,7 @@ pub async fn join_event(caller: Principal, event_id: u128) -> Result<TicketSigna
             event_joined = true;
             event_name = event.name().clone().to_owned();
         }
+        Ok(())
     });
 
     if event_joined {

@@ -28,7 +28,7 @@ pub async fn verify_ticket_signature_by_admin(
 
         }
         Ok(())
-    } else {
+    }else {
         Err("User is not an admin".to_string())
     }
 }

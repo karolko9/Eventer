@@ -1,0 +1,29 @@
+BACKEND FUNCTIONS WITH RESULTS:
+    
+    sections:
+        - contact:
+            > FUNCTION: .new()
+                > WHEN: if everything is empty
+                    > ERROR: "Empty"
+        - admin_e:
+            > FUNCTION: add_tag_to_event
+                > WHEN: user is not an admin
+                    > ERROR: "User is not an admin"
+            > FUNCTION: verify_ticket_signature_by_admin
+                > WHEN: signature is not valid
+                    > ERROR: "Signature is not valid"
+                > WHEN: user is not an admin
+                    > ERROR: "User is not an admin"
+                > NOTES: Is this finished? Where is the error then ticket isnt valid (ADDED)
+        - event_controller:
+            > FUNCTION: 
+                > WHEN:
+                > ERROR: 
+        - controller:
+            > FUNCTION: 
+                > WHEN:
+                > ERROR: 
+        - controller:
+            > FUNCTION: 
+                > WHEN:
+                > ERROR: 

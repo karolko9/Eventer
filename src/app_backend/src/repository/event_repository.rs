@@ -27,6 +27,16 @@ pub fn get_events(events_id: HashSet<u128>) -> Vec<Event> {
     event_list
 }
 
+/*pub fn get_event_by_id(event_id: u128) -> Result<Event, String> {
+    EVENTS.with(|events| {
+        let events_map = events.borrow();
+        match events_map.get(&event_id){
+            Some(event) => Ok(event.clone()),
+            None => Err("Event with this ID not found!".to_string())
+        }
+    })
+}*/
+
 pub fn get_event_by_id(event_id: u128) -> Option<Event> {
     EVENTS.with(|events| {
         let events_map = events.borrow();
@@ -34,7 +44,7 @@ pub fn get_event_by_id(event_id: u128) -> Option<Event> {
     })
 }
 
-pub fn get_all_events() -> Option<Vec<Event>>{
+pub fn get_all_events() -> Option<Vec<Event>> {
     EVENTS.with(|events| {
         let events = events.borrow();
         let mut all_events = Vec::new();

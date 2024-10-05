@@ -8,17 +8,21 @@ use std::collections::HashSet;
 // CREATE EVENT 
 //  Result<(), event_error::Error_event>
 #[ic_cdk::update]
-fn create_event(event_dto: dto_request::event_dto_request::EventDTO) -> bool{
+fn create_event(event_dto: dto_request::event_dto_request::EventDTO) -> Result<(),String>{
     match service::update::event_service_update::create_event(event_dto, ic_cdk::caller()) {
-        Ok(_) => true,
-        Err(_) => false,
+        Ok(_) => Ok(()),
+        
+        Err(e) => Err(format!("Failed to create event: {:?}", e)),
     }
 }
 
 // GET EVENT BY ID
 #[ic_cdk::query]
-fn get_event(event_id: u128) -> Option<dto_response::event_dto_response::EventDetailsResponse> {
-    service::query::event_service_query::get_event(event_id) 
+fn get_event(event_id: u128) -> Result<dto_response::event_dto_response::EventDetailsResponse,String> {
+    match service::query::event_service_query::get_event(event_id){
+        Ok(event) => Ok(event),
+        Err(e) => Err(e)
+    }
 }
 
 // GET EVENTS BY TAGS USER

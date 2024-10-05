@@ -4,6 +4,13 @@ use crate::repository;
 use candid::Principal;
 
 //1 Get event
+/*pub fn get_event(event_id: u128) -> Result<EventDetailsResponse,String> {
+    match event_repository::get_event_by_id(event_id){
+        Ok(event) => Ok(EventDetailsResponse::from(&event)),
+        Err(e) => Err(e),
+    }
+}*/
+
 pub fn get_event(event_id: u128) -> Option<EventDetailsResponse> {
     event_repository::get_event_by_id(event_id)
         .as_ref()

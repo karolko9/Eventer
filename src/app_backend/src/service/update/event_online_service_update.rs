@@ -59,7 +59,7 @@ pub fn add_event_to_online_tags(event_id: u128, tags: HashSet<String>) {
     });
 }
 
-pub fn register_blank_user(user: Principal) -> bool {
+pub fn register_blank_user(user: Principal) -> Result<(), String> {
     let user_dto = dto_request::user_dto_request::UserDTO {
         name: "".to_string(),
         location: (0.0, 0.0),
@@ -69,44 +69,45 @@ pub fn register_blank_user(user: Principal) -> bool {
         bio: "".to_string(),
     };
     if user_repository::user_exists(user) {
-        false
+        return Err("User already exists".to_string())
     } else {
         let user_data = match UserDataModel::new(user_dto) {
             Ok(data) => data,
-            Err(_) => return false,
+            Err(e) => return Err(e),
         };
 
         USER_DATA_MODEL.with(|user_data_model| {
             let mut user_data_map = user_data_model.borrow_mut();
             user_data_map.insert(user, user_data);
         });
-        true
+        Ok(())
     }
 }
 
 //JOINING EVENT ONLINE
 
-pub fn join_event_online(caller: Principal, event_id: u128) -> bool {
+pub fn join_event_online(caller: Principal, event_id: u128) -> Result<bool,String> {
     let mut event_joined = false;
 
-    EVENT_ONLINE.with(|events| {
+    let ev = EVENT_ONLINE.with(|events| {
         let mut events_map = events.borrow_mut();
         
         if let Some(event) = events_map.get_mut(&event_id) {
             let host = event.list_of_admin().first();
             if let Some(host) = host {
                 if host.to_string() == caller.to_string() {
-                    return; // Host cannot join their own event
+                    return Err("Host cannot join their own event".to_string()); // Host cannot join their own event
                 }
             }
             
             if event.hash_map_of_declared().contains(&caller) {
-                return; 
+                return Err("User has already declared".to_string()); 
             }
 
             event.add_participant(caller);
             event_joined = true;
         }
+        Ok(())
     });
 
     if event_joined {
@@ -116,13 +117,13 @@ pub fn join_event_online(caller: Principal, event_id: u128) -> bool {
             let mut users_map = users.borrow_mut();
             if let Some(user) = users_map.get_mut(&caller) {
                 user.add_event(event_id);
-                true
+                Ok(true)
             } else {
-                false
+                return Err("User not found".to_string())
             }
         })
     } else {
-        false
+        return Err("Event not found".to_string());
     }
 }
 
