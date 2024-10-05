@@ -15,7 +15,7 @@ fn get_user() -> Option<UserDataModel> {
 
 // REGISTER USER
 #[ic_cdk::update]
-fn register_user(user_dto: dto_request::user_dto_request::UserDTO) -> bool {
+fn register_user(user_dto: dto_request::user_dto_request::UserDTO) -> Result<bool, String> {
     service::update::user_service_update::register_user(ic_cdk::caller(), user_dto)
 }
 
@@ -30,7 +30,7 @@ async fn join_event(event_id: u128) -> Result<TicketSignature, String> {
 }
 
 #[ic_cdk::update]
-fn join_event_online(event_id: u128) -> bool {
+fn join_event_online(event_id: u128) -> Result<bool,String> {
     service::update::event_online_service_update::join_event_online(ic_cdk::caller(), event_id)
 }
 

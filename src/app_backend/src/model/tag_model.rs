@@ -9,11 +9,13 @@ pub struct Tag {
 
 impl Tag{
     pub fn new(name: String) -> Result<Self, String> {
+        if name.is_empty(){
+            return Err("Name is not assigned".to_string())
+        }
         Ok(Tag{
             name: name,
             events_ids: HashSet::new(),
         })
-
     }
 
     pub fn get_events_ids(&self) -> &HashSet<u128>{
