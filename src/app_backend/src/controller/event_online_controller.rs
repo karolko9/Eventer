@@ -1,14 +1,20 @@
 use crate::dto_request;
 use crate::dto_response;
+use std::error::Error;
+use crate::error::event_online_error::ErrorEventOnline;
 
 use crate::service; 
 
 //CREATE EVENT ONLINE
 #[ic_cdk::update]
-fn create_event_online(event_online_dto: dto_request::event_online_dto_request::EventOnlineDTO) -> Result<(),String>{
-    match service::update::event_online_service_update::create_event_online(event_online_dto, ic_cdk::caller()) {
+fn create_event_online(event_online_dto: dto_request::event_online_dto_request::EventOnlineDTO) -> Result<(),ErrorEventOnline>{
+    /*match service::update::event_online_service_update::create_event_online(event_online_dto, ic_cdk::caller()) {
         Ok(_) => Ok(()),
         Err(e) => Err(format!("Failed to create event: {:?}", e))
+    }*/
+    match service::update::event_online_service_update::create_event_online(event_online_dto, ic_cdk::caller()){
+        Ok(()) => Ok(()),
+        Err(e) => Err(ErrorEventOnline::FailedToCreateEvent(e.to_string()))
     }
 }
 
