@@ -1,12 +1,12 @@
 <script>
     import { MapLibre, Marker } from 'svelte-maplibre';
-    import { auth } from "../../lib/auth";
+    import { auth } from "$lib/auth";
     import { onMount } from "svelte";
     import { goto } from '$app/navigation'
     import { writable } from 'svelte/store';
-    import EventDetailsModal from '../../components/EventDetailsModal.svelte';
-    import Searchbox from '../../components/Searchbox.svelte';
-    import Loader from '../../components/Loader.svelte';
+    import EventDetailsModal from '$lib/EventDetailsModal.svelte';
+    import Searchbox from '$lib/Searchbox.svelte';
+    import Loader from '$lib/Loader.svelte';
     import { IconLogin, IconConfetti, IconX, IconHeart } from '@tabler/icons-svelte';
     import { createDialog, melt } from '@melt-ui/svelte';
     import { fade } from 'svelte/transition';

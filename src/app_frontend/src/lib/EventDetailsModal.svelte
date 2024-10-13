@@ -2,9 +2,9 @@
     import { onMount } from "svelte";
     import { createDialog, melt } from '@melt-ui/svelte';
     import { fade } from 'svelte/transition';
-    import { auth } from "../lib/auth";
+    import { auth } from "$lib/auth";
     import { IconMapPin, IconUserSearch, IconCalendarEvent, IconUsers, IconTicket,  IconMail, IconX, IconPhone, IconMailUp } from '@tabler/icons-svelte';
-    import { getAsset } from "../lib/uploader";
+    import { getAsset } from "$lib/uploader";
 
     export let event;
     export let openModal;

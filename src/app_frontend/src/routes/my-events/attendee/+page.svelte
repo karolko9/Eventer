@@ -1,8 +1,8 @@
 <script>
     import { onMount } from "svelte";
    import { goto } from '$app/navigation'
-   import { auth } from "../../../lib/auth";
-   import EventCard from "../../../components/EventCard.svelte";
+   import { auth } from "$lib/auth";
+   import EventCard from "$lib/EventCard.svelte";
   
    let events = [];
 

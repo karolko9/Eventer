@@ -3,8 +3,8 @@
     import { get } from 'svelte/store';
     import { goto } from '$app/navigation'
     import { formProgress, formStep, formData } from '../../stores/createEvent.js';
-    import { auth } from "../../lib/auth.js";
-    import { addToast } from "../../components/Toast.svelte";
+    import { auth } from "$lib/auth.js";
+    import { addToast } from "$lib/Toast";
 
     onMount(() => {
         $auth.init();

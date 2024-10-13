@@ -4,7 +4,7 @@
     import { IconInfoCircle, IconMapSearch, IconX } from '@tabler/icons-svelte'; 
     import { createTagsInput, melt } from '@melt-ui/svelte';
     import { auth } from "../../lib/auth.js";
-    import { addToast } from "../../components/Toast.svelte";
+    import { addToast } from "$lib/Toast.svelte";
 
     let isLoggedIn = false;
 

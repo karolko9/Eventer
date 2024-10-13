@@ -1,8 +1,7 @@
 <script>
-  import Map from "../components/Map.svelte";
-  import { auth } from "../lib/auth";
+  import { auth } from "$lib/auth";
   import { onMount } from "svelte";
-  import Loader from "../components/Loader.svelte"
+  import Loader from "$lib/Loader.svelte"
   import { currentUserType } from "../stores/userTypeStore";
 
   onMount(() => {
