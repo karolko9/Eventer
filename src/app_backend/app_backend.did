@@ -1,4 +1,22 @@
 type Contact = record { media : text; email : text; phone : text };
+type ErrorEventOnline = variant {
+  EventOnlineNotFound;
+  FailedToCreateEvent : text;
+};
+type ErrorUser = variant {
+  HostCannotJoinTheirOwnEvent;
+  SignWithEcdsaFailed : text;
+  LatitudeIsIncorrect;
+  ContactEmpty;
+  LocationCoordinatesAreIncorrect;
+  EventNotFound;
+  UserIsAlreadyDeclared;
+  UserIsNotAnAdmin;
+  LongitudeIsIncorrect;
+  FailedToUpdateUserData;
+  TicketAlreadyUsed;
+  UserNotFound;
+};
 type EventDTO = record {
   media : text;
   thumbnail : text;
@@ -59,9 +77,12 @@ type EventOnlineDetailsResponse = record {
   time_end : text;
 };
 type PublicKeyReply = record { public_key_hex : text };
-type Result = variant { Ok; Err : text };
-type Result_1 = variant { Ok : TicketSignature; Err : text };
-type Result_2 = variant { Ok : PublicKeyReply; Err : text };
+type Result = variant { Ok; Err : ErrorUser };
+type Result_1 = variant { Ok; Err : text };
+type Result_2 = variant { Ok; Err : ErrorEventOnline };
+type Result_3 = variant { Ok : TicketSignature; Err : ErrorUser };
+type Result_4 = variant { Ok : bool; Err : ErrorUser };
+type Result_5 = variant { Ok : PublicKeyReply; Err : ErrorUser };
 type Ticket = record { user : principal; event_id : nat; event_name : text };
 type TicketSignature = record { signature_hex : text };
 type UserDTO = record {
@@ -88,8 +109,8 @@ type UserDataModel = record {
 };
 service : () -> {
   add_tag_to_event : (principal, nat, text) -> (Result);
-  create_event : (EventDTO) -> (bool);
-  create_event_online : (EventOnlineDTO) -> (bool);
+  create_event : (EventDTO) -> (Result_1);
+  create_event_online : (EventOnlineDTO) -> (Result_2);
   download_recommended_events : () -> (opt vec EventDetailsResponse);
   download_recommended_events_online : () -> (
       opt vec EventOnlineDetailsResponse,
@@ -112,9 +133,9 @@ service : () -> {
   get_user_hosted_events_online : () -> (
       opt vec EventOnlineDetailsResponse,
     ) query;
-  join_event : (nat) -> (Result_1);
-  join_event_online : (nat) -> (bool);
-  public_key : () -> (Result_2);
-  register_user : (UserDTO) -> (bool);
+  join_event : (nat) -> (Result_3);
+  join_event_online : (nat) -> (Result_4);
+  public_key : () -> (Result_5);
+  register_user : (UserDTO) -> (Result_4);
   verify_ticket_signature_by_admin : (principal, text, Ticket) -> (Result);
 }

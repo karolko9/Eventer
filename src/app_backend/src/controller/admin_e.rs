@@ -21,7 +21,7 @@ pub async fn verify_ticket_signature_by_admin(
     ticket: Ticket,
 ) -> Result<(), ErrorUser> {
     if event_repository::is_user_admin(admin, ticket.event_id.clone()) {
-        if(verify_ticket_signature(signature_hex, ticket).await.unwrap().is_signature_valid){  
+        if verify_ticket_signature(signature_hex, ticket).await.unwrap().is_signature_valid {  
             return Ok(());
         }
         Ok(())

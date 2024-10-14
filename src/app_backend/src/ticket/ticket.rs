@@ -108,7 +108,7 @@ pub async fn verify_ticket_signature(
         .verify(message_bytes, &signature)
         .is_ok();
 
-    if(event_repository::is_ticket_used(ticket.event_id.clone(), signature_hex.clone()) == false){
+    if event_repository::is_ticket_used(ticket.event_id.clone(), signature_hex.clone()) == false {
         return Err(ErrorUser::TicketAlreadyUsed);
         //"Ticket is already used"
     }
