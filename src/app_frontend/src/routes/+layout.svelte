@@ -1,7 +1,7 @@
 <script>
-    import Menu from "../components/Menu.svelte";
+    import Menu from "$lib/Menu.svelte";
     import "../app.css";
-    import Toast from "../components/Toast.svelte";
+    import Toast from "$lib/Toast.svelte";
     import { currentUserType } from "../stores/userTypeStore";
     import { page } from '$app/stores';
 </script>

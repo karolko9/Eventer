@@ -2,7 +2,7 @@
     import { onMount } from "svelte";
     import { goto } from '$app/navigation'
     import { auth } from "../../lib/auth";
-    import EventCard from "../../components/EventCard.svelte"; 
+    import EventCard from "$lib/EventCard.svelte"; 
     import { IconInfoCircle } from '@tabler/icons-svelte';
 
     let events = [];

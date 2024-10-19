@@ -7,7 +7,7 @@
     import QrCode from './QrCode.svelte';
     import QrCodeScanner from "./QrCodeScanner.svelte"
     import { onMount } from "svelte";
-    import { auth } from "../lib/auth";
+    import { auth } from "./auth";
 
 
 
