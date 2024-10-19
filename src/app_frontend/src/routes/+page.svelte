@@ -1,13 +1,6 @@
 <script>
-  import { auth } from "$lib/auth";
   import { onMount } from "svelte";
-  import Loader from "$lib/Loader.svelte"
   import { currentUserType } from "../stores/userTypeStore";
-
-  onMount(() => {
-    $auth.init();
-    currentUserType.set(null);
-  });
 
 </script>
 

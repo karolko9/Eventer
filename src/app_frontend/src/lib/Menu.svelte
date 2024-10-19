@@ -73,12 +73,6 @@
         cursor:pointer;
     }
 
- 
-
-    .hideMenuOption {
-        display:none;
-    }
-
     a {
         display: flex;
         flex-direction: column;

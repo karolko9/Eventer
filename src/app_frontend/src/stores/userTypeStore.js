@@ -3,7 +3,6 @@ import { writable } from 'svelte/store';
 function createUserTypeStore() {
     let initialValue = null;
 
-    // Check if we're in a browser environment (so localStorage is available)
     if (typeof localStorage !== 'undefined') {
         const storedValue = localStorage.getItem('userType');
         initialValue = storedValue ? JSON.parse(storedValue) : null;
@@ -11,13 +10,17 @@ function createUserTypeStore() {
 
     const { subscribe, set, update } = writable(initialValue);
 
-    // Only write to localStorage if we're in the browser
     if (typeof localStorage !== 'undefined') {
         subscribe((value) => {
-            if (value !== null) {
-                localStorage.setItem('userType', JSON.stringify(value));
-            } else {
-                localStorage.removeItem('userType');
+            const currentStoredValue = localStorage.getItem('userType');
+            const parsedStoredValue = currentStoredValue ? JSON.parse(currentStoredValue) : null;
+
+            if (value !== parsedStoredValue) {
+                if (value !== null) {
+                    localStorage.setItem('userType', JSON.stringify(value));
+                } else {
+                    localStorage.removeItem('userType');
+                }
             }
         });
     }
