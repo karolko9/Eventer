@@ -4,7 +4,7 @@
     import { goto } from '$app/navigation'
     import { formProgress, formStep, formData } from '../../stores/createEvent.js';
     import { auth } from "$lib/auth.js";
-    import { addToast } from "$lib/Toast";
+    import { addToast } from "$lib/Toast.svelte";
 
     onMount(() => {
         $auth.init();

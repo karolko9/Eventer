@@ -5,6 +5,9 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
   kit: {
+    files: {
+      lib: 'src/lib'
+    },
     adapter: adapter({
       out: 'dist',  // This is where the built output will go
       precompress: false,  // Set this to true if you want to precompress files

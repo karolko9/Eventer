@@ -3,7 +3,7 @@
     import { MapLibre, MapEvents, DefaultMarker } from 'svelte-maplibre';
     import { IconMapSearch } from '@tabler/icons-svelte'
     import { formProgress, formStep, formData } from '../../stores/createEvent.js';
-    import { addToast } from "$lib/Toast";
+    import { addToast } from "$lib/Toast.svelte";
 
     let formDataStore = get(formData);
     let {location, address} = formDataStore;
