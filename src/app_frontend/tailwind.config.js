@@ -9,6 +9,15 @@ export default {
       colors: {
         background: '#ffffff',
         primary: '#5B2784',
+        purple: {
+          normal: '#572D8A',
+        },
+        orange: {
+          normal: '#F05A24'
+        },
+        black: {
+          normal: '#050008'
+        },
         primary500: 'rgba(91, 39, 102, 0.5)',
         primary300: 'rgba(91, 39, 102, 0.8)',
         gray: {
