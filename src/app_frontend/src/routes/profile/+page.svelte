@@ -171,7 +171,7 @@
                             <IconX class="height:12px; width:12px"/>
                             </button>
                         </div>
-                        <div use:melt={$edit(t)} class="flex items-center overflow-hidden rounded-md px-1.5 [word-break:break-word] data-[invalid-edit]:focus:!ring-red-500"/>
+                        <div use:melt={$edit(t)} class="flex items-center overflow-hidden rounded-md px-1.5 [word-break:break-word] data-[invalid-edit]:focus:!ring-red-500"></div>
                     {/each}
                     <input use:melt={$input} type="text" name="tags" placeholder="Enter tags..." class="min-w-[4.5rem] shrink grow basis-0 border-0 text-black outline-none focus:!ring-0 data-[invalid]:text-red-500 placeholder-primary500"/>
                 </div>

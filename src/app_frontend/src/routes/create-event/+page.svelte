@@ -75,7 +75,7 @@
 </header>
 <form class="w-full h-mobile lg:h-desktop px-4 pb-4 overflow-y-hidden flex flex-col">
     <div {...$root} use:root class="h-6 w-full mb-3 overflow-hidden rounded-[99999px] border-2 border-color bg-background">
-        <div class="h-full w-full bg-primary transition-transform duration-[660ms] ease-[cubic-bezier(0.65,0,0.35,1)]" style={`transform: translateX(-${ 100 - (100 * ($formProgress ?? 0)) / ($max ?? 1)}%)`}/>
+        <div class="h-full w-full bg-primary transition-transform duration-[660ms] ease-[cubic-bezier(0.65,0,0.35,1)]" style={`transform: translateX(-${ 100 - (100 * ($formProgress ?? 0)) / ($max ?? 1)}%)`}></div>
     </div>
     <button bind:this={showLoginModalButton} use:melt={$trigger} class=""></button>
     <button bind:this={closeLoginModalButton} use:melt={$close} class=""></button>
