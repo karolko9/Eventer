@@ -21,7 +21,8 @@ export default {
         primary500: 'rgba(91, 39, 102, 0.5)',
         primary300: 'rgba(91, 39, 102, 0.8)',
         gray: {
-          '100': 'rgba(0, 0, 0, 0.1)'
+          '100': 'rgba(0, 0, 0, 0.1)',
+          'userTypeBorder': '#A4A4A4'
         },
         green: '#004F2D',
         accent: '#EC1D79',

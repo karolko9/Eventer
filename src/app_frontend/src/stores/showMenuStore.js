@@ -1,10 +1,10 @@
 import { derived } from 'svelte/store';
-import { currentUserType } from './userTypeStore';
+import { currentUserData } from './userDataStore';
 import { page } from '$app/stores';
 
 export const showMenu = derived(
-    [currentUserType, page],
-    ([$currentUserType, $page]) => {
-        return $currentUserType !== null && $page.url.pathname !== '/';
+    [currentUserData, page],
+    ([$currentUserData, $page]) => {
+        return $currentUserData.userType !== null && $page.url.pathname !== '/';
     }
 );

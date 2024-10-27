@@ -1,5 +1,4 @@
 <script>
-    import { currentUserType } from "../stores/userTypeStore";
     import { showMenu } from "../stores/showMenuStore";
 
     import Toast from "$lib/Toast.svelte";
@@ -9,7 +8,7 @@
     let Menu = null;
 
     $: if ($showMenu && !Menu) {
-        import("$lib/Menu.svelte").then(module => {
+        import("$lib/Menu.svelte").then((module) => {
             Menu = module.default;
         });
     }
