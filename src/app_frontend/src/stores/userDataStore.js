@@ -1,8 +1,13 @@
 import { writable } from 'svelte/store';
 
+export const USER_TYPES = {
+    attendee: 'attendee',
+    host: 'host'
+}
+
 function userDataStore() {
     let initialValues = {
-        userType: 'attendee',
+        userType: USER_TYPES.attendee,
         firstEntrance: true,
     };
 
@@ -23,7 +28,6 @@ function userDataStore() {
         subscribe((value) => {
             const currentStoredValue = localStorage.getItem('userData');
             const parsedStoredValue = currentStoredValue ? JSON.parse(currentStoredValue) : null;
-
             if (value !== parsedStoredValue) {
                 if (value !== null) {
                     localStorage.setItem('userData', JSON.stringify(value));

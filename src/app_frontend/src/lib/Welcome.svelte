@@ -16,7 +16,7 @@
 
         <a
             href="/map"
-            class="p-3 bg-orange-normal text-background border-2 border-background rounded-lg"
+            class="p-3 bg-purple-normal text-background border-2 border-background rounded-lg"
             >Get started</a
         >
     </article>

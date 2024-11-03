@@ -16,7 +16,12 @@ export default {
           normal: '#F05A24'
         },
         black: {
-          normal: '#050008'
+          default: '#000000',
+          normal: '#050008',
+          dark: '#333333'
+        },
+        white: {
+          normal: '#ffffff',
         },
         primary500: 'rgba(91, 39, 102, 0.5)',
         primary300: 'rgba(91, 39, 102, 0.8)',
